@@ -7,8 +7,13 @@ export const connectTo = (url: string, ctx: Context): WebSocket => {
         console.log("connected");
     };
     ws.onmessage = (event) => {
-        parseEvent(event, ctx);
+        const shouldScroll = parseEvent(event, ctx);
+        if (shouldScroll) {
+            setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight)
+            }, 0)
+        }
+
     };
     ws.onclose = () => {
         console.log("disconnected");
@@ -46,13 +51,13 @@ export const backspaceMessage = (idx: number, ctx: Context) => {
     ctx.ws.send(byteArray)
 }
 
-function parseEvent(event: MessageEvent<any>, ctx: Context): void {
+function parseEvent(event: MessageEvent<any>, ctx: Context): boolean {
     const byteArray = new Uint8Array(event.data);
     switch (byteArray[5]) {
         case 0: {
             const text = new TextDecoder("ascii").decode(byteArray.slice(6));
             ctx.setTopic(text)
-            return;
+            return false;
         }
 
         case 1: {
@@ -60,7 +65,7 @@ function parseEvent(event: MessageEvent<any>, ctx: Context): void {
                 ctx.pendingPing(performance.now())
                 ctx.pendingPing = null
             }
-            return
+            return false
         }
 
         case 2: {
@@ -68,27 +73,28 @@ function parseEvent(event: MessageEvent<any>, ctx: Context): void {
             const text = "";
             const active = true;
             ctx.pushMessage({ id, color, name, text, active })
-            return;
+            return true
         }
 
         case 3: {
             const { id } = byteArrayToPubObject(byteArray)
             ctx.pubMessage(id)
-            return;
+            return false
         }
 
         case 4: {
             const { id, idx, s } = byteArrayToInsertObject(byteArray)
             ctx.insertMessage(id, idx, s)
-            return;
+            return false
         }
 
         case 5: {
             const { id, idx } = byteArrayToBackspaceObject(byteArray)
             ctx.backspaceMessage(id, idx)
-            return;
+            return false
         }
     }
+    return false
 }
 
 
