@@ -1,8 +1,51 @@
 import type { Message } from "./types"
+import { ping, connectTo, initMessage, pubMessage, insertMessage, backspaceMessage } from "./websocket";
 
 export class Context {
     messages: Array<Message> = $state(new Array());
     topic: string = $state("loading...")
+    ws: WebSocket
+    curMsg: string = ""
+    active: boolean = false
+    name: string = ""
+    pendingPing: ((pongTime: number) => void) | null = null
+
+    insertLineBreak = () => {
+        if (this.active) {
+            pubMessage(this)
+            this.active = false
+            this.curMsg = ""
+        }
+    }
+
+    insert = (idx: number, s: string) => {
+        if (!this.active) {
+            initMessage(220, this.name, this)
+            this.active = true
+        }
+        insertMessage(idx, s, this)
+        this.curMsg = this.curMsg.slice(0,idx) + s + this.curMsg.slice(idx)
+    }
+
+    delete = (idx: number) => {
+        if (!this.active) {
+            return
+        }
+        backspaceMessage(idx, this)
+        this.curMsg = this.curMsg.slice(0,idx - 1) + this.curMsg.slice(idx)
+    }
+
+    constructor(url: string) {
+        this.ws = connectTo(url, this)
+        this.startPinging()
+    }
+
+    startPinging = async () => {
+        setInterval(async () => {
+            const pingTime = await ping(this)
+            console.log(pingTime)
+        }, 5000)
+    }
 
     setTopic = (topic: string) => {
         this.topic = topic

@@ -1,0 +1,11 @@
+input {
+  font: inherit;
+  border: none;
+  padding: 0;
+  overflow: visible !important;
+  overflow-clip-margin: 1px !important;
+}
+
+body {
+  margin: 0px
+}
