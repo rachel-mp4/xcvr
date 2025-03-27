@@ -10,7 +10,7 @@ export const connectTo = (url: string, ctx: Context): WebSocket => {
         const shouldScroll = parseEvent(event, ctx);
         if (shouldScroll) {
             setTimeout(() => {
-        window.scrollTo(0, document.body.scrollHeight)
+                window.scrollTo(0, document.body.scrollHeight)
             }, 0)
         }
 
@@ -102,7 +102,7 @@ function parseEvent(event: MessageEvent<any>, ctx: Context): boolean {
 function byteArrayToInitObject(byteArray: Uint8Array): { id: number, color: number, name: string } {
     const id = readId(byteArray.slice(1, 5));
     const color = byteArray[7];
-    const name = new TextDecoder("ascii").decode(byteArray.slice(8));
+    const name = new TextDecoder("utf-8").decode(byteArray.slice(8));
     return { id: id, color: color, name: name }
 }
 
@@ -123,7 +123,7 @@ function pubObjectToByteArray(): Uint8Array {
 function byteArrayToInsertObject(byteArray: Uint8Array): { id: number, idx: number, s: string } {
     const id = readId(byteArray.slice(1, 5));
     const idx = readIdx(byteArray.slice(6, 8));
-    const s = new TextDecoder("ascii").decode(byteArray.slice(8));
+    const s = new TextDecoder("utf-8").decode(byteArray.slice(8));
     return { id: id, idx: idx, s: s }
 }
 
