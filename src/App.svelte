@@ -8,7 +8,7 @@
 
 <main>
   <header>
-    <h1>xcvr</h1>
+    <h1><span style:color="#034732">x</span><span style:color="#008148">c</span><span style:color="#C6C013">v</span><span style:color="#EF8A17">r</span></h1>
     <h2>{ctx.topic}</h2>
   </header>
   <section>
