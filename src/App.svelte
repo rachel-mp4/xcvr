@@ -3,7 +3,7 @@
   import Transmitter from "./lib/Transmitter.svelte";
   import { Context } from "./Context.svelte.ts";
 
-  const ctx = new Context("ws://localhost:927/ws");
+  const ctx = new Context("ws://localhost:8080/ws");
 </script>
 
 <main>

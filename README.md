@@ -8,4 +8,4 @@ npm install
 npm run dev
 ```
 
-Note that this is just a client. For an lrc server, see [weblrcd](https://github.com/rachel-mp4/weblrc)
+Note that this is just a client. For an lrc server, use [lrcd](https://github.com/rachel-mp4/lrc)
