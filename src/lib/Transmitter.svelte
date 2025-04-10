@@ -1,21 +1,24 @@
 <script lang="ts">
     import AutoGrowInput from "./AutoGrowInput.svelte";
-    import { Context } from "../Context.svelte";
+    import { WSContext } from "../Context.svelte";
+    import { ansiToHex } from "../colors";
     interface Props {
-        ctx: Context;
+        ctx: WSContext;
     }
     let { ctx }: Props = $props();
     let name = $state("wanderer");
-    ctx.name = "wanderer"
+    ctx.name = "wanderer";
     let message = $state("");
     const setName = (event: Event) => {
         const el = event.target as HTMLInputElement;
         ctx.name = el.value;
     };
 
+    let color = $derived(ansiToHex(ctx.color));
+
     const bi = (event: InputEvent) => {
         const el = event.target as HTMLInputElement;
-        console.log(event.inputType)
+        console.log(event.inputType);
         switch (event.inputType) {
             case "insertLineBreak": {
                 ctx.insertLineBreak();
@@ -52,51 +55,55 @@
             }
 
             case "deleteContent": {
-                const { selectionStart } = el
-                let { selectionEnd } = el
+                const { selectionStart } = el;
+                let { selectionEnd } = el;
                 while (selectionStart != selectionEnd) {
                     if (selectionEnd == null) {
                         break;
                     }
                     ctx.delete(selectionEnd);
-                    selectionEnd -= 1
+                    selectionEnd -= 1;
                 }
-                ctx.delete(selectionStart ?? 0)
+                ctx.delete(selectionStart ?? 0);
             }
 
             case "deleteContentBackward": {
-                const { selectionStart } = el
-                let { selectionEnd } = el
-                let looped = false
+                const { selectionStart } = el;
+                let { selectionEnd } = el;
+                let looped = false;
                 while (selectionStart != selectionEnd) {
                     if (selectionEnd == null) {
                         break;
                     }
                     ctx.delete(selectionEnd);
-                    selectionEnd -= 1
-                    looped = true
+                    selectionEnd -= 1;
+                    looped = true;
                 }
                 if (looped) {
-                    return
+                    return;
                 }
-                ctx.delete(selectionStart ?? 0)
+                ctx.delete(selectionStart ?? 0);
             }
 
             case "historyUndo": {
-                console.log(event)
+                console.log(event);
             }
         }
     };
 </script>
 
 <div>
-    <AutoGrowInput
-        bind:value={name}
-        placeholder="your name"
-        onInput={setName}
-        maxlength={12}
-        bold={true}
-    />
+    <div class="wrapper" style:--theme={color}>
+        <input type="range" min="0" max="255" bind:value={ctx.color}>
+        <AutoGrowInput
+            bind:value={name}
+            {color}
+            placeholder="your name"
+            onInput={setName}
+            maxlength={12}
+            bold={true}
+        />
+    </div>
     <AutoGrowInput
         bind:value={message}
         placeholder="start typing..."
@@ -105,3 +112,22 @@
         maxlength={65535}
     />
 </div>
+
+<style>
+    .wrapper {
+        position: relative;
+        display: inline;
+    }
+    .wrapper :first-child {
+        position:absolute;
+        left: 0px;
+        right: 0px;
+        top:-2rem;
+        bottom: 1em;
+        display: none;
+        accent-color: var(--theme);
+    }
+    .wrapper:focus-within :first-child {
+        display: inline;
+    }
+</style>

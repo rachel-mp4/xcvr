@@ -1,14 +1,21 @@
 import type { Message } from "./types"
 import { ping, connectTo, initMessage, pubMessage, insertMessage, backspaceMessage } from "./websocket";
 
-export class Context {
+export class WSContext {
     messages: Array<Message> = $state(new Array());
-    topic: string = $state("loading...")
+    topic: string = $state("")
+    connected: boolean = $state(false)
     ws: WebSocket
+    color: number = $state(Math.floor(Math.random() * 256))
     curMsg: string = ""
     active: boolean = false
     name: string = ""
     pendingPing: ((pongTime: number) => void) | null = null
+
+    constructor(url: string) {
+        this.ws = connectTo(url, this)
+        this.startPinging()
+    }
 
     insertLineBreak = () => {
         if (this.active) {
@@ -20,7 +27,7 @@ export class Context {
 
     insert = (idx: number, s: string) => {
         if (!this.active) {
-            initMessage(220, this.name, this)
+            initMessage(this.color, this.name, this)
             this.active = true
         }
         insertMessage(idx, s, this)
@@ -35,10 +42,7 @@ export class Context {
         this.curMsg = this.curMsg.slice(0,idx - 1) + this.curMsg.slice(idx)
     }
 
-    constructor(url: string) {
-        this.ws = connectTo(url, this)
-        this.startPinging()
-    }
+
 
     startPinging = async () => {
         setInterval(async () => {

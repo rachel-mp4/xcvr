@@ -5,3 +5,9 @@ export type Message = {
     text: string
     active: boolean
 }
+
+export type Channel = {
+    port: number
+    band: string
+    sign: string
+}

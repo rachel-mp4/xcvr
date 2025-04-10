@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { onMount } from "svelte";
+
     interface Props {
         onBeforeInput?: (event: InputEvent) => void;
         onInput?: (event: Event) => void;
@@ -6,7 +8,8 @@
         value?: string;
         size?: number;
         maxlength?: number;
-        bold?: boolean
+        bold?: boolean;
+        color?: string;
     }
 
     let {
@@ -16,26 +19,42 @@
         onInput,
         size = 5,
         maxlength,
-        bold = false
+        bold = false,
+        color,
     }: Props = $props();
 
     let inputEl: HTMLElement;
-    function adjustSize(event: Event) {
+    function adjust(event: Event) {
+        onInput?.(event);
+    }
+
+    function adjustWidth() {
         if (inputEl) {
             inputEl.style.width = "auto";
             inputEl.style.width = inputEl.scrollWidth + 1 + "px";
         }
-        onInput?.(event)
     }
+    onMount(adjustWidth);
+    $effect(() => {
+        value;
+        adjustWidth();
+    });
 </script>
 
 <input
     bind:value
     bind:this={inputEl}
-    size={size}
-    maxlength={maxlength}
-    oninput={adjustSize}
+    {size}
+    {maxlength}
+    oninput={adjust}
     onbeforeinput={onBeforeInput}
     style:font-weight={bold ? "700" : "inherit"}
+    style:--theme={color}
     {placeholder}
 />
+
+<style>
+    input {
+        color: var(--theme);
+    }
+</style>

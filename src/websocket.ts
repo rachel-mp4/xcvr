@@ -1,10 +1,10 @@
-import { Context } from "./Context.svelte"
+import { WSContext } from "./Context.svelte"
 
-export const connectTo = (url: string, ctx: Context): WebSocket => {
+export const connectTo = (url: string, ctx: WSContext): WebSocket => {
     const ws = new WebSocket(url); //"ws://localhost:927/ws"
     ws.binaryType = "arraybuffer";
     ws.onopen = () => {
-        console.log("connected");
+        ctx.connected = true
     };
     ws.onmessage = (event) => {
         const shouldScroll = parseEvent(event, ctx);
@@ -16,12 +16,15 @@ export const connectTo = (url: string, ctx: Context): WebSocket => {
 
     };
     ws.onclose = () => {
-        console.log("disconnected");
+        ctx.connected = false
     };
+    ws.onerror = () => {
+        ctx.connected = false
+    }
     return ws
 }
 
-export async function ping(ctx: Context): Promise<number> {
+export async function ping(ctx: WSContext): Promise<number> {
     return new Promise((resolve) => {
         ctx.pendingPing = (pongTime: number) => {
             const pingTime = pongTime - startTime
@@ -32,26 +35,26 @@ export async function ping(ctx: Context): Promise<number> {
     })
 }
 
-export const initMessage = (color: number, name: string, ctx: Context) => {
+export const initMessage = (color: number, name: string, ctx: WSContext) => {
     const byteArray = initObjectToByteArray({ color: color, name: name })
     ctx.ws.send(byteArray)
 }
 
-export const insertMessage = (idx: number, s: string, ctx: Context) => {
+export const insertMessage = (idx: number, s: string, ctx: WSContext) => {
     const byteArray = insertObjectToByteArray({ idx, s })
     ctx.ws.send(byteArray)
 }
 
-export const pubMessage = (ctx: Context) => {
+export const pubMessage = (ctx: WSContext) => {
     ctx.ws.send(pubObjectToByteArray())
 }
 
-export const backspaceMessage = (idx: number, ctx: Context) => {
+export const backspaceMessage = (idx: number, ctx: WSContext) => {
     const byteArray = backspaceObjectToByteArray({ idx })
     ctx.ws.send(byteArray)
 }
 
-function parseEvent(event: MessageEvent<any>, ctx: Context): boolean {
+function parseEvent(event: MessageEvent<any>, ctx: WSContext): boolean {
     const byteArray = new Uint8Array(event.data);
     switch (byteArray[5]) {
         case 0: {
