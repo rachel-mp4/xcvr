@@ -18,7 +18,6 @@
 
     const bi = (event: InputEvent) => {
         const el = event.target as HTMLInputElement;
-        console.log(event.inputType);
         switch (event.inputType) {
             case "insertLineBreak": {
                 ctx.insertLineBreak();
@@ -86,7 +85,6 @@
             }
 
             case "historyUndo": {
-                console.log(event);
             }
         }
     };
@@ -94,7 +92,7 @@
 
 <div>
     <div class="wrapper" style:--theme={color}>
-        <input type="range" min="0" max="255" bind:value={ctx.color}>
+        <input type="range" min="0" max="255" bind:value={ctx.color} />
         <AutoGrowInput
             bind:value={name}
             {color}
@@ -119,10 +117,10 @@
         display: inline;
     }
     .wrapper :first-child {
-        position:absolute;
+        position: absolute;
         left: 0px;
         right: 0px;
-        top:-2rem;
+        top: -2rem;
         bottom: 1em;
         display: none;
         accent-color: var(--theme);
