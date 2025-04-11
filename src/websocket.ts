@@ -1,7 +1,7 @@
 import { WSContext } from "./Context.svelte"
 
 export const connectTo = (url: string, ctx: WSContext): WebSocket => {
-    const ws = new WebSocket(url); //"ws://localhost:927/ws"
+    const ws = new WebSocket(url); 
     ws.binaryType = "arraybuffer";
     ws.onopen = () => {
         ctx.connected = true

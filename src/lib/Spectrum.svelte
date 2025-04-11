@@ -15,7 +15,7 @@
 	{#each channels as channel}
 		<button
 			onclick={appctx.connectFunc(
-				`ws://localhost:${channel.port}/${channel.band}/ws`,
+				channel.port,
 			)}
 		>
 			{channel.band}
@@ -26,7 +26,9 @@
 <form
 	onsubmit={async (e) => {
 		e.preventDefault();
-		const res = await fetch("http://localhost:8080/xrpc/initChannel", {
+		const base = import.meta.env.DEV ? "http://localhost:8080" : ""
+
+		const res = await fetch(`${base}/xrpc/initChannel`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
