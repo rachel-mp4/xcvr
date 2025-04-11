@@ -13,11 +13,7 @@
 
 <div class="channels">
 	{#each channels as channel}
-		<button
-			onclick={appctx.connectFunc(
-				channel.port,
-			)}
-		>
+		<button onclick={appctx.connectFunc(channel.port)}>
 			{channel.band}
 		</button>
 	{/each}
@@ -26,7 +22,7 @@
 <form
 	onsubmit={async (e) => {
 		e.preventDefault();
-		const base = import.meta.env.DEV ? "http://localhost:8080" : ""
+		const base = import.meta.env.DEV ? "http://localhost:8080" : "";
 
 		const res = await fetch(`${base}/xrpc/initChannel`, {
 			method: "POST",
@@ -36,7 +32,7 @@
 			body: JSON.stringify({ band, sign, port: 0 }),
 		});
 		const data = await res.json();
-		appctx.connectFunc(`ws://localhost:${data.port}/${data.band}/ws`)();
+		appctx.connectFunc(data.port)();
 	}}
 >
 	<div>
@@ -69,7 +65,7 @@
 	}
 	button {
 		font: inherit;
-		padding:0;
+		padding: 0;
 		margin: 0;
 		background: none;
 		border: none;
@@ -77,10 +73,7 @@
 		font-weight: 700;
 	}
 	button::before {
-		content:"#";
-	}
-	ul {
-		margin-block: 0rem;
+		content: "#";
 	}
 	form {
 		margin-top: 1rem;
