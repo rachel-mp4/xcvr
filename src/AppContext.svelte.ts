@@ -5,7 +5,8 @@ export class AppContext {
 	ctx?: WSContext = $state()
 	connectFunc = (port: number) => {
 		return () => {
-			const s = import.meta.env.DEV ? `ws://localhost:${port}/ws` : `ws://xcvr.chat/${port}/ws`
+			const scheme = window.location.protocol === "https:" ? "wss" : "ws"
+			const s = import.meta.env.DEV ? `${scheme}://localhost:${port}/ws` : `${scheme}://xcvr.chat/${port}/ws`
 			this.explainer = false
 			this.ctx = new WSContext(s)
 		}

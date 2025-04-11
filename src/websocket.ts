@@ -64,7 +64,7 @@ function parseEvent(event: MessageEvent<any>, ctx: WSContext): boolean {
         }
 
         case 1: {
-            if (ctx.pendingPing != null) {
+            if (ctx.pendingPing !== null) {
                 ctx.pendingPing(performance.now())
                 ctx.pendingPing = null
             }

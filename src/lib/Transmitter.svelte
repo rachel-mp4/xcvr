@@ -28,8 +28,8 @@
             case "insertText": {
                 const { selectionStart } = el;
                 let { selectionEnd } = el;
-                while (selectionStart != selectionEnd) {
-                    if (selectionEnd == null) {
+                while (selectionStart !== selectionEnd) {
+                    if (selectionEnd === null) {
                         break;
                     }
                     ctx.delete(selectionEnd);
@@ -42,8 +42,8 @@
             case "insertFromPaste": {
                 const { selectionStart } = el;
                 let { selectionEnd } = el;
-                while (selectionStart != selectionEnd) {
-                    if (selectionEnd == null) {
+                while (selectionStart !== selectionEnd) {
+                    if (selectionEnd === null) {
                         break;
                     }
                     ctx.delete(selectionEnd);
@@ -56,8 +56,8 @@
             case "deleteContent": {
                 const { selectionStart } = el;
                 let { selectionEnd } = el;
-                while (selectionStart != selectionEnd) {
-                    if (selectionEnd == null) {
+                while (selectionStart !== selectionEnd) {
+                    if (selectionEnd === null) {
                         break;
                     }
                     ctx.delete(selectionEnd);
@@ -70,8 +70,8 @@
                 const { selectionStart } = el;
                 let { selectionEnd } = el;
                 let looped = false;
-                while (selectionStart != selectionEnd) {
-                    if (selectionEnd == null) {
+                while (selectionStart !== selectionEnd) {
+                    if (selectionEnd === null) {
                         break;
                     }
                     ctx.delete(selectionEnd);
