@@ -40,7 +40,7 @@
 			type="text"
 			name="band"
 			id="band"
-			placeholder="enter a band"
+			placeholder="enter a frequency band"
 			bind:value={band}
 			required
 		/>
