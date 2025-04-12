@@ -44,15 +44,23 @@
         error! {err}
       {/await}
     {:else if appctx.ctx.connected}
-      <Receiver messages={appctx.ctx.messages} />
-      <Transmitter ctx={appctx.ctx} />
+      <div id="transceiver">
+        <Receiver messages={appctx.ctx.messages} />
+        <Transmitter ctx={appctx.ctx} />
+      </div>
+      
     {/if}
   </section>
 </main>
 
 <style>
+  #transceiver {
+    display: flex;
+    flex-direction: column;
+  }
+
   .blur {
-        position: sticky;
+    position: sticky;
     top: 0;
     background-image: linear-gradient(white, #ffffff00);
     backdrop-filter: blur(0.25rem);

@@ -8,9 +8,9 @@
     let color: string = ansiToHex(message.color);
 </script>
 
-<div style:--theme={color} class={message.active ? "active" : " "}>
-    <b>{message.name}</b>
-    {message.text}
+<div style:--theme={color} class={message.active ? "active transmission" : "transmission"}>
+    <div class="header">{message.name}</div>
+    <div class="body">{message.text}</div>
 </div>
 
 <style>
@@ -18,10 +18,20 @@
         background-color: var(--theme);
         color: white;
     }
-    div:not(.active) b {
+    .header {
+        font-weight: 700;
+    }
+
+    .transmission {
+        padding-bottom: 1rem;
+    }
+
+    .transmission:not(.active) .header {
         color: var(--theme);
     }
-    div {
+    .body {
         white-space: pre-wrap;
+        word-wrap: break-word;
+        max-width: 100%;
     }
 </style>

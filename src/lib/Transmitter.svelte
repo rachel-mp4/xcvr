@@ -2,6 +2,7 @@
     import AutoGrowInput from "./AutoGrowInput.svelte";
     import { WSContext } from "../Context.svelte";
     import { ansiToHex } from "../colors";
+    import AutoGrowTextArea from "./AutoGrowTextArea.svelte";
     interface Props {
         ctx: WSContext;
     }
@@ -22,6 +23,7 @@
             case "insertLineBreak": {
                 ctx.insertLineBreak();
                 el.value = "";
+                event.preventDefault()
                 return;
             }
 
@@ -90,7 +92,7 @@
     };
 </script>
 
-<div>
+<div id="transmitter">
     <div class="wrapper" style:--theme={color}>
         <input type="range" min="0" max="255" bind:value={ctx.color} />
         <AutoGrowInput
@@ -102,19 +104,22 @@
             bold={true}
         />
     </div>
-    <AutoGrowInput
+    <AutoGrowTextArea
         bind:value={message}
         placeholder="start typing..."
         onBeforeInput={bi}
-        size={12}
         maxlength={65535}
     />
 </div>
 
 <style>
+    #transmitter {
+        margin-top:.25rem;
+        outline: .25rem solid black;
+    }
     .wrapper {
         position: relative;
-        display: inline;
+        display: inline-block;
     }
     .wrapper :first-child {
         position: absolute;
@@ -126,6 +131,6 @@
         accent-color: var(--theme);
     }
     .wrapper:focus-within :first-child {
-        display: inline;
+        display: inline-block;
     }
 </style>

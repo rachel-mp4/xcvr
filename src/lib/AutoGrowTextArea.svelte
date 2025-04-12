@@ -6,7 +6,6 @@
         onInput?: (event: Event) => void;
         placeholder?: string;
         value?: string;
-        size?: number;
         maxlength?: number;
         bold?: boolean;
         color?: string;
@@ -17,7 +16,6 @@
         placeholder,
         value = $bindable(""),
         onInput,
-        size = 5,
         maxlength,
         bold = false,
         color,
@@ -28,34 +26,40 @@
         onInput?.(event);
     }
 
-    function adjustWidth() {
+    function adjustHeight() {
         if (inputEl) {
-            inputEl.style.width = "auto";
-            inputEl.style.width = inputEl.scrollWidth + 1 + "px";
+            inputEl.style.height = "auto";
+            inputEl.style.height = inputEl.scrollHeight + "px";
         }
     }
-    onMount(adjustWidth);
+    onMount(adjustHeight);
     $effect(() => {
         value;
-        adjustWidth();
+        adjustHeight();
     });
 </script>
 
-<input
+<textarea
+    rows="1"
     bind:value
     bind:this={inputEl}
-    {size}
     {maxlength}
     oninput={adjust}
     onbeforeinput={onBeforeInput}
     style:font-weight={bold ? "700" : "inherit"}
     style:--theme={color}
     {placeholder}
-/>
+></textarea>
 
 <style>
-    input {
+    textarea {
         color: var(--theme);
-        background-color: transparent;
+        width: 100%;
+        font: inherit;
+        padding: 0;
+        margin: 0;
+        display: block;
+        resize: none;
+        border:none;
     }
 </style>
