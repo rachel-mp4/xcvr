@@ -4,7 +4,17 @@
 	let { data, children }: LayoutProps = $props();
 </script>
 
-<Spectrum channels={data.message} />
-<div>
-	{@render children()}
+<div id="content">
+	<aside>
+		<Spectrum channels={data.message} />
+	</aside>
+	<main>
+		{@render children()}
+	</main>
 </div>
+
+<style>
+	#content {
+		display:flex;
+	}
+</style>
