@@ -9,9 +9,9 @@
 <div id="spectrum">
 	<div class="channels">
 		{#each channels as channel}
-			<button>
+			<a href="/{channel.band}">
 				{channel.band}
-			</button>
+			</a>
 		{/each}
 	</div>
 </div>
@@ -19,13 +19,16 @@
 <style>
 	#spectrum {
 		position: relative;
+		min-width: 15rem;
 	}
 	.channels {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 	}
-	button {
+	a {
+		color: inherit;
+		text-decoration: none;
 		font: inherit;
 		padding: 0;
 		margin: 0;
@@ -33,8 +36,9 @@
 		border: none;
 		cursor: pointer;
 		font-weight: 700;
+		font-size: 1.5rem;
 	}
-	button::before {
+	a::before {
 		content: "#";
 	}
 </style>

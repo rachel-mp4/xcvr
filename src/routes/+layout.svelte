@@ -6,7 +6,7 @@
 
 <div id="content">
 	<aside>
-		<Spectrum channels={data.message} />
+		<Spectrum channels={data.channels} />
 	</aside>
 	<main>
 		{@render children()}

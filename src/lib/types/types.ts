@@ -7,7 +7,6 @@ export type Message = {
 }
 
 export type Channel = {
-    port: number
     band: string
     sign: string
 }

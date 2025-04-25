@@ -4,12 +4,12 @@ export const load: LayoutLoad = async ({ fetch }) => {
 	const res = await fetch(`${import.meta.env.VITE_API_URL}/xrpc/getChannels`)
 	if (!res.ok) {
 		return {
-			message: "oopsi",
+			channels: [],
 		}
 	}
 
 
-	const message = await res.json()
+	const channels = await res.json()
 
-	return { message }
+	return { channels }
 }
