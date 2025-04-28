@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Channel } from "../types/types";
+	import type { Channel } from "$lib/types";
 	interface Props {
 		channels: Array<Channel>;
 	}

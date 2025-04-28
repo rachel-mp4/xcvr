@@ -1,6 +1,7 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 
-import type { Channel } from "$lib/types/types";
+import type { Channel } from "$lib/types";
+import { WSContext } from "$lib/wscontext.svelte";
 
 // for information about these interfaces
 declare global {
@@ -9,7 +10,7 @@ declare global {
 		// interface Locals {}
 		interface PageData {
 			channels: Array<Channel>
-			websocket?: WebSocket
+			slug: string
 		}
 		// interface PageState {}
 		// interface Platform {}
