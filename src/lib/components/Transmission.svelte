@@ -1,19 +1,19 @@
 <script lang="ts">
     import type { Message } from "$lib/types";
-    import { ansiToHex } from "$lib/colors";
+    import { numToHex } from "$lib/colors";
     interface Props {
         message: Message;
     }
     let { message }: Props = $props();
-    let color: string = ansiToHex(message.color);
+    let color: string = numToHex(message.color);
 </script>
 
 <div
     style:--theme={color}
     class={message.active ? "active transmission" : "transmission"}
 >
-    <div class="header">{message.name}</div>
-    <div class="body">{message.text}</div>
+    <div class="header">{message.nick}{#if message.did}@{message.did}{/if}</div>
+    <div class="body">{message.body}</div>
 </div>
 
 <style>

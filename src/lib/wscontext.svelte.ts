@@ -1,32 +1,34 @@
-import type { Message } from "./types"
+import type { Message, LogItem } from "./types"
+import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 
 export class WSContext {
-    messages: Array<Message> = $state(new Array());
+    messages: Array<Message> = $state(new Array())
+    log: Array<LogItem> = $state(new Array())
     topic: string = $state("")
     connected: boolean = $state(false)
-    ws: WebSocket
-    color: number = $state(Math.floor(Math.random() * 256))
+    conncount = $state(0)
+    ws: WebSocket | null = null
+    color: number = $state(Math.floor(Math.random() * 16777216))
     curMsg: string = ""
     active: boolean = false
-    name: string = ""
-    pendingPing: ((pongTime: number) => void) | null = null
-    pinger?: number
+    nick: string = "wanderer"
+    did: string = ""
 
-    constructor(url: string) {
+    constructor() {
+    }
+
+    connect(url: string) {
+        this.ws?.close()
         this.ws = connectTo(url, this)
-        this.pinger = this.startPinging()
     }
 
     reconnect = (url: string) => {
-        this.stopPinging()
-        this.ws.close()
+        this.ws?.close()
         this.ws = connectTo(url, this)
-        this.pinger = this.startPinging()
     }
 
     disconnect = () => {
-        this.stopPinging()
-        this.ws.close()
+        this.ws?.close()
     }
 
     insertLineBreak = () => {
@@ -39,37 +41,28 @@ export class WSContext {
 
     insert = (idx: number, s: string) => {
         if (!this.active) {
-            initMessage(this.color, this.name, this)
+            initMessage(this)
             this.active = true
         }
         insertMessage(idx, s, this)
         this.curMsg = this.curMsg.slice(0, idx) + s + this.curMsg.slice(idx)
     }
 
-    delete = (idx: number) => {
+    delete = (idx: number, idx2: number) => {
         if (!this.active) {
             return
         }
-        backspaceMessage(idx, this)
-        this.curMsg = this.curMsg.slice(0, idx - 1) + this.curMsg.slice(idx)
-    }
-
-
-
-    startPinging = () => {
-        return setInterval(async () => {
-            const pingTime = await ping(this)
-            console.log(pingTime)
-        }, 5000)
-    }
-
-    stopPinging = () => {
-        clearInterval(this.pinger)
-        this.pinger = undefined
+        deleteMessage(idx, idx2, this)
+        this.curMsg = this.curMsg.slice(0, idx - 1) + this.curMsg.slice(idx2)
     }
 
     setTopic = (topic: string) => {
+        console.log("new topic:", topic)
         this.topic = topic
+    }
+
+    setConncount = (cc: number) => {
+        this.conncount = cc
     }
 
     pushMessage = (message: Message) => {
@@ -90,36 +83,36 @@ export class WSContext {
 
     insertMessage = (id: number, idx: number, s: string) => {
         this.messages = this.messages.map((msg: Message) => {
-            return msg.id === id ? { ...msg, text: msg.text.slice(0, idx) + s + msg.text.slice(idx) } : msg
+            return msg.id === id ? { ...msg, body: msg.body.slice(0, idx) + s + msg.body.slice(idx) } : msg
         })
     }
 
     deleteMessage = (id: number, idx1: number, idx2: number) => {
         this.messages = this.messages.map((msg: Message) => {
-            return msg.id === id ? { ...msg, text: msg.text.slice(0, idx1) + msg.text.slice(idx2) } : msg
-        })
-    }
-
-    backspaceMessage = (id: number, idx: number) => {
-        this.messages = this.messages.map((msg: Message) => {
-            return msg.id === id ? { ...msg, text: msg.text.slice(0, idx - 1) + msg.text.slice(idx) } : msg
+            return msg.id === id ? { ...msg, body: msg.body.slice(0, idx1) + msg.body.slice(idx2) } : msg
         })
     }
 }
 
 export const connectTo = (url: string, ctx: WSContext): WebSocket => {
-    const ws = new WebSocket(url); 
+    const ws = new WebSocket(url, "lrc.v1");
     ws.binaryType = "arraybuffer";
     ws.onopen = () => {
+        console.log("connected")
         ctx.connected = true
+        getTopic(ctx)
+        setNick("wanderer", ctx)
+        setColor(255, ctx)
+        setDID("beep.boop", ctx)
     };
     ws.onmessage = (event) => {
-        const shouldScroll = parseEvent(event, ctx);
-        if (shouldScroll) {
-            setTimeout(() => {
-                window.scrollTo(0, document.body.scrollHeight)
-            }, 0)
-        }
+        console.log(event)
+        parseEvent(event, ctx)
+        // if (shouldScroll) {
+        //     setTimeout(() => {
+        //         window.scrollTo(0, document.body.scrollHeight)
+        //     }, 0)
+        // }
 
     };
     ws.onclose = () => {
@@ -128,152 +121,218 @@ export const connectTo = (url: string, ctx: WSContext): WebSocket => {
             ctx.connected = false
         }
     };
-    ws.onerror = () => {
-        console.log("errored")
+    ws.onerror = (event) => {
+        console.log("errored:", event)
+        console.log("readyState:",ws.readyState)
         if (ws === ctx.ws) {
-            ctx.connected = false    
+            ctx.connected = false
         }
     }
     return ws
 }
 
-export async function ping(ctx: WSContext): Promise<number> {
-    return new Promise((resolve) => {
-        ctx.pendingPing = (pongTime: number) => {
-            const pingTime = pongTime - startTime
-            resolve(pingTime)
+export const initMessage = (ctx: WSContext) => {
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "init",
+            init: {
+                nick: ctx.nick,
+                color: ctx.color,
+                externalID: ctx.did
+            }
         }
-        const startTime = performance.now()
-        ctx.ws.send(new Uint8Array([2, 0]))
-    })
-}
-
-export const initMessage = (color: number, name: string, ctx: WSContext) => {
-    const byteArray = initObjectToByteArray({ color: color, name: name })
-    ctx.ws.send(byteArray)
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
 }
 
 export const insertMessage = (idx: number, s: string, ctx: WSContext) => {
-    const byteArray = insertObjectToByteArray({ idx, s })
-    ctx.ws.send(byteArray)
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "insert",
+            insert: {
+                utf16Index: idx,
+                body: s
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
 }
 
 export const pubMessage = (ctx: WSContext) => {
-    ctx.ws.send(pubObjectToByteArray())
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "pub",
+            pub: {
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
 }
 
-export const backspaceMessage = (idx: number, ctx: WSContext) => {
-    const byteArray = backspaceObjectToByteArray({ idx })
-    ctx.ws.send(byteArray)
+export const deleteMessage = (idx: number, idx2: number, ctx: WSContext) => {
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "delete",
+            delete: {
+                utf16Start: idx,
+                utf16End: idx2
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
 }
 
-function parseEvent(event: MessageEvent<any>, ctx: WSContext): boolean {
-    const byteArray = new Uint8Array(event.data);
-    switch (byteArray[5]) {
-        case 0: {
-            const text = new TextDecoder("ascii").decode(byteArray.slice(6));
-            ctx.setTopic(text)
+export const getTopic = (ctx: WSContext) => {
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "get",
+            get: {
+                topic: "_"
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
+}
+
+export const setNick = (nick: string, ctx: WSContext) => {
+    ctx.nick = nick
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "set",
+            set: {
+                nick: nick
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
+}
+
+export const setDID = (did: string, ctx: WSContext) => {
+    ctx.did = did
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "set",
+            set: {
+                externalID: did
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
+}
+export const setColor = (color: number, ctx: WSContext) => {
+    ctx.color = color
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "set",
+            set: {
+                color: color
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
+}
+
+function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
+    const byteArray = new Uint8Array(binary.data);
+    const event = lrc.Event.fromBinary(byteArray)
+    switch (event.msg.oneofKind) {
+        case "ping": {
             return false;
         }
 
-        case 1: {
-            if (ctx.pendingPing !== null) {
-                ctx.pendingPing(performance.now())
-                ctx.pendingPing = null
-            }
+        case "pong": {
             return false
         }
 
-        case 2: {
-            const { id, color, name } = byteArrayToInitObject(byteArray)
-            const text = "";
-            const active = true;
-            ctx.pushMessage({ id, color, name, text, active })
+        case "init": {
+            const id = event.msg.init.id ?? 0
+            if (id === 0) return false
+            const echoed = event.msg.init.echoed ?? false
+            // if (echoed) return false
+            const nick = event.msg.init.nick ?? "wanderer"
+            const did = event.msg.init.externalID ?? "origin"
+            const color = event.msg.init.color ?? 12529712
+            const body = ""
+            const active = true
+            const mine = echoed
+            const muted = false
+            const msg = { id, active, mine, muted, body, nick, did, color }
+            ctx.pushMessage(msg)
+            const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
+            ctx.log.push({event:event, binary: bstring, color:"init"})
             return true
         }
 
-        case 3: {
-            const { id } = byteArrayToPubObject(byteArray)
+        case "pub": {
+            const id = event.msg.pub.id ?? 0
+            if (id === 0) return false
             ctx.pubMessage(id)
+            const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
+            ctx.log.push({event:event, binary: bstring, color:"pub"})
             return false
         }
 
-        case 4: {
-            const { id, idx, s } = byteArrayToInsertObject(byteArray)
+        case "insert": {
+            const id = event.msg.insert.id ?? 0
+            if (id === 0) return false
+            const idx = event.msg.insert.utf16Index
+            const s = event.msg.insert.body
             ctx.insertMessage(id, idx, s)
+            const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
+            ctx.log.push({event:event, binary: bstring, color:"insert"})
             return false
         }
 
-        case 5: {
-            const { id, idx } = byteArrayToBackspaceObject(byteArray)
-            ctx.backspaceMessage(id, idx)
+        case "delete": {
+            const id = event.msg.delete.id ?? 0
+            if (id === 0) return false
+            const idx = event.msg.delete.utf16Start
+            const idx2 = event.msg.delete.utf16End
+            ctx.deleteMessage(id, idx, idx2)
+            const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
+            ctx.log.push({event:event, binary: bstring, color:"delete"})
             return false
         }
+
+
+        case "mute": {
+            const id = event.msg.mute.id ?? 0
+            if (id === 0) return false
+            const nick = ""
+            const muted = true
+            const active = false
+            const mine = false
+            const color = 0
+            const did = ""
+            const body = ""
+            ctx.pushMessage({ id, body, nick, muted, active, mine, color, did })
+        }
+
+        case "unmute": {
+            return false
+        }
+
+        case "set": {
+            return false
+        }
+
+        case "get": {
+            if (event.msg.get.connected !== undefined) {
+                ctx.setConncount(event.msg.get.connected)
+            }
+            if (event.msg.get.topic !== undefined) {
+                ctx.setTopic(event.msg.get.topic)
+            }
+        }
+
     }
     return false
-}
-
-function byteArrayToInitObject(byteArray: Uint8Array): { id: number, color: number, name: string } {
-    const id = readId(byteArray.slice(1, 5));
-    const color = byteArray[7];
-    const name = new TextDecoder("utf-8").decode(byteArray.slice(8));
-    return { id: id, color: color, name: name }
-}
-
-function initObjectToByteArray(initObj: { color: number, name: string }): Uint8Array {
-    const nameArray = new TextEncoder().encode(initObj.name)
-    return (new Uint8Array([4 + nameArray.length, 2, 0, initObj.color, ...nameArray]))
-}
-
-function byteArrayToPubObject(byteArray: Uint8Array): { id: number } {
-    const id = readId(byteArray.slice(1, 5));
-    return { id: id }
-}
-
-function pubObjectToByteArray(): Uint8Array {
-    return (new Uint8Array([2, 3]))
-}
-
-function byteArrayToInsertObject(byteArray: Uint8Array): { id: number, idx: number, s: string } {
-    const id = readId(byteArray.slice(1, 5));
-    const idx = readIdx(byteArray.slice(6, 8));
-    const s = new TextDecoder("utf-8").decode(byteArray.slice(8));
-    return { id: id, idx: idx, s: s }
-}
-
-function insertObjectToByteArray(insertObj: { idx: number, s: string }): Uint8Array {
-    const sArray = new TextEncoder().encode(insertObj.s)
-    const idxArray = new Uint8Array(2)
-    const view = new DataView(idxArray.buffer)
-    view.setUint16(0, insertObj.idx, false)
-    return (new Uint8Array([4 + sArray.length, 4, ...idxArray, ...sArray]))
-}
-
-function byteArrayToBackspaceObject(byteArray: Uint8Array): { id: number, idx: number } {
-    const id = readId(byteArray.slice(1, 5));
-    const idx = readIdx(byteArray.slice(6, 8));
-    return { id: id, idx: idx }
-}
-
-function backspaceObjectToByteArray(insertObj: { idx: number }): Uint8Array {
-    const idxArray = new Uint8Array(2)
-    const view = new DataView(idxArray.buffer)
-    view.setUint16(0, insertObj.idx, false)
-    return (new Uint8Array([4, 5, ...idxArray]))
-}
-
-function readId(bytes: Uint8Array): number {
-    return new DataView(
-        bytes.buffer,
-        bytes.byteOffset,
-        bytes.byteLength,
-    ).getUint32(0, false);
-}
-
-function readIdx(bytes: Uint8Array): number {
-    return new DataView(
-        bytes.buffer,
-        bytes.byteOffset,
-        bytes.byteLength,
-    ).getUint16(0, false);
 }

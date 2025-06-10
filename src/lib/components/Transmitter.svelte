@@ -3,21 +3,22 @@
     import { WSContext } from "$lib/wscontext.svelte";
     import { ansiToHex } from "$lib/colors";
     import AutoGrowTextArea from "$lib/components/AutoGrowTextArea.svelte";
+    import { getPrevCharBoundary, getNextCharBoundary } from "$lib/utils";
     interface Props {
         ctx: WSContext;
     }
     let { ctx }: Props = $props();
-    let name = $state("wanderer");
-    ctx.name = "wanderer";
-    $effect( () => {
+    let nick = $state("wanderer");
+    ctx.nick = "wanderer";
+    $effect(() => {
         if (ctx) {
-            ctx.name = name
+            ctx.nick = nick;
         }
-    })
+    });
     let message = $state("");
     const setName = (event: Event) => {
         const el = event.target as HTMLInputElement;
-        ctx.name = el.value;
+        ctx.nick = el.value;
     };
 
     let color = $derived(ansiToHex(ctx.color));
@@ -34,13 +35,14 @@
 
             case "insertText": {
                 const { selectionStart } = el;
-                let { selectionEnd } = el;
-                while (selectionStart !== selectionEnd) {
-                    if (selectionEnd === null) {
-                        break;
-                    }
-                    ctx.delete(selectionEnd);
-                    selectionEnd -= 1;
+                const { selectionEnd } = el;
+
+                if (
+                    selectionStart !== selectionEnd &&
+                    selectionEnd !== null &&
+                    selectionStart !== null
+                ) {
+                    ctx.delete(selectionStart, selectionEnd);
                 }
                 ctx.insert(selectionStart ?? 0, event.data ?? "");
                 return;
@@ -48,13 +50,13 @@
 
             case "insertFromPaste": {
                 const { selectionStart } = el;
-                let { selectionEnd } = el;
-                while (selectionStart !== selectionEnd) {
-                    if (selectionEnd === null) {
-                        break;
-                    }
-                    ctx.delete(selectionEnd);
-                    selectionEnd -= 1;
+                const { selectionEnd } = el;
+                if (
+                    selectionStart !== selectionEnd &&
+                    selectionEnd !== null &&
+                    selectionStart !== null
+                ) {
+                    ctx.delete(selectionStart, selectionEnd);
                 }
                 ctx.insert(selectionStart ?? 0, event.data ?? "");
                 return;
@@ -62,33 +64,56 @@
 
             case "deleteContent": {
                 const { selectionStart } = el;
-                let { selectionEnd } = el;
-                while (selectionStart !== selectionEnd) {
-                    if (selectionEnd === null) {
-                        break;
-                    }
-                    ctx.delete(selectionEnd);
-                    selectionEnd -= 1;
+                const { selectionEnd } = el;
+                if (
+                    selectionStart !== selectionEnd &&
+                    selectionStart !== null &&
+                    selectionEnd !== null
+                ) {
+                    ctx.delete(selectionStart, selectionEnd);
                 }
-                ctx.delete(selectionStart ?? 0);
             }
 
             case "deleteContentBackward": {
                 const { selectionStart } = el;
-                let { selectionEnd } = el;
-                let looped = false;
-                while (selectionStart !== selectionEnd) {
-                    if (selectionEnd === null) {
-                        break;
+                const { selectionEnd } = el;
+                if (selectionStart !== null && selectionEnd !== null) {
+                    if (selectionStart !== selectionEnd) {
+                        ctx.delete(selectionStart, selectionEnd);
+                    } else if (selectionStart !== 0) {
+                        event.preventDefault();
+                        const realStart = getPrevCharBoundary(
+                            el.value,
+                            selectionStart,
+                        );
+                        ctx.delete(realStart, selectionEnd);
+                        el.value =
+                            el.value.slice(0, realStart) +
+                            el.value.slice(selectionEnd);
+                        el.setSelectionRange(realStart, realStart);
                     }
-                    ctx.delete(selectionEnd);
-                    selectionEnd -= 1;
-                    looped = true;
                 }
-                if (looped) {
-                    return;
+            }
+
+            case "deleteContentForward": {
+                const { selectionStart } = el;
+                const { selectionEnd } = el;
+                if (selectionStart !== null && selectionEnd !== null) {
+                    if (selectionStart !== selectionEnd) {
+                        ctx.delete(selectionStart, selectionEnd);
+                    } else if (selectionEnd !== el.value.length) {
+                        event.preventDefault();
+                        const realEnd = getNextCharBoundary(
+                            el.value,
+                            selectionEnd,
+                        );
+                        ctx.delete(selectionStart, realEnd);
+                        el.value =
+                            el.value.slice(0, selectionStart) +
+                            el.value.slice(realEnd);
+                        el.setSelectionRange(selectionStart, selectionStart);
+                    }
                 }
-                ctx.delete(selectionStart ?? 0);
             }
 
             case "historyUndo": {
@@ -101,7 +126,7 @@
     <div class="wrapper" style:--theme={color}>
         <input type="range" min="0" max="255" bind:value={ctx.color} />
         <AutoGrowInput
-            bind:value={name}
+            bind:value={nick}
             {color}
             placeholder="your name"
             onInput={setName}

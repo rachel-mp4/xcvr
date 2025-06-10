@@ -19,5 +19,9 @@
 		"svelte-check": "^4.0.0",
 		"typescript": "^5.0.0",
 		"vite": "^6.2.5"
+	},
+	"dependencies": {
+		"@protobuf-ts/runtime": "^2.11.0",
+		"@rachel-mp4/lrcproto": "^1.0.2"
 	}
 }

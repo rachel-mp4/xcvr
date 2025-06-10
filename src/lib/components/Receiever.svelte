@@ -7,13 +7,14 @@
   let { messages }: Props = $props();
 </script>
 
-<div id="reciever">
-{#each messages as message}
-  <Transmission {message} />
-{/each}  
+<div id="receiver">
+  {#each messages as message}
+    <Transmission {message} />
+  {/each}
 </div>
+
 <style>
-  #reciever {
+  #receiver {
     width: 100%;
   }
-</style> 
+</style>

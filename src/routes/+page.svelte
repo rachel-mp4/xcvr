@@ -1,70 +1,49 @@
-<script lang="ts">
-	let band = $state("");
-	let sign = $state("");
-</script>
-
 <svelte:head>
 	<title>xcvr</title>
 </svelte:head>
-<div class="fp-blurb">
+<main class="fp-blurb">
 	<h1>welcome to xcvr</h1>
 	<p>
-		xcvr (transceiver) is a web implementation of the LRC protocol. Where
-		most text-based communication that occurs on the web is like mail—I
-		compose my message, then I proofread it, then I send it to a
-		correspondent who then has a permanent record of it—LRC is more like
-		radio—I transmit my message as I compose it & anyone who is tuned into
-		my band recieves an ephemeral signal.
+		xcvr (transceiver) is a web implementation of the LRC protocol. Where most
+		text-based communication that occurs on the web is like mail—I compose my
+		message, then I proofread it, then I send it to a correspondent who then has
+		a permanent record of it—LRC is more like radio—I transmit my message as I
+		compose it & anyone who is tuned into my band recieves an ephemeral signal.
 	</p>
 	<p>click on a channel to the left to get started.</p>
-	<p>or create your own:</p>
-
-	<form
-		onsubmit={async (e) => {
-			e.preventDefault();
-			const base = import.meta.env.DEV ? "http://localhost:8080" : "";
-
-			const res = await fetch(`${base}/xrpc/initChannel`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ band, sign, port: 0 }),
-			});
-			const data = await res.json();
-		}}
-	>
-		<div>
-			<input
-				type="text"
-				name="band"
-				id="band"
-				placeholder="enter a frequency band"
-				bind:value={band}
-				required
-			/>
-		</div>
-		<div>
-			<input
-				type="text"
-				name="sign"
-				id="sign"
-				bind:value={sign}
-				placeholder="enter a call sign"
-			/>
-		</div>
-		<div>
-			<input
-				class="form-submit"
-				type="submit"
-				value="create new channel"
-			/>
-		</div>
-	</form>
-</div>
+</main>
+<aside>
+	<a href="/settings"> adjust settings </a>
+</aside>
 
 <style>
-	.fp-blurb {
-		max-width: 40rem
+	h1 {
+		position: relative;
+		font-size: 4rem;
+		font-weight: normal;
+		display: inline-block;
+	}
+	p:not(:first-of-type) {
+		margin-top: 1rem;
+	}
+	h1::before {
+		content: "";
+		position: absolute;
+		z-index: -1;
+		left: 0rem;
+		right: 0rem;
+		top: 3rem;
+		bottom: 0.375rem;
+		background-image: linear-gradient(
+			90deg,
+			#034732ff,
+			#034732ee 40%,
+			#008148dd 40%,
+			#008148cc 70%,
+			#c6c013bb 70%,
+			#c6c013aa 90%,
+			#ef8a1799 90%,
+			#ef8a1788
+		);
 	}
 </style>

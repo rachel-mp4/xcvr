@@ -3,6 +3,11 @@ export function ansiToHex(ansiCode:number) {
     return rgbToHex(rgb)
 }
 
+export function numToHex(num:number) {
+    const int = Math.max(Math.min(16777215, Math.floor(num)), 0)
+    return "#" + int.toString(16).padStart(6,'0')
+}
+
 function ansiToRgb(ansiCode: number): [number, number, number] {
     // Define the standard and high-intensity colors
     const colors: Array<[number, number, number]> = [

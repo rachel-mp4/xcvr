@@ -9,12 +9,11 @@ declare global {
 		// interface Error {}
 		// interface Locals {}
 		interface PageData {
-			channels: Array<Channel>
-			slug: string
+			channels: Array<ChannelView>
 		}
 		// interface PageState {}
 		// interface Platform {}
 	}
 }
 
-export {};
+export { };

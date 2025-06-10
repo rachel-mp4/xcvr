@@ -1,0 +1,29 @@
+h1, p {
+  margin: 0;
+}
+
+body {
+  font-family: sans-serif;
+  color: white;
+  background: #000000;
+  margin: 0;
+}
+a {
+	color: white;
+	font-size: 2rem;
+	display: block;
+	text-decoration: none;
+  font-weight: 400;
+}
+
+a:hover {
+  font-weight: 700;
+}
+#content>* {
+	max-height: 100vh;
+	overflow-y: scroll;
+	align-self: start;
+}
+#content>:not(:last-child) {
+  border-right: .25rem solid white;
+}
