@@ -4,7 +4,7 @@ export const load: LayoutLoad = async ({ fetch }) => {
 	const results = await Promise.allSettled([
 		fetch(`${import.meta.env.VITE_API_URL}/xrpc/org.xcvr.feed.getChannels`)
 			.then(r => r.json()),
-		fetch(`${import.meta.env.VITE_API_URL}/oauth`)
+		fetch(`${import.meta.env.VITE_API_URL}/oauth/whoami`)
 			.then(r => r.json())
 	])
 	return {
