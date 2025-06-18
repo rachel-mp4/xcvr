@@ -16,7 +16,7 @@ export function getChannelUrl(c: ChannelView): string | null {
   if (rkey == null) {
     return null
   }
-  return `/lrc/${handle}/${rkey}`
+  return `/c/${handle}/${rkey}`
 }
 
 export function getRkeyFromUri(uri: string): string | null {

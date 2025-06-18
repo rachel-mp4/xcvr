@@ -3,7 +3,6 @@
   import { WSContext } from "$lib/wscontext.svelte";
   import Receiever from "$lib/components/Receiever.svelte";
   import Transmitter from "$lib/components/Transmitter.svelte";
-  import Console from "$lib/components/Console.svelte";
   let { data }: PageProps = $props();
   let ctx = new WSContext();
   $effect(() => {
@@ -24,7 +23,6 @@
   <Transmitter {ctx} />
 </main>
 <aside id="transceiver-log">
-  <Console log={ctx.log} />
 </aside>
 
 <style>

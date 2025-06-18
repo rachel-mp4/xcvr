@@ -266,8 +266,8 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const muted = false
             const msg = { id, active, mine, muted, body, nick, did, color }
             ctx.pushMessage(msg)
-            const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
-            ctx.log.push({event:event, binary: bstring, color:"init"})
+            // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
+            // ctx.log.push({event:event, binary: bstring, color:"init"})
             return true
         }
 
@@ -275,8 +275,8 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const id = event.msg.pub.id ?? 0
             if (id === 0) return false
             ctx.pubMessage(id)
-            const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
-            ctx.log.push({event:event, binary: bstring, color:"pub"})
+            // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
+            // ctx.log.push({event:event, binary: bstring, color:"pub"})
             return false
         }
 
@@ -286,8 +286,8 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const idx = event.msg.insert.utf16Index
             const s = event.msg.insert.body
             ctx.insertMessage(id, idx, s)
-            const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
-            ctx.log.push({event:event, binary: bstring, color:"insert"})
+            // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
+            // ctx.log.push({event:event, binary: bstring, color:"insert"})
             return false
         }
 
@@ -297,8 +297,8 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const idx = event.msg.delete.utf16Start
             const idx2 = event.msg.delete.utf16End
             ctx.deleteMessage(id, idx, idx2)
-            const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
-            ctx.log.push({event:event, binary: bstring, color:"delete"})
+            // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
+            // ctx.log.push({event:event, binary: bstring, color:"delete"})
             return false
         }
 
