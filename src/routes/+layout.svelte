@@ -16,7 +16,7 @@
 				{/if}
 			</a>
 			{#if data.id}
-				<a href="/profile/{data.id.handle}"> i know who you are </a>
+				<a href="/p/{data.id.handle}"> i know who you are </a>
 			{:else}
 				<a href="/login"> log in with atproto </a>
 			{/if}
