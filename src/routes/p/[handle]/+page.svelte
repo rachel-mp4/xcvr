@@ -79,7 +79,7 @@
           name="displayName"
           placeholder="alice rulez"
           maxlength="640"
-          value={data.profile.displayName}
+          bind:value={editedProfile.displayName}
           required
         />
       </div>
@@ -91,7 +91,7 @@
           type="text"
           name="defaultNick"
           placeholder="alice"
-          value={data.profile?.defaultNick}
+          bind:value={editedProfile.defaultNick}
           required
         />
       </div>
@@ -105,7 +105,7 @@
         <textarea
           name="status"
           placeholder="hi i'm alice"
-          value={data.profile?.status}
+          bind:value={editedProfile.status}
           required
         ></textarea>
       </div>
