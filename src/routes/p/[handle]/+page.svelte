@@ -47,9 +47,9 @@
     <h1 class="display name">
       {editedProfile.displayName}
     </h1>
-    <h2 class="display">
-      <a href={data.profile.handle}>
-        @{data.profile.handle}
+    <h2 class="display handle">
+      {data.profile.defaultNick}@<a href="https://{data.profile.handle}">
+        {data.profile.handle}
       </a>
     </h2>
     <p>
@@ -69,7 +69,7 @@
       method="POST"
     >
       <div
-        class="{dnchanged ? 'changed' : ''} {displayNameValid ? 'valid' : ''}"
+        class="display-name {dnchanged ? 'changed' : ''} {displayNameValid ? 'valid' : ''}"
       >
         <label for="displayName">
           display name, this is what shows in most atproto stuff
@@ -83,7 +83,7 @@
           required
         />
       </div>
-      <div class="{nickchanged ? 'changed' : ''} {nickValid ? 'valid' : ''}">
+      <div class="default-nick {nickchanged ? 'changed' : ''} {nickValid ? 'valid' : ''}">
         <label for="defaultNick">
           default nickname, which is what shows just in the lrc chats by default
         </label>
@@ -131,10 +131,20 @@
   .changed::after {
     content: "not ok!";
   }
+  form .display-name {
+    font-size:2rem;
+  }
   .profile-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+  .handle {
+    font-size: 2rem;
+    font-weight:400;
+  }
+  .handle a {
+    display: inline;
   }
   .profile-form > * > * {
     display: block;

@@ -1,20 +1,28 @@
+:root {
+  --bg: #000000;
+  --fg: #ffffff;
+}
 * {
   scrollbar-width: none;
 }
-h1, p {
+h1, h2, p {
   margin: 0;
 }
 
 body {
   font-family: sans-serif;
-  color: white;
-  background: #000000;
+  color: var(--fg);
+  background: var(--bg);
   margin: 0;
 }
-a {
-	color: white;
-	font-size: 2rem;
+
+.block-link {
 	display: block;
+	font-size: 2rem;
+}
+
+a {
+	color: var(--fg);
 	text-decoration: none;
   font-weight: 400;
 }
@@ -28,5 +36,5 @@ a:hover {
 	align-self: start;
 }
 #content>:not(:last-child) {
-  border-right: .25rem solid white;
+  border-right: .25rem solid var(--fg);
 }
