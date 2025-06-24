@@ -1,12 +1,20 @@
 :root {
   --bg: #000000;
   --fg: #ffffff;
+  --mg: #00000080;
 }
 * {
   scrollbar-width: none;
 }
 h1, h2, p {
   margin: 0;
+}
+input {
+  border: none;
+}
+
+input::placeholder {
+  color: var(--mg);
 }
 
 body {

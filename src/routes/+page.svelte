@@ -91,11 +91,11 @@
 			ninevis = false;
 		}
 	});
-	$effect(()=> {
+	$effect(() => {
 		if (!ninevis) {
 			nine = false;
 		}
-	})
+	});
 	$effect(() => {
 		if (four || eight || nine) {
 			tenvis = true;
@@ -115,11 +115,11 @@
 			elevenvis = false;
 		}
 	});
-	$effect(()=> {
+	$effect(() => {
 		if (!elevenvis) {
 			eleven = false;
 		}
-	})
+	});
 </script>
 
 <svelte:head>
@@ -139,8 +139,8 @@
 		hi! i'm rachel and i'd like to welcome you to xcvr (pronounced transceiver)!
 	</p>
 	<p>
-		tune in to a channel (to the left) and start chatting, make your own, or login
-		with atproto if you'd like (it's optional, but recommended)
+		tune in to a channel (to the left) and start chatting, make your own, or
+		login with atproto if you'd like (it's optional, but recommended)
 	</p>
 	<p style="border-bottom: .25rem solid white">
 		don't be weird, don't be mean, you're on our computer screens<span
@@ -203,8 +203,8 @@
 	{#if three}
 		<p style="margin-top:0">
 			<span class="footnote">3</span>atproto is the protocol that bluesky runs
-			on, and which xcvr uses for identity<span class="footnote">8</span> and other
-			things<span class="footnote">9</span>
+			on, and which xcvr uses for identity<span class="footnote">8</span> and
+			other things<span class="footnote">9</span>
 		</p>
 	{/if}
 	{#if fourvis}
@@ -238,7 +238,6 @@
 	{#if five}
 		<p style="margin-top:0">
 			<span class="footnote">5</span><a
-				class="normal"
 				href="https://blackdresses.bandcamp.com/track/please-be-nice"
 				>it's our world, it's our lives, we are people please be nice</a
 			><span class="footnote">11</span>
@@ -274,9 +273,7 @@
 			<span class="footnote">7</span>for now... everything is open source and if
 			you're at all interested in contributing, email me @ rachel@moth11.net or
 			my twitter is
-			<a class="normal" href="https://bsky.app/profile/moth11.net"
-				>@moth11.net</a
-			>
+			<a href="https://bsky.app/profile/moth11.net">@moth11.net</a>
 			even if you have no skills there's always stuff to do!
 		</p>
 	{/if}
@@ -396,8 +393,8 @@
 		<p style="margin-top:0">
 			<span class="footnote">11</span>i'm really not interested in making rules
 			and moderating and all that. i will of course if necessary, i just don't
-			believe anyone doesn't know that they are breaking the rules when they 
-			are breaking the rules. another town square with so many rules where useless 
+			believe anyone doesn't know that they are breaking the rules when they are
+			breaking the rules. another town square with so many rules where useless
 			libido gets metabolized into debates to nowhere? zzzzz zzzz zzzz zzzzz
 			ZZZZZZZZZZZ! we have enough of those and look where they got us. instead,
 			i'd instead like to imagine this is, instead, a public park instead, where
@@ -407,7 +404,6 @@
 		<p>or</p>
 		<p>
 			<a
-				class="normal"
 				href="https://www.marxists.org/archive/marx/works/1845/theses/index.htm"
 				>(social media platforms have hitherto only reflected the world in
 				various ways; the point is to change it.)</a
@@ -416,14 +412,14 @@
 	{/if}
 </main>
 <aside>
-	<a href="/settings"> adjust settings </a>
+	<a class="block-link" href="/settings"> adjust settings </a>
 </aside>
 
 <style>
 	button {
 		display: block;
 		font-size: 1rem;
-		color: white;
+		color: var(--fg);
 		border: none;
 		background: none;
 		font-weight: 700;
@@ -440,14 +436,10 @@
 	h2 {
 		margin-block: 0 1rem;
 	}
-	.normal {
-		display: inline;
-		font-size: 1rem;
-	}
 	h1 .zizz {
 		color: transparent;
 		text-shadow:
-			0rem 0rem black,
+			0rem 0rem var(--bg),
 			-0.25rem -0.25rem #e18f39,
 			-0.5rem -0.5rem #c5c042,
 			-0.75rem -0.75rem #387f4d,
@@ -461,9 +453,9 @@
 		bottom: 0.5em;
 	}
 	h1 .zizz:hover {
-		color: white;
+		color: var(--fg);
 		text-shadow:
-			0rem 0rem #00000000,
+			0rem 0rem var(--bg),
 			0rem 0rem #e18f3900,
 			0rem 0rem #c5c04200,
 			0rem 0rem #387f4d00,
@@ -472,24 +464,4 @@
 	p:not(:first-of-type) {
 		margin-top: 1rem;
 	}
-	/* h1::before {
-		content: "";
-		position: absolute;
-		z-index: -1;
-		left: 0rem;
-		right: 0rem;
-		top: 3rem;
-		bottom: 0.375rem;
-		background-image: linear-gradient(
-			90deg,
-			#034732ff,
-			#034732ee 40%,
-			#008148dd 40%,
-			#008148cc 70%,
-			#c6c013bb 70%,
-			#c6c013aa 90%,
-			#ef8a1799 90%,
-			#ef8a1788
-		);
-	} */
 </style>

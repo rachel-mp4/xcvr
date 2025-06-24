@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
-  import { numToHex } from "$lib/colors";
+  import { numToHex, hexToNum, hexToContrast } from "$lib/colors";
+  import { browser } from "$app/environment";
   let { data }: PageProps = $props();
   const graphemes = (text: string) => {
     if (Intl.Segmenter) {
@@ -13,16 +14,17 @@
     displayName: "",
     defaultNick: "",
     status: "",
-    color: 0,
+    color: numToHex(0),
   });
   $effect(() => {
     if (data.profile) {
       editedProfile.displayName = data.profile?.displayName || "";
       editedProfile.defaultNick = data.profile?.defaultNick || "";
       editedProfile.status = data.profile?.status || "";
-      editedProfile.color = data.profile?.color || 0;
+      editedProfile.color = numToHex(data.profile?.color) || numToHex(0);
     }
   });
+  const colorasint = $derived(hexToNum(editedProfile.color));
   const displayNameGraphemes = $derived(graphemes(editedProfile.displayName));
   const statusGraphemes = $derived(graphemes(editedProfile.status));
   const dnchanged = $derived(
@@ -40,6 +42,28 @@
   const statusValid = $derived(
     statusGraphemes <= 300 && editedProfile.status.length <= 3000,
   );
+  $effect(() => {
+    if (browser) {
+      document.documentElement.style.setProperty("--bg", editedProfile.color);
+      document.documentElement.style.setProperty(
+        "--fg",
+        hexToContrast(editedProfile.color),
+      );
+      document.documentElement.style.setProperty(
+        "--mg",
+        editedProfile.color + "80",
+      );
+    }
+  });
+  $effect(() => {
+    return () => {
+      if (browser) {
+        document.documentElement.style.removeProperty("--bg");
+        document.documentElement.style.removeProperty("--fg");
+        document.documentElement.style.removeProperty("--mg");
+      }
+    };
+  });
 </script>
 
 <main>
@@ -69,7 +93,9 @@
       method="POST"
     >
       <div
-        class="display-name {dnchanged ? 'changed' : ''} {displayNameValid ? 'valid' : ''}"
+        class="display-name {dnchanged ? 'changed' : ''} {displayNameValid
+          ? 'valid'
+          : ''}"
       >
         <label for="displayName">
           display name, this is what shows in most atproto stuff
@@ -83,7 +109,11 @@
           required
         />
       </div>
-      <div class="default-nick {nickchanged ? 'changed' : ''} {nickValid ? 'valid' : ''}">
+      <div
+        class="default-nick {nickchanged ? 'changed' : ''} {nickValid
+          ? 'valid'
+          : ''}"
+      >
         <label for="defaultNick">
           default nickname, which is what shows just in the lrc chats by default
         </label>
@@ -114,10 +144,14 @@
           this is your accent color, make sure to pick something cool and trendy
           to drive your personal brand awareness
         </label>
+        <input type="color" bind:value={editedProfile.color} />
+        <input type="hidden" name="color" value={colorasint} />
+      </div>
+      <div>
         <input
-          type="color"
-          name="color"
-          value={numToHex(data.profile?.color)}
+          type="submit"
+          value="i'm done"
+          disabled={!nickValid || !displayNameValid || !statusValid}
         />
       </div>
     </form>
@@ -129,10 +163,20 @@
     content: "ok!";
   }
   .changed::after {
-    content: "not ok!";
+    content: "not ok! (too long)";
   }
   form .display-name {
-    font-size:2rem;
+    font-size: 2rem;
+  }
+  form input {
+    padding: 0;
+    font-size: 1.5rem;
+    width: 100%;
+  }
+  form textarea {
+    padding: 0;
+    width: 100%;
+    height: 9rem;
   }
   .profile-form {
     display: flex;
@@ -141,7 +185,7 @@
   }
   .handle {
     font-size: 2rem;
-    font-weight:400;
+    font-weight: 400;
   }
   .handle a {
     display: inline;

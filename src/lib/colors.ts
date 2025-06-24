@@ -1,11 +1,22 @@
-export function ansiToHex(ansiCode:number) {
+export function ansiToHex(ansiCode: number) {
     const rgb = ansiToRgb(ansiCode)
     return rgbToHex(rgb)
 }
 
-export function numToHex(num:number) {
+export function numToHex(num: number) {
     const int = Math.max(Math.min(16777215, Math.floor(num)), 0)
-    return "#" + int.toString(16).padStart(6,'0')
+    return "#" + int.toString(16).padStart(6, '0')
+}
+
+export function hexToNum(hex: string) {
+    return Number("0x" + hex.slice(1))
+}
+export function hexToContrast(hex: string) {
+    const r = Number("0x" + hex.slice(1, 3))
+    const g = Number("0x" + hex.slice(3, 5))
+    const b = Number("0x" + hex.slice(5))
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+    return luminance > 0.5 ? "#000000" : "#ffffff"
 }
 
 function ansiToRgb(ansiCode: number): [number, number, number] {
@@ -29,7 +40,7 @@ function ansiToRgb(ansiCode: number): [number, number, number] {
         const gray = (ansiCode - 232) * 10 + 8;
         return [gray, gray, gray];
     } else {
-       return [255,255,255]
+        return [255, 255, 255]
     }
 }
 

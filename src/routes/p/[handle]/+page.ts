@@ -16,6 +16,6 @@ export const load: PageLoad = async ({ params, fetch }) => {
   const profile = await res.json()
   console.log(profile)
   return {
-    profile: profile 
+    profile: profile
   }
 }

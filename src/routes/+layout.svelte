@@ -8,7 +8,7 @@
 <div id="content">
 	<aside id="left-sidebar">
 		<nav>
-			<a href="/">
+			<a class="block-link" href="/">
 				{#if $page.url.pathname === "/"}
 					& now you're home
 				{:else}
@@ -16,9 +16,11 @@
 				{/if}
 			</a>
 			{#if data.id}
-				<a href="/p/{data.id.handle}"> i know who you are </a>
+				<a class="block-link" href="/p/{data.id.handle}">
+					i know who you are
+				</a>
 			{:else}
-				<a href="/login"> log in with atproto </a>
+				<a class="block-link" href="/login"> log in with atproto </a>
 			{/if}
 		</nav>
 
