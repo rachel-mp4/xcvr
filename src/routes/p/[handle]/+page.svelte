@@ -72,11 +72,11 @@
       {editedProfile.displayName}
     </h1>
     <h2 class="display handle">
-      {data.profile.defaultNick}@<a href="https://{data.profile.handle}">
+      {editedProfile.defaultNick}@<a href="https://{data.profile.handle}">
         {data.profile.handle}
       </a>
     </h2>
-    <p>
+    <p class="status">
       {editedProfile.status}
     </p>
   {/if}
@@ -89,7 +89,7 @@
     </p>
     <form
       class="profile-form"
-      action="{import.meta.env.VITE_API_URL}/oauth/login"
+      action="{import.meta.env.VITE_API_URL}/xcvr/profile"
       method="POST"
     >
       <div
@@ -163,10 +163,7 @@
     content: "ok!";
   }
   .changed::after {
-    content: "not ok! (too long)";
-  }
-  form .display-name {
-    font-size: 2rem;
+    content: "NOT OK! (too long)";
   }
   form input {
     padding: 0;
@@ -175,6 +172,7 @@
   }
   form textarea {
     padding: 0;
+    border: none;
     width: 100%;
     height: 9rem;
   }
@@ -196,7 +194,7 @@
   .name {
     font-size: 4rem;
   }
-  h2 {
-    margin: 0;
+  .status {
+    white-space: pre-wrap;
   }
 </style>

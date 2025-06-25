@@ -47,6 +47,6 @@
 	nav {
 		top: 0rem;
 		line-height: 1;
-		border-bottom: 0.25rem solid white;
+		border-bottom: 0.25rem solid var(--fg);
 	}
 </style>

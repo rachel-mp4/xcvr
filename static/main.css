@@ -11,6 +11,18 @@ h1, h2, p {
 }
 input {
   border: none;
+  background: var(--fg);
+  color: var(--bg);
+  padding: 0;
+}
+
+textarea {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+textarea::placeholder {
+  color: var(--mg);
 }
 
 input::placeholder {

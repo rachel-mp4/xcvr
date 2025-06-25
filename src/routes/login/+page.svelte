@@ -56,7 +56,7 @@
   }
   .beep {
     background: none;
-    color: white;
+    color: var(--fg);
   }
   .beep:hover {
     font-weight: 700;
