@@ -2,6 +2,7 @@
   import type { PageProps } from "./$types";
   import { numToHex, hexToNum, hexToContrast } from "$lib/colors";
   import { browser } from "$app/environment";
+  import { enhance } from "$app/forms";
   let { data }: PageProps = $props();
   const graphemes = (text: string) => {
     if (Intl.Segmenter) {
@@ -64,6 +65,21 @@
       }
     };
   });
+  const handleSubmit = async (e: Event) => {
+    e.preventDefault();
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/xcvr/profile`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedProfile),
+      },
+    );
+    const result = await response.json();
+    console.log(result);
+  };
 </script>
 
 <main>
@@ -87,11 +103,7 @@
       you can change your profile here, press the i'm done button when you have
       finished to save your new profile
     </p>
-    <form
-      class="profile-form"
-      action="{import.meta.env.VITE_API_URL}/xcvr/profile"
-      method="POST"
-    >
+    <form class="profile-form" onsubmit={handleSubmit}>
       <div
         class="display-name {dnchanged ? 'changed' : ''} {displayNameValid
           ? 'valid'
