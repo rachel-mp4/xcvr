@@ -74,7 +74,10 @@
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(editedProfile),
+        body: JSON.stringify({displayName:editedProfile.displayName, 
+                              defaultNick:editedProfile.defaultNick, 
+                              status:editedProfile.status,
+                              color:colorasint}),
       },
     );
     const result = await response.json();
