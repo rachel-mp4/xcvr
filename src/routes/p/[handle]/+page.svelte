@@ -74,10 +74,12 @@
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({displayName:editedProfile.displayName, 
-                              defaultNick:editedProfile.defaultNick, 
-                              status:editedProfile.status,
-                              color:colorasint}),
+        body: JSON.stringify({
+          displayName: editedProfile.displayName,
+          defaultNick: editedProfile.defaultNick,
+          status: editedProfile.status,
+          color: colorasint,
+        }),
       },
     );
     const result = await response.json();
@@ -100,6 +102,7 @@
     </p>
   {/if}
 </main>
+
 {#if data?.id?.handle && data?.profile?.handle && data.id.handle === data.profile.handle}
   <aside>
     <p>
@@ -169,6 +172,9 @@
           disabled={!nickValid || !displayNameValid || !statusValid}
         />
       </div>
+    </form>
+    <form action="{import.meta.env.VITE_API_URL}/xcvr/beep" method="POST">
+      <input type="submit" value="push_to_beep_" />
     </form>
   </aside>
 {/if}
