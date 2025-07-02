@@ -24,6 +24,7 @@
 			{/if}
 		</nav>
 
+		<a class="block-link" href="/c/create"> create a channel</a>
 		<div class="beep">here's what's been happening recently</div>
 		<Spectrum channels={data.channels}></Spectrum>
 	</aside>
