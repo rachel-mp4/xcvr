@@ -14,6 +14,7 @@
         });
         const response = await res.json();
         channels = response;
+        console.log(response);
       }
     };
   };

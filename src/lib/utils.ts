@@ -26,7 +26,7 @@ export function getChannelDeleteUrl(c: ChannelView): string | null {
   if (rkey == null) {
     return null
   }
-  return `https://${host}/lrc/${rkey}/ws`
+  return `https://${host}/lrc/${c.creator.did}/${rkey}/ws`
 }
 
 export function getRkeyFromUri(uri: string): string | null {
