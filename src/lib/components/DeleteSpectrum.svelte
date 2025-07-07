@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { ChannelView } from "$lib/types";
-  import { getChannelUrl } from "$lib/utils";
+  import { getChannelDeleteUrl } from "$lib/utils";
   interface Props {
     channels: Array<ChannelView>;
   }
   let { channels }: Props = $props();
   const deleteChannel = (channel: ChannelView) => {
     return async () => {
-      const url = getChannelUrl(channel);
+      const url = getChannelDeleteUrl(channel);
       if (url !== null) {
         const res = await fetch(url, {
           method: "DELETE",

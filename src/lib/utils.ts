@@ -19,12 +19,22 @@ export function getChannelUrl(c: ChannelView): string | null {
   return `/c/${handle}/${rkey}`
 }
 
+export function getChannelDeleteUrl(c: ChannelView): string | null {
+  const host = c.host
+  const uri = c.uri
+  let rkey = getRkeyFromUri(uri)
+  if (rkey == null) {
+    return null
+  }
+  return `https://${host}/lrc/${rkey}/ws`
+}
+
 export function getRkeyFromUri(uri: string): string | null {
   const matched = uri.match(/^at:\/\/[^/]+\/[^/]+\/([^/]+)$/)
   return matched ? matched[1] : null
 }
 
-const segmenter = new Intl.Segmenter('en', {granularity: 'grapheme'})
+const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' })
 
 export function getNextCharBoundary(text: string, position: number) {
   if (position >= text.length) return position;
