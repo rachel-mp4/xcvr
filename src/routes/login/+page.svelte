@@ -6,7 +6,9 @@
     send me a temporary key instead which lets me add or subtract stuff from
     your account respository.
   </p>
-  <p class="big" style="margin-top:1rem">your handle goes there | | | V V V</p>
+  <p class="big" style="margin-top:1rem">your handle goes there
+     |   |                      |
+    V  V                    V    </p>
   <form action="{import.meta.env.VITE_API_URL}/oauth/login" method="POST">
     <input
       type="text"
@@ -18,9 +20,14 @@
     &lt;—
     <input class="beep" type="submit" value="this is my handle" />
   </form>
-  <p class="big">
-    yup... ^ ^ ^ │ │ │ │ └ that's your handle │ │ alright... │ │ │ │ ┌┘ │ click
-    that "this is my handle" └────when that handle is your handle
+  <p class="big">yup...       ^       ^                                  ^
+               │     │                                │
+               │     └  that's your handle  │
+               │            alright...                │
+               │                                         │
+               │                                     ┌┘
+               │                           click that "this is my handle"
+               └────when that handle is your handle
   </p>
   <p class="snirp">
     if all this oauth stuff is a bit too intimidating or you don't have an
