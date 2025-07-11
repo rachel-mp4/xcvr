@@ -1,6 +1,13 @@
 <script lang="ts">
 	import type { ChannelView } from "$lib/types";
 	import { getChannelUrl } from "$lib/utils";
+	import { getContext } from "svelte";
+	const tabContext = getContext<{
+		curTab: string;
+		gotoA: () => void;
+		gotoB: () => void;
+		gotoC: () => void;
+	}>("tabs");
 	interface Props {
 		channels: Array<ChannelView>;
 	}
@@ -10,7 +17,13 @@
 <div id="spectrum">
 	<div class="channels">
 		{#each channels as channel}
-			<a class="channel" href={getChannelUrl(channel) ?? "/"}>
+			<a
+				class="channel"
+				href={getChannelUrl(channel) ?? "/"}
+				onclick={() => {
+					tabContext.gotoB;
+				}}
+			>
 				<span class="title">{channel.title}</span>
 				@{channel.creator.handle}
 			</a>

@@ -1,4 +1,12 @@
 <script lang="ts">
+	import { getContext } from "svelte";
+	const tabContext = getContext<{
+		curTab: string;
+		gotoA: () => void;
+		gotoB: () => void;
+		gotoC: () => void;
+	}>("tabs");
+
 	let onevis = $state(false);
 	let one = $state(false);
 	let twovis = $state(false);
@@ -413,7 +421,15 @@
 	{/if}
 </main>
 <aside>
-	<a class="block-link" href="/settings"> adjust settings </a>
+	<a
+		class="block-link"
+		href="/settings"
+		onclick={() => {
+			tabContext.gotoB();
+		}}
+	>
+		adjust settings
+	</a>
 </aside>
 
 <style>

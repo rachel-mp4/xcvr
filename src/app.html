@@ -58,10 +58,10 @@
       			in2="SourceAlpha" 
       			operator="in" 
       			result="masked-pattern"/>
-    			<feComposite 
+    			<feBlend 
       			in="masked-pattern" 
       			in2="SourceGraphic" 
-      			operator="multiply"/>
+      			mode="multiply"/>
   			</filter>
 				<filter id="knockout">
   				<feFlood flood-color="white" flood-opacity="1" result="whiteFlood"/>

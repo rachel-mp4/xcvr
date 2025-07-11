@@ -1,16 +1,35 @@
 <script lang="ts">
+	import { setContext } from "svelte";
 	import { page } from "$app/stores";
 	import type { LayoutProps } from "./$types";
 	import Spectrum from "$lib/components/Spectrum.svelte";
 	let { data, children }: LayoutProps = $props();
 	let innerWidth = $state(0);
 	let isDesktop = $derived(innerWidth > 1000);
-	let curtab = $state("bbbbb");
+
+	let curTab = $state("bbbbb");
+	const tabContext = {
+		get curTab() {
+			return curTab;
+		},
+		gotoA: () => {
+			curTab = "aaaaa";
+		},
+		gotoB: () => {
+			curTab = "bbbbb";
+		},
+		gotoC: () => {
+			curTab = "ccccc";
+		},
+	};
+
+	setContext("tabs", tabContext);
+
 	const evaluateClass = () => {
 		if (isDesktop) {
 			return "desktop";
 		}
-		switch (curtab) {
+		switch (curTab) {
 			case "aaaaa":
 				return "tab-a";
 			case "bbbbb":
@@ -29,7 +48,13 @@
 <div id="content" class={curClass}>
 	<aside id="left-sidebar">
 		<nav>
-			<a class="block-link" href="/">
+			<a
+				class="block-link"
+				href="/"
+				onclick={() => {
+					tabContext.gotoB();
+				}}
+			>
 				{#if $page.url.pathname === "/"}
 					& now you're home
 				{:else}
@@ -37,15 +62,37 @@
 				{/if}
 			</a>
 			{#if data.id}
-				<a class="block-link" href="/p/{data.id.handle}">
+				<a
+					class="block-link"
+					href="/p/{data.id.handle}"
+					onclick={() => {
+						tabContext.gotoB();
+					}}
+				>
 					i know who you are
 				</a>
 			{:else}
-				<a class="block-link" href="/login"> log in with atproto </a>
+				<a
+					class="block-link"
+					href="/login"
+					onclick={() => {
+						tabContext.gotoB();
+					}}
+				>
+					log in with atproto
+				</a>
 			{/if}
 		</nav>
 
-		<a class="block-link" href="/c/create"> create a channel</a>
+		<a
+			class="block-link"
+			href="/c/create"
+			onclick={() => {
+				tabContext.gotoB();
+			}}
+		>
+			create a channel</a
+		>
 		<div class="beep">here's what's been happening recently</div>
 		<Spectrum channels={data.channels}></Spectrum>
 	</aside>
@@ -59,7 +106,7 @@
 				type="radio"
 				id="aaaaa"
 				name="tabs"
-				bind:group={curtab}
+				bind:group={curTab}
 				value="aaaaa"
 			/>
 			<label for="aaaaa">aaaaa</label>
@@ -69,7 +116,7 @@
 				type="radio"
 				id="bbbbb"
 				name="tabs"
-				bind:group={curtab}
+				bind:group={curTab}
 				value="bbbbb"
 			/>
 			<label for="bbbbb">bbbbb</label>
@@ -79,7 +126,7 @@
 				type="radio"
 				id="ccccc"
 				name="tabs"
-				bind:group={curtab}
+				bind:group={curTab}
 				value="ccccc"
 			/>
 			<label for="ccccc">ccccc</label>
