@@ -1,16 +1,32 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	// import { browser } from "$app/environment";
 	import type { LayoutProps } from "./$types";
 	import Spectrum from "$lib/components/Spectrum.svelte";
 	let { data, children }: LayoutProps = $props();
 	let innerWidth = $state(0);
 	let isDesktop = $derived(innerWidth > 1000);
+	let curtab = $state(1);
+	const evaluateClass = () => {
+		if (isDesktop) {
+			return "desktop";
+		}
+		switch (curtab) {
+			case 0:
+				return "tab-a";
+			case 1:
+				return "tab-b";
+			case 2:
+				return "tab-c";
+			case 3:
+				return "";
+		}
+	};
+	let curClass = $derived(evaluateClass());
 </script>
 
 <svelte:window bind:innerWidth />
 
-<div id="content" class={isDesktop ? "desktop" : ""}>
+<div id="content" class={curClass}>
 	{#if isDesktop}
 		<aside id="left-sidebar">
 			<nav>

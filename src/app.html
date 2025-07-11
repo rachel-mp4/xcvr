@@ -12,6 +12,63 @@
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
+		<svg width="0" height="0">
+			<defs>
+  			<filter id="pearly" x="0" y="0" width="100vw" height="100vw" filterUnits="userSpaceOnUse">
+    			<feTurbulence 
+      			baseFrequency="0.002,0.005" 
+      			numOctaves="2" 
+      			seed="301" 
+      			type="fractalNoise" 
+      			result="turb1"/>
+    			<feColorMatrix 
+      			type="hueRotate" 
+      			in="turb1" 
+      			result="colored1">
+      			<animate 
+        			attributeName="values" 
+        			values="0;360;0" 
+        			dur="11s" 
+        			repeatCount="indefinite"/>
+    			</feColorMatrix>
+    			<feTurbulence 
+      			baseFrequency="0.003,0.004" 
+      			numOctaves="2" 
+      			seed="302" 
+      			type="fractalNoise" 
+      			result="turb2">
+    			</feTurbulence>
+    			<feColorMatrix 
+    			  type="hueRotate" 
+    			  in="turb2" 
+    			  result="colored2">
+      			<animate 
+        			attributeName="values" 
+        			values="120;480;120" 
+        			dur="13s" 
+        			repeatCount="indefinite"/>
+    			</feColorMatrix>
+    			<feBlend 
+      			mode="multiply" 
+      			in="colored1" 
+      			in2="colored2" 
+      			result="blended-turbulence"/>
+ 		  		<feComposite 
+      			in="blended-turbulence" 
+      			in2="SourceAlpha" 
+      			operator="in" 
+      			result="masked-pattern"/>
+    			<feComposite 
+      			in="masked-pattern" 
+      			in2="SourceGraphic" 
+      			operator="multiply"/>
+  			</filter>
+				<filter id="knockout">
+  				<feFlood flood-color="white" flood-opacity="1" result="whiteFlood"/>
+   				<feComposite in="whiteFlood" in2="SourceGraphic" operator="out" result="knockedOut"/>
+  			</filter>
+			</defs>
+    </svg>
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

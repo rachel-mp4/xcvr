@@ -445,6 +445,8 @@
 			-0.75rem -0.75rem #387f4d,
 			-1rem -1rem #1d4633;
 		transition: 0.17s all;
+		position: relative;
+		z-index: 2;
 	}
 	.footnote {
 		font-size: 0.5em;
@@ -460,6 +462,7 @@
 			0rem 0rem #c5c04200,
 			0rem 0rem #387f4d00,
 			0rem 0rem #1d463300;
+		z-index: 0;
 	}
 	p:not(:first-of-type) {
 		margin-top: 1rem;
