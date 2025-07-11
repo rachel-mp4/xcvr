@@ -107,7 +107,7 @@
   }
   input {
     font-size: inherit;
-    background: white;
+    background: var(--fg);
     border-radius: 0;
     border: 0;
     padding: 0;

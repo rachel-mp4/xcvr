@@ -5,19 +5,19 @@
 	let { data, children }: LayoutProps = $props();
 	let innerWidth = $state(0);
 	let isDesktop = $derived(innerWidth > 1000);
-	let curtab = $state(1);
+	let curtab = $state("bbbbb");
 	const evaluateClass = () => {
 		if (isDesktop) {
 			return "desktop";
 		}
 		switch (curtab) {
-			case 0:
+			case "aaaaa":
 				return "tab-a";
-			case 1:
+			case "bbbbb":
 				return "tab-b";
-			case 2:
+			case "ccccc":
 				return "tab-c";
-			case 3:
+			default:
 				return "";
 		}
 	};
@@ -57,16 +57,34 @@
 {#if !isDesktop}
 	<div class="tab-container">
 		<div>
-			<input type="radio" id="aaaaaaaa" name="tabs" value="aaaaaaaa" />
-			<label for="aaaaaaaa">aaaaaaaa</label>
+			<input
+				type="radio"
+				id="aaaaa"
+				name="tabs"
+				bind:group={curtab}
+				value="aaaaa"
+			/>
+			<label for="aaaaa">aaaaa</label>
 		</div>
 		<div>
-			<input type="radio" id="bbbbbbbb" name="tabs" value="bbbbbbbb" />
-			<label for="bbbbbbbb">bbbbbbbb</label>
+			<input
+				type="radio"
+				id="bbbbb"
+				name="tabs"
+				bind:group={curtab}
+				value="bbbbb"
+			/>
+			<label for="bbbbb">bbbbb</label>
 		</div>
 		<div>
-			<input type="radio" id="cccccccc" name="tabs" value="cccccccc" />
-			<label for="cccccccc">cccccccc</label>
+			<input
+				type="radio"
+				id="ccccc"
+				name="tabs"
+				bind:group={curtab}
+				value="ccccc"
+			/>
+			<label for="ccccc">ccccc</label>
 		</div>
 	</div>
 {/if}
@@ -78,9 +96,11 @@
 	}
 	.tab-container {
 		display: flex;
+		justify-content: space-around;
 		position: fixed;
 		bottom: 0;
 		font-size: 2rem;
+		border-top: solid var(--fg) 0.25rem;
 	}
 
 	.tab-container input[type="radio"] {
@@ -89,6 +109,7 @@
 		height: 0;
 		margin: 0;
 	}
+
 	.tab-container div:has(input:checked) {
 		font-weight: 700;
 	}

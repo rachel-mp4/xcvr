@@ -142,7 +142,7 @@
 		tune in to a channel (to the left) and start chatting, make your own, or
 		login with atproto if you'd like (it's optional, but recommended)
 	</p>
-	<p style="border-bottom: .25rem solid white">
+	<p style="border-bottom: .25rem solid var(--fg)">
 		don't be weird, don't be mean, you're on our computer screens<span
 			class="footnote">5</span
 		>
