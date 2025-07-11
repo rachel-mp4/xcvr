@@ -139,8 +139,9 @@
 		hi! i'm rachel and i'd like to welcome you to xcvr (pronounced transceiver)!
 	</p>
 	<p>
-		tune in to a channel (to the left) and start chatting, make your own, or
-		login with atproto if you'd like (it's optional, but recommended)
+		tune in to a channel <span class="desktop">(to the left)</span>
+		<span class="mobile">(press aaaaa)</span> and start chatting, make your own,
+		or login with atproto if you'd like (it's optional, but recommended)
 	</p>
 	<p style="border-bottom: .25rem solid var(--fg)">
 		don't be weird, don't be mean, you're on our computer screens<span

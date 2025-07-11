@@ -27,30 +27,28 @@
 <svelte:window bind:innerWidth />
 
 <div id="content" class={curClass}>
-	{#if isDesktop}
-		<aside id="left-sidebar">
-			<nav>
-				<a class="block-link" href="/">
-					{#if $page.url.pathname === "/"}
-						& now you're home
-					{:else}
-						go home
-					{/if}
-				</a>
-				{#if data.id}
-					<a class="block-link" href="/p/{data.id.handle}">
-						i know who you are
-					</a>
+	<aside id="left-sidebar">
+		<nav>
+			<a class="block-link" href="/">
+				{#if $page.url.pathname === "/"}
+					& now you're home
 				{:else}
-					<a class="block-link" href="/login"> log in with atproto </a>
+					go home
 				{/if}
-			</nav>
+			</a>
+			{#if data.id}
+				<a class="block-link" href="/p/{data.id.handle}">
+					i know who you are
+				</a>
+			{:else}
+				<a class="block-link" href="/login"> log in with atproto </a>
+			{/if}
+		</nav>
 
-			<a class="block-link" href="/c/create"> create a channel</a>
-			<div class="beep">here's what's been happening recently</div>
-			<Spectrum channels={data.channels}></Spectrum>
-		</aside>
-	{/if}
+		<a class="block-link" href="/c/create"> create a channel</a>
+		<div class="beep">here's what's been happening recently</div>
+		<Spectrum channels={data.channels}></Spectrum>
+	</aside>
 	{@render children()}
 </div>
 
@@ -97,6 +95,7 @@
 	.tab-container {
 		display: flex;
 		justify-content: space-around;
+		width: 100%;
 		position: fixed;
 		bottom: 0;
 		font-size: 2rem;

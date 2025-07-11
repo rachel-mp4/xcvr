@@ -66,6 +66,21 @@ a:hover {
 	overflow-y: scroll;
 	align-self: start;
 }
-#content>:not(:last-child) {
+#content.desktop>:not(:last-child) {
   border-right: .25rem solid var(--fg);
+}
+#content.tab-a > *:not(:nth-child(1)) {
+	display: none;
+}
+#content.tab-b > *:not(:nth-child(2)) {
+	display: none;
+}
+#content.tab-c > *:not(:nth-child(3)) {
+	display: none;
+}
+#content.desktop .mobile {
+  display: none;
+}
+#content:not(.desktop) .desktop {
+  display: none;
 }
