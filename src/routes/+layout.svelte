@@ -61,10 +61,10 @@
 					go home
 				{/if}
 			</a>
-			{#if data.id}
+			{#if data.myProfile.handle !== "xcvr.org"}
 				<a
 					class="block-link"
-					href="/p/{data.id.handle}"
+					href="/p/{data.myProfile.handle}"
 					onclick={() => {
 						tabContext.gotoB();
 					}}

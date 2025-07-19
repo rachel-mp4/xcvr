@@ -30,10 +30,11 @@ export type Message = {
     active: boolean
     mine: boolean
     muted: boolean
-    color: number 
-    did: string
+    color: number
+    handle: string
     profileview?: string
     nick: string
+    startedAt: number
 }
 
 export type LogItem = {

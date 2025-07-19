@@ -17,6 +17,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
   const addrEndpoint = channel.url
   const addrURL = `${base}${addrEndpoint}`
   return {
-    address: addrURL
+    address: addrURL,
+    uri: channel?.uri
   }
 }

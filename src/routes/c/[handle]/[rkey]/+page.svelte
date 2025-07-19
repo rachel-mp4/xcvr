@@ -4,7 +4,11 @@
   import Receiever from "$lib/components/Receiever.svelte";
   import Transmitter from "$lib/components/Transmitter.svelte";
   let { data }: PageProps = $props();
-  let ctx = new WSContext();
+  let ctx = new WSContext(
+    data.uri,
+    data.myProfile.defaultNick,
+    data.myProfile.color,
+  );
   $effect(() => {
     if (data.address) {
       ctx.connect(data.address);
@@ -22,8 +26,7 @@
   <Receiever messages={ctx.messages} />
   <Transmitter {ctx} />
 </main>
-<aside id="transceiver-log">
-</aside>
+<aside id="transceiver-log"></aside>
 
 <style>
   #transceiver-log {

@@ -8,32 +8,68 @@ export class WSContext {
     connected: boolean = $state(false)
     conncount = $state(0)
     ws: WebSocket | null = null
+    ls: WebSocket | null = null
     color: number = $state(Math.floor(Math.random() * 16777216))
+    myID: undefined | number
+    mySignetUri: undefined | string
+    channelUri: string
     curMsg: string = ""
     active: boolean = false
     nick: string = "wanderer"
-    did: string = ""
+    handle: string = ""
 
-    constructor() {
+    constructor(channelUri: string, defaultNick: string, defaultColor: number) {
+        this.channelUri = channelUri
+        this.nick = defaultNick
+        this.color = defaultColor
     }
 
     connect(url: string) {
         this.ws?.close()
-        this.ws = connectTo(url, this)
+        this.ls?.close()
+        connectTo(url, this)
+
     }
 
     reconnect = (url: string) => {
         this.ws?.close()
-        this.ws = connectTo(url, this)
+        this.ls?.close()
+        connectTo(url, this)
     }
 
     disconnect = () => {
         this.ws?.close()
+        this.ls?.close()
     }
 
     insertLineBreak = () => {
         if (this.active) {
             pubMessage(this)
+            const api = import.meta.env.VITE_API_URL
+            let record
+            if (this.mySignetUri !== undefined) {
+                record = {
+                    signetURI: this.mySignetUri,
+                    body: this.curMsg,
+                    nick: this.nick,
+                    color: this.color
+                }
+            } else {
+                record = {
+                    channelURI: this.channelUri,
+                    messageID: this.myID,
+                    body: this.curMsg,
+                    color: this.color,
+                    nick: this.nick
+                }
+            }
+            fetch(`${api}/lrc/message`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(record),
+            }).then((val) => console.log(val), (val) => console.log(val))
             this.active = false
             this.curMsg = ""
         }
@@ -45,7 +81,7 @@ export class WSContext {
             this.active = true
         }
         insertMessage(idx, s, this)
-        this.curMsg = this.curMsg.slice(0, idx) + s + this.curMsg.slice(idx)
+        this.curMsg = insertSIntoAStringAtIdx(s, this.curMsg, idx)
     }
 
     delete = (idx: number, idx2: number) => {
@@ -53,7 +89,7 @@ export class WSContext {
             return
         }
         deleteMessage(idx, idx2, this)
-        this.curMsg = this.curMsg.slice(0, idx - 1) + this.curMsg.slice(idx2)
+        this.curMsg = deleteFromAStringBetweenIdxs(this.curMsg, idx, idx2)
     }
 
     setTopic = (topic: string) => {
@@ -83,18 +119,32 @@ export class WSContext {
 
     insertMessage = (id: number, idx: number, s: string) => {
         this.messages = this.messages.map((msg: Message) => {
-            return msg.id === id ? { ...msg, body: msg.body.slice(0, idx) + s + msg.body.slice(idx) } : msg
+            return msg.id === id ? { ...msg, body: insertSIntoAStringAtIdx(s, msg.body, idx) } : msg
         })
     }
 
     deleteMessage = (id: number, idx1: number, idx2: number) => {
         this.messages = this.messages.map((msg: Message) => {
-            return msg.id === id ? { ...msg, body: msg.body.slice(0, idx1) + msg.body.slice(idx2) } : msg
+            return msg.id === id ? { ...msg, body: deleteFromAStringBetweenIdxs(msg.body, idx1, idx2) } : msg
         })
     }
 }
 
-export const connectTo = (url: string, ctx: WSContext): WebSocket => {
+const insertSIntoAStringAtIdx = (s: string, a: string, idx: number) => {
+    if (idx > a.length) {
+        a = a.padEnd(idx)
+    }
+    return a.slice(0, idx) + s + a.slice(idx)
+}
+
+const deleteFromAStringBetweenIdxs = (a: string, idx1: number, idx2: number) => {
+    if (idx2 > a.length) {
+        a = a.padEnd(idx2)
+    }
+    return a.slice(0, idx1) + a.slice(idx2)
+}
+
+export const connectTo = (url: string, ctx: WSContext) => {
     const ws = new WebSocket(url, "lrc.v1");
     ws.binaryType = "arraybuffer";
     ws.onopen = () => {
@@ -103,7 +153,7 @@ export const connectTo = (url: string, ctx: WSContext): WebSocket => {
         getTopic(ctx)
         setNick("wanderer", ctx)
         setColor(255, ctx)
-        setDID("beep.boop", ctx)
+        setHandle("beep.boop", ctx)
     };
     ws.onmessage = (event) => {
         console.log(event)
@@ -123,12 +173,28 @@ export const connectTo = (url: string, ctx: WSContext): WebSocket => {
     };
     ws.onerror = (event) => {
         console.log("errored:", event)
-        console.log("readyState:",ws.readyState)
+        console.log("readyState:", ws.readyState)
         if (ws === ctx.ws) {
             ctx.connected = false
         }
     }
-    return ws
+    ctx.ws = ws
+    const lsURI = `${import.meta.env.BASE_URL}/xrpc/org.xcvr.lrc.subscribeLexStream?uri=${ctx.channelUri}`
+    const ls = new WebSocket(lsURI)
+    ls.onmessage = (event) => {
+        console.log(event)
+    }
+    ls.onclose = () => {
+        console.log("closed ls")
+    }
+    ls.onerror = (event) => {
+        console.log("errored:", event)
+    }
+    ctx.ls = ls
+}
+
+const parseLexStreamEvent = (event: MessageEvent<any>) => {
+
 }
 
 export const initMessage = (ctx: WSContext) => {
@@ -138,7 +204,7 @@ export const initMessage = (ctx: WSContext) => {
             init: {
                 nick: ctx.nick,
                 color: ctx.color,
-                externalID: ctx.did
+                externalID: ctx.handle
             }
         }
     }
@@ -213,13 +279,13 @@ export const setNick = (nick: string, ctx: WSContext) => {
     ctx.ws?.send(byteArray)
 }
 
-export const setDID = (did: string, ctx: WSContext) => {
-    ctx.did = did
+export const setHandle = (handle: string, ctx: WSContext) => {
+    ctx.handle = handle
     const evt: lrc.Event = {
         msg: {
             oneofKind: "set",
             set: {
-                externalID: did
+                externalID: handle
             }
         }
     }
@@ -258,13 +324,14 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const echoed = event.msg.init.echoed ?? false
             // if (echoed) return false
             const nick = event.msg.init.nick ?? "wanderer"
-            const did = event.msg.init.externalID ?? "origin"
+            const handle = event.msg.init.externalID ?? ""
             const color = event.msg.init.color ?? 12529712
             const body = ""
             const active = true
             const mine = echoed
             const muted = false
-            const msg = { id, active, mine, muted, body, nick, did, color }
+            const startedAt = Date.now()
+            const msg = { id, active, mine, muted, body, nick, handle, color, startedAt }
             ctx.pushMessage(msg)
             // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
             // ctx.log.push({event:event, binary: bstring, color:"init"})
@@ -311,9 +378,10 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const active = false
             const mine = false
             const color = 0
-            const did = ""
+            const handle = ""
             const body = ""
-            ctx.pushMessage({ id, body, nick, muted, active, mine, color, did })
+            const startedAt = Date.now()
+            ctx.pushMessage({ id, body, nick, muted, active, mine, color, handle, startedAt })
         }
 
         case "unmute": {
