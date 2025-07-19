@@ -179,7 +179,7 @@ export const connectTo = (url: string, ctx: WSContext) => {
         }
     }
     ctx.ws = ws
-    const lsURI = `${import.meta.env.BASE_URL}/xrpc/org.xcvr.lrc.subscribeLexStream?uri=${ctx.channelUri}`
+    const lsURI = `${import.meta.env.VITE_API_URL}/xrpc/org.xcvr.lrc.subscribeLexStream?uri=${ctx.channelUri}`
     const ls = new WebSocket(lsURI)
     ls.onmessage = (event) => {
         console.log(event)
