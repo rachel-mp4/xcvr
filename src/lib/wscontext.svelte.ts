@@ -1,8 +1,10 @@
-import type { Message, LogItem } from "./types"
+import type { Message, LogItem, SignetView, MessageView } from "./types"
 import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 
 export class WSContext {
     messages: Array<Message> = $state(new Array())
+    orphanedSignets: Map<string, SignetView> = new Map()
+    orphanedMessages: Map<string, MessageView> = new Map()
     log: Array<LogItem> = $state(new Array())
     topic: string = $state("")
     connected: boolean = $state(false)
@@ -11,7 +13,7 @@ export class WSContext {
     ls: WebSocket | null = null
     color: number = $state(Math.floor(Math.random() * 16777216))
     myID: undefined | number
-    mySignetUri: undefined | string
+    mySignet: undefined | SignetView
     channelUri: string
     curMsg: string = ""
     active: boolean = false
@@ -47,9 +49,9 @@ export class WSContext {
             pubMessage(this)
             const api = import.meta.env.VITE_API_URL
             let record
-            if (this.mySignetUri !== undefined) {
+            if (this.mySignet !== undefined) {
                 record = {
-                    signetURI: this.mySignetUri,
+                    signetURI: this.mySignet.uri,
                     body: this.curMsg,
                     nick: this.nick,
                     color: this.color
@@ -72,6 +74,8 @@ export class WSContext {
             }).then((val) => console.log(val), (val) => console.log(val))
             this.active = false
             this.curMsg = ""
+            this.mySignet = undefined
+            this.myID = undefined
         }
     }
 
@@ -101,8 +105,15 @@ export class WSContext {
         this.conncount = cc
     }
 
+    // theoretically this could occur _after we have an orphaned signet or an orphanedmessage or both! so,
+    // TODO: make it work in that case
     pushMessage = (message: Message) => {
-        this.messages.push(message)
+        if (this.messages.length > 200) {
+            this.messages = [...this.messages.slice(this.messages.length - 199), message]
+        }
+        else {
+            this.messages.push(message)
+        }
     }
 
     editMessage = (id: number, newMessage: Message) => {
@@ -128,6 +139,71 @@ export class WSContext {
             return msg.id === id ? { ...msg, body: deleteFromAStringBetweenIdxs(msg.body, idx1, idx2) } : msg
         })
     }
+
+    addSignet = (signet: SignetView) => {
+        const arrayIdx = this.messages.findIndex(msg => msg.id === signet.lrcId)
+        if (arrayIdx !== -1) {
+            this.messages = this.messages.map((msg: Message) => {
+                return msg.id === signet.lrcId ? { ...msg, signetView: signet } : msg
+            })
+        } else {
+            const om = this.orphanedMessages.get(signet.uri)
+            if (om !== undefined) {
+                const message = makeMessageFromSignetAndMessageViews(om, signet)
+                const idx = this.messages.findIndex(msg => msg.id > signet.lrcId)
+                if (idx === -1) {
+                    this.messages.push(message)
+                } else {
+                    this.messages = [...this.messages.slice(0, idx), message, ...this.messages.slice(idx)]
+                }
+                this.orphanedMessages.delete(signet.uri)
+            } else {
+                this.orphanedSignets.set(signet.uri, signet)
+            }
+        }
+    }
+
+    verifyMessage = (message: MessageView) => {
+        const arrayIdx = this.messages.findIndex(msg => msg.signetView?.uri === message.signetUri)
+        if (arrayIdx !== -1) {
+            this.messages = this.messages.map((msg: Message) => {
+                return msg.signetView?.uri === message.signetUri ?
+                    makeMessageFromSignetAndMessageViews(message, msg.signetView) : msg
+            })
+        }
+        else {
+            const os = this.orphanedSignets.get(message.signetUri)
+            if (os !== undefined) {
+                const m = makeMessageFromSignetAndMessageViews(message, os)
+                const idx = this.messages.findIndex(msg => msg.id > os.lrcId)
+                if (idx === -1) {
+                    this.messages.push(m)
+                } else {
+                    this.messages = [...this.messages.slice(0, idx), m, ...this.messages.slice(idx)]
+                }
+                this.orphanedSignets.delete(os.uri)
+            } else {
+                this.orphanedMessages.set(message.signetUri, message)
+            }
+        }
+    }
+}
+
+const makeMessageFromSignetAndMessageViews = (m: MessageView, s: SignetView): Message => {
+    return {
+        uri: m.uri,
+        body: m.body,
+        id: s.lrcId,
+        active: false,
+        mine: false,
+        muted: false,
+        ...(m.color && { color: m.color }),
+        handle: m.author.handle,
+        profileView: m.author,
+        signetView: s,
+        ...(m.nick && { nick: m.nick }),
+        startedAt: s.startedAt
+    }
 }
 
 const insertSIntoAStringAtIdx = (s: string, a: string, idx: number) => {
@@ -151,9 +227,9 @@ export const connectTo = (url: string, ctx: WSContext) => {
         console.log("connected")
         ctx.connected = true
         getTopic(ctx)
-        setNick("wanderer", ctx)
-        setColor(255, ctx)
-        setHandle("beep.boop", ctx)
+        setNick(ctx.nick, ctx)
+        setColor(ctx.color, ctx)
+        setHandle(ctx.handle, ctx)
     };
     ws.onmessage = (event) => {
         console.log(event)
@@ -182,7 +258,7 @@ export const connectTo = (url: string, ctx: WSContext) => {
     const lsURI = `${import.meta.env.VITE_API_URL}/xrpc/org.xcvr.lrc.subscribeLexStream?uri=${ctx.channelUri}`
     const ls = new WebSocket(lsURI)
     ls.onmessage = (event) => {
-        console.log(event)
+        console.log(event, ctx)
     }
     ls.onclose = () => {
         console.log("closed ls")
@@ -193,8 +269,39 @@ export const connectTo = (url: string, ctx: WSContext) => {
     ctx.ls = ls
 }
 
-const parseLexStreamEvent = (event: MessageEvent<any>) => {
-
+const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
+    const lex = JSON.parse(event.data)
+    switch (lex.$type) {
+        case "org.xcvr.lrc.defs#signetView": {
+            const uri = lex.uri
+            const issuerHandle = lex.issuerHandle
+            const channelURI = lex.channelURI
+            const lrcID = lex.lrcID
+            const authorHandle = lex.authorHandle
+            const startedAt = Date.parse(lex.startedAt)
+            ctx.addSignet({
+                uri: uri,
+                issuerHandle: issuerHandle,
+                channelURI: channelURI,
+                lrcId: lrcID,
+                authorHandle: authorHandle,
+                startedAt: startedAt
+            })
+            return
+        }
+        case "org.xcvr.lrc.defs#messageView": {
+            const uri = lex.uri
+            const author = {
+                did: lex.author.did,
+                handle: lex.author.handle,
+                ...(lex.author.displayName && { displayName: lex.author.displayName }),
+                ...(lex.author.status && { status: lex.author.status }),
+                ...(lex.author.color && { status: lex.author.color }),
+                ...(lex.author.avatar && { status: lex.author.avatar }),
+            }
+            return
+        }
+    }
 }
 
 export const initMessage = (ctx: WSContext) => {
@@ -322,16 +429,29 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const id = event.msg.init.id ?? 0
             if (id === 0) return false
             const echoed = event.msg.init.echoed ?? false
-            // if (echoed) return false
-            const nick = event.msg.init.nick ?? "wanderer"
-            const handle = event.msg.init.externalID ?? ""
-            const color = event.msg.init.color ?? 12529712
+            if (echoed) {
+                ctx.myID = id
+                // return false
+            }
+            const nick = event.msg.init.nick
+            const handle = event.msg.init.externalID
+            const color = event.msg.init.color
             const body = ""
             const active = true
             const mine = echoed
             const muted = false
             const startedAt = Date.now()
-            const msg = { id, active, mine, muted, body, nick, handle, color, startedAt }
+            const msg = {
+                body: body,
+                id: id,
+                active: active,
+                mine: mine,
+                muted: muted,
+                ...(color && { color: color }),
+                ...(handle && { handle: handle }),
+                ...(nick && { nick: nick }),
+                startedAt: startedAt
+            }
             ctx.pushMessage(msg)
             // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
             // ctx.log.push({event:event, binary: bstring, color:"init"})
