@@ -53,7 +53,7 @@ export class WSContext {
                 ...(this.mySignet && { signetURI: this.mySignet.uri }),
                 ...(this.channelUri && { channelURI: this.channelUri }),
                 ...(this.myID && { messageID: this.myID }),
-                ...(this.myNonce && { nonce: this.myNonce }),
+                ...(this.myNonce && { nonce: b64encodebytearray(this.myNonce) }),
                 body: this.curMsg,
                 ...(this.nick && { nick: this.nick }),
                 ...(this.color && { color: this.color }),
@@ -180,6 +180,10 @@ export class WSContext {
             }
         }
     }
+}
+
+const b64encodebytearray = (u8: Uint8Array): string => {
+    return btoa(String.fromCharCode(...u8))
 }
 
 const makeMessageFromSignetAndMessageViews = (m: MessageView, s: SignetView): Message => {
