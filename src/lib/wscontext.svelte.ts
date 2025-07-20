@@ -14,6 +14,7 @@ export class WSContext {
     color: number = $state(Math.floor(Math.random() * 16777216))
     myID: undefined | number
     mySignet: undefined | SignetView
+    myNonce: undefined | Uint8Array
     channelUri: string
     curMsg: string = ""
     active: boolean = false
@@ -48,22 +49,14 @@ export class WSContext {
         if (this.active) {
             pubMessage(this)
             const api = import.meta.env.VITE_API_URL
-            let record
-            if (this.mySignet !== undefined) {
-                record = {
-                    signetURI: this.mySignet.uri,
-                    body: this.curMsg,
-                    nick: this.nick,
-                    color: this.color
-                }
-            } else {
-                record = {
-                    channelURI: this.channelUri,
-                    messageID: this.myID,
-                    body: this.curMsg,
-                    color: this.color,
-                    nick: this.nick
-                }
+            const record = {
+                ...(this.mySignet && { signetURI: this.mySignet.uri }),
+                ...(this.channelUri && { channelURI: this.channelUri }),
+                ...(this.myID && { messageID: this.myID }),
+                ...(this.myNonce && { nonce: this.myNonce }),
+                body: this.curMsg,
+                ...(this.nick && { nick: this.nick }),
+                ...(this.color && { color: this.color }),
             }
             fetch(`${api}/lrc/message`, {
                 method: "POST",
@@ -431,6 +424,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const echoed = event.msg.init.echoed ?? false
             if (echoed) {
                 ctx.myID = id
+                ctx.myNonce = event.msg.init.nonce
                 // return false
             }
             const nick = event.msg.init.nick
