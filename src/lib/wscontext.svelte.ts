@@ -419,6 +419,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
         }
 
         case "init": {
+            console.log(event.msg.init)
             const id = event.msg.init.id ?? 0
             if (id === 0) return false
             const echoed = event.msg.init.echoed ?? false
