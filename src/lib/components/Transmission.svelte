@@ -15,7 +15,7 @@
     style:--tcontrast={contrast}
     style:--tpartial={partial}
     class="{message.active ? 'active' : ''} 
-    {message.signetView ? 'signed' : ''} 
+    {message.profileView ? 'signed' : ''} 
     transmission"
 >
     <div class="header">
