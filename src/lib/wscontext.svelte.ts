@@ -269,9 +269,12 @@ export const connectTo = (url: string, ctx: WSContext) => {
 }
 
 const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
+    console.log("parsing!!!!")
     const lex = JSON.parse(event.data)
+    console.log(lex.$type)
     switch (lex.$type) {
         case "org.xcvr.lrc.defs#signetView": {
+            console.log("parsing signet!!!")
             const uri = lex.uri
             const issuerHandle = lex.issuerHandle
             const channelURI = lex.channelURI
@@ -289,6 +292,7 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
             return
         }
         case "org.xcvr.lrc.defs#messageView": {
+            console.log("parsing message!!!")
             const uri = lex.uri
             const author = {
                 did: lex.author.did,
@@ -298,6 +302,20 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
                 ...(lex.author.color && { status: lex.author.color }),
                 ...(lex.author.avatar && { status: lex.author.avatar }),
             }
+            const body = lex.body
+            const nick = lex.nick
+            const color = lex.color
+            const signetUri = lex.signetUri
+            const postedAt = lex.postedAt
+            ctx.verifyMessage({
+                uri: uri,
+                author: author,
+                body: body,
+                ...(nick && { nick: nick }),
+                ...(color && { color: color }),
+                ...(signetUri && { signetUri: signetUri }),
+                ...(postedAt && { postedAt: postedAt }),
+            })
             return
         }
     }
