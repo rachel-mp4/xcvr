@@ -256,7 +256,8 @@ export const connectTo = (url: string, ctx: WSContext) => {
     const lsURI = `${import.meta.env.VITE_API_URL}/xrpc/org.xcvr.lrc.subscribeLexStream?uri=${ctx.channelUri}`
     const ls = new WebSocket(lsURI)
     ls.onmessage = (event) => {
-        console.log(event, ctx)
+        console.log("recieved lexicon event:", event)
+        parseLexStreamEvent(event, ctx)
     }
     ls.onclose = () => {
         console.log("closed ls")

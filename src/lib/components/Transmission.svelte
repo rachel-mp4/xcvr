@@ -35,13 +35,13 @@
         font-weight: 700;
     }
     .active .handle {
-        color: var(--partial);
+        color: var(--tpartial);
     }
     .signed .handle {
-        color: var(--contrast);
+        color: var(--fg);
     }
     :not(:is(.signed, .active)) .handle {
-        color: var(--partial);
+        color: var(--mg);
     }
 
     .transmission {
