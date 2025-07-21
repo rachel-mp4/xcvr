@@ -135,14 +135,18 @@ export class WSContext {
     }
 
     addSignet = (signet: SignetView) => {
+        console.log("now we are signing")
         const arrayIdx = this.messages.findIndex(msg => msg.id === signet.lrcId)
         if (arrayIdx !== -1) {
+            console.log("found appropriate signet c:")
             this.messages = this.messages.map((msg: Message) => {
                 return msg.id === signet.lrcId ? { ...msg, signetView: signet } : msg
             })
         } else {
+            console.log("couldn't find appropriate signet :c")
             const om = this.orphanedMessages.get(signet.uri)
             if (om !== undefined) {
+                console.log("some orphan logic")
                 const message = makeMessageFromSignetAndMessageViews(om, signet)
                 const idx = this.messages.findIndex(msg => msg.id > signet.lrcId)
                 if (idx === -1) {
@@ -158,16 +162,20 @@ export class WSContext {
     }
 
     verifyMessage = (message: MessageView) => {
+        console.log("now we are verifying!")
         const arrayIdx = this.messages.findIndex(msg => msg.signetView?.uri === message.signetUri)
         if (arrayIdx !== -1) {
+            console.log("found appropriate message c:")
             this.messages = this.messages.map((msg: Message) => {
                 return msg.signetView?.uri === message.signetUri ?
                     makeMessageFromSignetAndMessageViews(message, msg.signetView) : msg
             })
         }
         else {
+            console.log("couldn't find appropriate message :c")
             const os = this.orphanedSignets.get(message.signetUri)
             if (os !== undefined) {
+                console.log("some orphan logic")
                 const m = makeMessageFromSignetAndMessageViews(message, os)
                 const idx = this.messages.findIndex(msg => msg.id > os.lrcId)
                 if (idx === -1) {
