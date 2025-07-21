@@ -37,10 +37,13 @@
     .active .handle {
         color: var(--tpartial);
     }
+    .active.signed .handle {
+        color: var(--tcontrast);
+    }
     .signed .handle {
         color: var(--fg);
     }
-    :not(:is(.signed, .active)) .handle {
+    .handle {
         color: var(--fl);
     }
 
