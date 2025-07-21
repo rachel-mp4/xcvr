@@ -41,7 +41,7 @@
         color: var(--fg);
     }
     :not(:is(.signed, .active)) .handle {
-        color: var(--bl);
+        color: var(--fl);
     }
 
     .transmission {

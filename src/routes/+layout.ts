@@ -12,7 +12,7 @@ export const load: LayoutLoad = async ({ fetch }) => {
 		myProfile: results[1].status === 'fulfilled' ? results[1].value : {
 			handle: "xcvr.org",
 			defaultNick: "wanderer",
-			color: 3602605,
+			color: 3702605,
 		}
 	}
 }
