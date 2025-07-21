@@ -8,6 +8,7 @@
     data.uri,
     data.myProfile.defaultNick,
     data.myProfile.color,
+    data.myProfile.handle,
   );
   $effect(() => {
     if (data.address) {

@@ -21,10 +21,11 @@ export class WSContext {
     nick: string = "wanderer"
     handle: string = ""
 
-    constructor(channelUri: string, defaultNick: string, defaultColor: number) {
+    constructor(channelUri: string, defaultNick: string, defaultColor: number, defaultHandle: string) {
         this.channelUri = channelUri
         this.nick = defaultNick
         this.color = defaultColor
+        this.handle = defaultHandle
     }
 
     connect(url: string) {
