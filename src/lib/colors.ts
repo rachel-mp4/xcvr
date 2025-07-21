@@ -18,6 +18,9 @@ export function hexToContrast(hex: string) {
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
     return luminance > 0.5 ? "#000000" : "#ffffff"
 }
+export function hexToTransparent(hex: string) {
+    return hex + "80"
+}
 
 function ansiToRgb(ansiCode: number): [number, number, number] {
     // Define the standard and high-intensity colors
