@@ -1,7 +1,8 @@
 :root {
   --bg: #000000;
   --fg: #ffffff;
-  --mg: #00000080;
+  --fl: #ffffff80;
+  --bl: #00000080;
 }
 * {
   scrollbar-width: none;
@@ -33,11 +34,11 @@ textarea {
 }
 
 textarea::placeholder {
-  color: var(--mg);
+  color: var(--bl);
 }
 
 input::placeholder {
-  color: var(--mg);
+  color: var(--bl);
 }
 
 body {

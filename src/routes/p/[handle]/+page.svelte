@@ -51,7 +51,11 @@
         hexToContrast(editedProfile.color),
       );
       document.documentElement.style.setProperty(
-        "--mg",
+        "--fl",
+        hexToContrast(editedProfile.color) + "80",
+      );
+      document.documentElement.style.setProperty(
+        "--bl",
         editedProfile.color + "80",
       );
     }
@@ -61,7 +65,8 @@
       if (browser) {
         document.documentElement.style.removeProperty("--bg");
         document.documentElement.style.removeProperty("--fg");
-        document.documentElement.style.removeProperty("--mg");
+        document.documentElement.style.removeProperty("--ml");
+        document.documentElement.style.removeProperty("--bl");
       }
     };
   });
@@ -103,7 +108,7 @@
   {/if}
 </main>
 
-{#if data?.id?.handle && data?.profile?.handle && data.id.handle === data.profile.handle}
+{#if data?.myProfile?.handle && data?.profile?.handle && data.myProfile.handle === data.profile.handle}
   <aside>
     <p>
       you can change your profile here, press the i'm done button when you have
