@@ -163,6 +163,7 @@ export class WSContext {
 
     verifyMessage = (message: MessageView) => {
         console.log("now we are verifying!")
+        console.log(message.signetUri)
         const arrayIdx = this.messages.findIndex(msg => msg.signetView?.uri === message.signetUri)
         if (arrayIdx !== -1) {
             console.log("found appropriate message c:")
