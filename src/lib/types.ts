@@ -60,6 +60,6 @@ export type MessageView = {
     body: string
     nick?: string
     color?: number
-    signetUri: string
+    signetURI: string
     postedAt: string
 }

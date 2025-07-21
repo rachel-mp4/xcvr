@@ -163,18 +163,18 @@ export class WSContext {
 
     verifyMessage = (message: MessageView) => {
         console.log("now we are verifying!")
-        console.log(message.signetUri)
-        const arrayIdx = this.messages.findIndex(msg => msg.signetView?.uri === message.signetUri)
+        console.log(message.signetURI)
+        const arrayIdx = this.messages.findIndex(msg => msg.signetView?.uri === message.signetURI)
         if (arrayIdx !== -1) {
             console.log("found appropriate message c:")
             this.messages = this.messages.map((msg: Message) => {
-                return msg.signetView?.uri === message.signetUri ?
+                return msg.signetView?.uri === message.signetURI ?
                     makeMessageFromSignetAndMessageViews(message, msg.signetView) : msg
             })
         }
         else {
             console.log("couldn't find appropriate message :c")
-            const os = this.orphanedSignets.get(message.signetUri)
+            const os = this.orphanedSignets.get(message.signetURI)
             if (os !== undefined) {
                 console.log("some orphan logic")
                 const m = makeMessageFromSignetAndMessageViews(message, os)
@@ -186,7 +186,7 @@ export class WSContext {
                 }
                 this.orphanedSignets.delete(os.uri)
             } else {
-                this.orphanedMessages.set(message.signetUri, message)
+                this.orphanedMessages.set(message.signetURI, message)
             }
         }
     }
@@ -314,7 +314,7 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
             const body = lex.body
             const nick = lex.nick
             const color = lex.color
-            const signetUri = lex.signetUri
+            const signetURI = lex.signetURI
             const postedAt = lex.postedAt
             ctx.verifyMessage({
                 uri: uri,
@@ -322,7 +322,7 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
                 body: body,
                 ...(nick && { nick: nick }),
                 ...(color && { color: color }),
-                ...(signetUri && { signetUri: signetUri }),
+                ...(signetURI && { signetURI: signetURI }),
                 ...(postedAt && { postedAt: postedAt }),
             })
             return
