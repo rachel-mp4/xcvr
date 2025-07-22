@@ -45,6 +45,27 @@
     }
     .handle {
         color: var(--fl);
+        position: relative;
+    }
+
+    .handle::after {
+        content: "";
+        color: var(--fg);
+        background: var(--bg);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(55% - 0.125rem);
+        bottom: calc(45% - 0.125rem);
+        transform: scaleX(0);
+        transition: transform 0.17s 3s;
+    }
+
+    :not(.signed):not(.active) .handle::after {
+        transform: scaleX(1);
+    }
+    :not(.signed):not(.active) .handle:hover::after {
+        content: "i couldn't find a record :c";
     }
 
     .transmission {
