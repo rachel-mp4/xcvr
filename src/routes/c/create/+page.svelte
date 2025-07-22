@@ -31,8 +31,11 @@
         }),
       },
     );
-    const result = await response.json();
-    console.log(result);
+    if (response.ok) {
+      window.location.href = response.url;
+    } else {
+      console.error("request failed");
+    }
   };
 </script>
 
