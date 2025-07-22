@@ -61,10 +61,10 @@
         transition: transform 0.17s 3s;
     }
 
-    :not(.signed):not(.active) .handle::after {
+    .transmission:not(.signed):not(.active) .handle::after {
         transform: scaleX(1);
     }
-    :not(.signed):not(.active) .handle:hover::after {
+    .transmission:not(.signed):not(.active) .handle:hover::after {
         content: "i couldn't find a record :c";
     }
 
