@@ -58,6 +58,7 @@
         top: calc(55% - 0.125rem);
         bottom: calc(45% - 0.125rem);
         transform: scaleX(0);
+        transform-origin: center left;
         transition: transform 0.17s 3s;
     }
 
