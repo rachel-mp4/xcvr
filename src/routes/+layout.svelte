@@ -147,6 +147,7 @@
 		bottom: 0;
 		font-size: 2rem;
 		border-top: solid var(--fg) 0.25rem;
+		background: var(--bg);
 	}
 
 	.tab-container input[type="radio"] {
