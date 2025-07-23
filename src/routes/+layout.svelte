@@ -143,7 +143,7 @@
 		display: flex;
 		justify-content: space-around;
 		width: 100%;
-		position: fixed;
+		position: sticky;
 		bottom: 0;
 		font-size: 2rem;
 		border-top: solid var(--fg) 0.25rem;
