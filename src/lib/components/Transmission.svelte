@@ -1,6 +1,8 @@
 <script lang="ts">
     import type { Message } from "$lib/types";
+    import { computePosition, flip, shift, offset } from "@floating-ui/dom";
     import { hexToContrast, hexToTransparent, numToHex } from "$lib/colors";
+    import ProfileCard from "./ProfileCard.svelte";
     interface Props {
         message: Message;
     }
@@ -8,6 +10,25 @@
     let color: string = numToHex(message.color ?? 16777215);
     let contrast: string = hexToContrast(color);
     let partial: string = hexToTransparent(contrast);
+    let triggerEl: HTMLElement | undefined = $state();
+    let profileEl: HTMLElement | undefined = $state();
+    let showProfile = $state(false);
+    async function updatePosition() {
+        if (triggerEl && profileEl) {
+            const { x, y } = await computePosition(triggerEl, profileEl, {
+                middleware: [offset(10), flip(), shift()],
+            });
+            Object.assign(profileEl.style, {
+                left: `${x}px`,
+                top: `${y}px`,
+            });
+        }
+    }
+    $effect(() => {
+        if (showProfile) {
+            updatePosition();
+        }
+    });
 </script>
 
 <div
@@ -20,9 +41,27 @@
 >
     <div class="header">
         {message.nick}{#if message.handle}
-            <span class="handle">@{message.handle}</span>{/if}
+            {#if !message.profileView}
+                <span class="handle">
+                    @{message.handle}
+                </span>
+            {:else}
+                <a
+                    bind:this={triggerEl}
+                    class="handle"
+                    href={`/p/${message.handle}`}
+                    onmouseenter={() => (showProfile = true)}
+                    onmouseleave={() => (showProfile = false)}
+                    >@{message.handle}</a
+                >{/if}
+        {/if}
         {#if message.profileView}beep{/if}
     </div>
+    {#if showProfile && message.profileView}
+        <div class="profile-container" bind:this={profileEl}>
+            <ProfileCard profile={message.profileView} />
+        </div>
+    {/if}
     <div class="body">{message.body}</div>
 </div>
 
@@ -80,5 +119,9 @@
         white-space: pre-wrap;
         word-wrap: break-word;
         max-width: 100%;
+    }
+    .profile-container {
+        position: absolute;
+        z-index: 1;
     }
 </style>
