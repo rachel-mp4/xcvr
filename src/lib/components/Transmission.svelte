@@ -46,22 +46,27 @@
                     @{message.handle}
                 </span>
             {:else}
-                <a
-                    bind:this={triggerEl}
-                    class="handle"
-                    href={`/p/${message.handle}`}
+                <button
+                    class="handle-container"
                     onmouseenter={() => (showProfile = true)}
                     onmouseleave={() => (showProfile = false)}
-                    >@{message.handle}</a
-                >{/if}
+                >
+                    <a
+                        bind:this={triggerEl}
+                        class="handle"
+                        href={`/p/${message.handle}`}
+                        >@{message.handle}
+                    </a>
+                    {#if showProfile}
+                        <div class="profile-container" bind:this={profileEl}>
+                            <ProfileCard profile={message.profileView} />
+                        </div>
+                    {/if}
+                </button>
+            {/if}
         {/if}
         {#if message.profileView}beep{/if}
     </div>
-    {#if showProfile && message.profileView}
-        <div class="profile-container" bind:this={profileEl}>
-            <ProfileCard profile={message.profileView} />
-        </div>
-    {/if}
     <div class="body">{message.body}</div>
 </div>
 
