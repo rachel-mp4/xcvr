@@ -46,7 +46,9 @@
                     @{message.handle}
                 </span>
             {:else}
-                <button
+                <div
+                    role="button"
+                    tabindex="0"
                     class="handle-container"
                     onmouseenter={() => (showProfile = true)}
                     onmouseleave={() => (showProfile = false)}
@@ -62,7 +64,7 @@
                             <ProfileCard profile={message.profileView} />
                         </div>
                     {/if}
-                </button>
+                </div>
             {/if}
         {/if}
         {#if message.profileView}beep{/if}
