@@ -2,7 +2,6 @@
   import type { PageProps } from "./$types";
   import { numToHex, hexToNum, hexToContrast } from "$lib/colors";
   import { browser } from "$app/environment";
-  import { enhance } from "$app/forms";
   let { data }: PageProps = $props();
   const graphemes = (text: string) => {
     if (Intl.Segmenter) {

@@ -56,4 +56,8 @@
 	.channel {
 		font-size: 1rem;
 	}
+	.channel:hover {
+		color: var(--bg);
+		background: var(--fg);
+	}
 </style>
