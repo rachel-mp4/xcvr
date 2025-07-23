@@ -108,7 +108,7 @@
   {/if}
 </main>
 
-{#if data?.myProfile?.handle && data?.profile?.handle && data.myProfile.handle === data.profile.handle}
+{#if data?.myProfile?.handle && data?.profile?.handle && data.myProfile.handle === data.profile.handle && data.myProfile.loggedIn}
   <aside>
     <p>
       you can change your profile here, press the i'm done button when you have

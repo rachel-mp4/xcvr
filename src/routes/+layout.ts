@@ -9,10 +9,11 @@ export const load: LayoutLoad = async ({ fetch }) => {
 	])
 	return {
 		channels: results[0].status === 'fulfilled' ? results[0].value : [],
-		myProfile: results[1].status === 'fulfilled' ? results[1].value : {
+		myProfile: results[1].status === 'fulfilled' ? { ...(results[1].value), loggedIn: true } : {
 			handle: "xcvr.org",
 			defaultNick: "wanderer",
 			color: 3702605,
+			loggedIn: false,
 		}
 	}
 }

@@ -67,7 +67,6 @@
                 </div>
             {/if}
         {/if}
-        {#if message.profileView}beep{/if}
     </div>
     <div class="body">{message.body}</div>
 </div>
