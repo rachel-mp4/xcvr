@@ -131,4 +131,8 @@
         position: absolute;
         z-index: 1;
     }
+    .handle-container {
+        display: inline-block;
+        color: var(--fg);
+    }
 </style>
