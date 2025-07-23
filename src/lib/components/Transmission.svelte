@@ -16,7 +16,7 @@
     async function updatePosition() {
         if (triggerEl && profileEl) {
             const { x, y } = await computePosition(triggerEl, profileEl, {
-                middleware: [offset(10), flip(), shift()],
+                middleware: [offset(0), flip(), shift()],
             });
             Object.assign(profileEl.style, {
                 left: `${x}px`,

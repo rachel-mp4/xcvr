@@ -21,5 +21,10 @@
 <style>
   .profile {
     background: var(--bg);
+    width: 16rem;
+  }
+  h3 {
+    margin: 0;
+    font-size: 1.5rem;
   }
 </style>
