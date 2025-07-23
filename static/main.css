@@ -62,7 +62,7 @@ a {
 a:hover {
   font-weight: 700;
 }
-#content>* {
+#content.desktop>* {
 	max-height: 100vh;
 	overflow-y: scroll;
 	align-self: start;
