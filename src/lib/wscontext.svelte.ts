@@ -308,8 +308,8 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
                 handle: lex.author.handle,
                 ...(lex.author.displayName && { displayName: lex.author.displayName }),
                 ...(lex.author.status && { status: lex.author.status }),
-                ...(lex.author.color && { status: lex.author.color }),
-                ...(lex.author.avatar && { status: lex.author.avatar }),
+                ...(lex.author.color && { color: lex.author.color }),
+                ...(lex.author.avatar && { avatar: lex.author.avatar }),
             }
             const body = lex.body
             const nick = lex.nick
