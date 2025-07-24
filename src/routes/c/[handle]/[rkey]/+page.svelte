@@ -25,7 +25,7 @@
   {/if}
 
   <Receiever messages={ctx.messages} />
-  <Transmitter {ctx} />
+  <Transmitter {ctx} defaultNick={data.myProfile.defaultNick} />
 </main>
 <aside id="transceiver-log"></aside>
 
