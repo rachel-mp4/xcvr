@@ -55,6 +55,7 @@
 
 <style>
     input {
+        font-size: 1rem;
         color: var(--theme);
         background-color: transparent;
         border: none;

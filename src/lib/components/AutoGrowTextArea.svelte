@@ -53,13 +53,13 @@
 
 <style>
     textarea {
-        color: var(--theme);
         width: 100%;
         font: inherit;
         padding: 0;
         margin: 0;
         display: block;
         resize: none;
-        border:none;
+        border: none;
     }
 </style>
+
