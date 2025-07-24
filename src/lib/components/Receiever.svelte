@@ -5,11 +5,26 @@
     messages: Array<Message>;
   }
   let { messages }: Props = $props();
+  function calculateMarginTop(
+    currentTime: number | null,
+    previousTime: number | null,
+  ) {
+    if (!previousTime || !currentTime) return 0;
+    const elapsedMs = currentTime - previousTime;
+    const elapsedMinutes = elapsedMs / (1000 * 60);
+    return Math.log(elapsedMinutes + 1) * 10;
+  }
 </script>
 
 <div id="receiver">
-  {#each messages as message}
-    <Transmission {message} />
+  {#each messages as message, i}
+    <Transmission
+      {message}
+      margin={calculateMarginTop(
+        message.startedAt,
+        i > 0 ? messages[i - 1].startedAt : null,
+      )}
+    />
   {/each}
 </div>
 

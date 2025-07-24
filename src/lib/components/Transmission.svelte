@@ -5,8 +5,9 @@
     import ProfileCard from "./ProfileCard.svelte";
     interface Props {
         message: Message;
+        margin: number;
     }
-    let { message }: Props = $props();
+    let { message, margin }: Props = $props();
     let color: string = numToHex(message.color ?? 16777215);
     let contrast: string = hexToContrast(color);
     let partial: string = hexToTransparent(contrast);
@@ -35,6 +36,7 @@
     style:--theme={color}
     style:--tcontrast={contrast}
     style:--tpartial={partial}
+    style:--margin={margin + "px"}
     class="{message.active ? 'active' : ''} 
     {message.profileView ? 'signed' : ''} 
     transmission"
@@ -116,6 +118,7 @@
 
     .transmission {
         padding-bottom: 1rem;
+        margin-top: var(--margin);
     }
 
     .transmission:not(.active) .header {
