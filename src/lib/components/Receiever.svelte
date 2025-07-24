@@ -12,7 +12,7 @@
     if (!previousTime || !currentTime) return 0;
     const elapsedMs = currentTime - previousTime;
     const elapsedMinutes = elapsedMs / (1000 * 60);
-    return Math.log(elapsedMinutes + 1) * 10;
+    return Math.log(elapsedMinutes + 1) * 77;
   }
 </script>
 
