@@ -6,13 +6,13 @@
     import { getPrevCharBoundary, getNextCharBoundary } from "$lib/utils";
     interface Props {
         ctx: WSContext;
+        defaultNick?: string;
     }
-    let { ctx }: Props = $props();
-    let nick = $state("wanderer");
-    ctx.nick = "wanderer";
+    let { ctx, defaultNick }: Props = $props();
+    let nick = $state(defaultNick ?? "wanderer");
     $effect(() => {
         if (ctx) {
-            ctx.nick = nick;
+            ctx.setNick(nick);
         }
     });
     let message = $state("");

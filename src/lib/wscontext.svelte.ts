@@ -90,6 +90,10 @@ export class WSContext {
         this.curMsg = deleteFromAStringBetweenIdxs(this.curMsg, idx, idx2)
     }
 
+    setNick = (nick: string) => {
+        setNick(nick, this)
+    }
+
     setTopic = (topic: string) => {
         console.log("new topic:", topic)
         this.topic = topic
