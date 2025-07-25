@@ -20,7 +20,7 @@
       const query = `?channelURI=${data.uri}&cursor=${nextCursor}`;
       const res = await fetch(`${base}${endpoint}${query}`);
       const newData = await res.json();
-      messages = [...newData.messages, ...messages];
+      messages = [...messages, ...newData.messages];
       nextCursor = newData.cursor;
     } catch (e) {
       console.error("failed to load more!", e);
