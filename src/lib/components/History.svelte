@@ -9,7 +9,7 @@
 </script>
 
 <div id="receiver">
-  {#each messages as message, i}
+  {#each [...messages].reverse() as message, i}
     <Transmission
       message={signedMessageViewToMessage(message)}
       margin={calculateMarginTop(
