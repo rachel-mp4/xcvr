@@ -36,5 +36,7 @@
   {/if}
   {#if messages}
     <History {messages} />
+  {:else}
+    <h1>NO HISTORY</h1>
   {/if}
 </main>
