@@ -27,7 +27,7 @@
         const el = event.target as HTMLInputElement;
         switch (event.inputType) {
             case "insertLineBreak": {
-                if (ctx.myID === undefined) {
+                if (ctx.mySignet === undefined) {
                     event.preventDefault();
                     return;
                 }
