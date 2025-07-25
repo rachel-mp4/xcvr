@@ -36,7 +36,7 @@
     style:--theme={color}
     style:--tcontrast={contrast}
     style:--tpartial={partial}
-    style:--margin={margin + "px"}
+    style:--margin={margin + "rem"}
     class="{message.active ? 'active' : ''} 
     {message.profileView ? 'signed' : ''} 
     transmission"

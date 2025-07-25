@@ -6,6 +6,7 @@ export type Channel = {
 }
 
 export type ChannelView = {
+    $type?: string
     uri: string
     host: string
     creator: ProfileView
@@ -16,6 +17,7 @@ export type ChannelView = {
 }
 
 export type ProfileView = {
+    $type?: string
     did: string
     handle: string
     displayName?: string
@@ -46,6 +48,7 @@ export type LogItem = {
 }
 
 export type SignetView = {
+    $type: string
     uri: string
     issuerHandle: string
     channelURI: string
@@ -55,11 +58,23 @@ export type SignetView = {
 }
 
 export type MessageView = {
+    $type?: string
     uri: string
     author: ProfileView
     body: string
     nick?: string
     color?: number
     signetURI: string
+    postedAt: string
+}
+
+export type SignedMessageView = {
+    $type?: string
+    uri: string
+    author: ProfileView
+    body: string
+    nick?: string
+    color?: number
+    signet: SignetView
     postedAt: string
 }

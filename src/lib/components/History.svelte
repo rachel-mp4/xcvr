@@ -1,9 +1,9 @@
 <script lang="ts">
   import Transmission from "$lib/components/Transmission.svelte";
-  import type { Message } from "$lib/types";
-  import { calculateMarginTop } from "$lib/utils";
+  import type { SignedMessageView } from "$lib/types";
+  import { calculateMarginTop, signedMessageViewToMessage } from "$lib/utils";
   interface Props {
-    messages: Array<Message>;
+    messages: Array<SignedMessageView>;
   }
   let { messages }: Props = $props();
 </script>
@@ -11,10 +11,10 @@
 <div id="receiver">
   {#each messages as message, i}
     <Transmission
-      {message}
+      message={signedMessageViewToMessage(message)}
       margin={calculateMarginTop(
-        message.startedAt,
-        i > 0 ? messages[i - 1].startedAt : null,
+        Date.parse(message.postedAt),
+        i > 0 ? Date.parse(messages[i - 1].postedAt) : null,
       )}
     />
   {/each}

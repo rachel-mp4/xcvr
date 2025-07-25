@@ -1,4 +1,5 @@
 import type { ChannelView } from "$lib/types.ts"
+import type { SignedMessageView, Message } from "$lib/types.ts"
 export function getChannelWS(c: ChannelView): string | null {
   const host = c.host
   const uri = c.uri
@@ -46,4 +47,31 @@ export function getPrevCharBoundary(text: string, position: number) {
   if (position <= 0) return 0;
   const segments = Array.from(segmenter.segment(text.slice(0, position)));
   return segments.length > 0 ? position - segments[segments.length - 1].segment.length : 0;
+}
+
+export function calculateMarginTop(
+  currentTime: number | null,
+  previousTime: number | null,
+) {
+  if (!previousTime || !currentTime) return 0;
+  const elapsedMs = currentTime - previousTime;
+  const elapsedMinutes = elapsedMs / (1000 * 60);
+  return Math.log(elapsedMinutes + 1);
+}
+
+export function signedMessageViewToMessage(sm: SignedMessageView): Message {
+  return {
+    uri: sm.uri,
+    body: sm.body,
+    id: sm.signet.lrcId,
+    active: false,
+    mine: false,
+    muted: false,
+    ...(sm.color && { color: sm.color }),
+    handle: sm.author.handle,
+    profileView: sm.author,
+    signetView: sm.signet,
+    ...(sm.nick && { nick: sm.nick }),
+    startedAt: Date.parse(sm.postedAt)
+  }
 }
