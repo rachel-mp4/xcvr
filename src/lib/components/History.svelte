@@ -10,13 +10,7 @@
 
 <div id="receiver">
   {#each [...messages].reverse() as message, i}
-    <Transmission
-      message={signedMessageViewToMessage(message)}
-      margin={calculateMarginTop(
-        Date.parse(message.postedAt),
-        i > 0 ? Date.parse(messages[i - 1].postedAt) : null,
-      )}
-    />
+    <Transmission message={signedMessageViewToMessage(message)} margin={0} />
   {/each}
 </div>
 

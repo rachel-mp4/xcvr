@@ -10,13 +10,7 @@
 
 <div id="receiver">
   {#each messages as message, i}
-    <Transmission
-      {message}
-      margin={calculateMarginTop(
-        message.startedAt,
-        i > 0 ? messages[i - 1].startedAt : null,
-      )}
-    />
+    <Transmission {message} margin={0} />
   {/each}
 </div>
 
