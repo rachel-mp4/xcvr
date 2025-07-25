@@ -220,12 +220,14 @@
         </div>
       {/if}
     </form>
+
     <form
       action="{import.meta.env.VITE_API_URL}/xcvr/beep"
       method="POST"
       onsubmit={handleBeep}
       style:margin-top="4rem"
     >
+      <label for="submit"> (i just post beep on your twitter) </label>
       <input type="submit" value="push_to_beep_" />
       {#if beep !== ""}
         {beep}
