@@ -22,6 +22,10 @@ export class WSContext {
     handle: string = ""
 
     constructor(channelUri: string, defaultNick: string, defaultColor: number, defaultHandle: string) {
+        console.log(channelUri)
+        console.log(defaultNick)
+        console.log(defaultColor)
+        console.log(defaultHandle)
         this.channelUri = channelUri
         this.nick = defaultNick
         this.color = defaultColor
