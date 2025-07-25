@@ -54,7 +54,7 @@
       <span> loading... </span>
     {/if}
   {/if}
-  {#if messages}
+  {#if messages && messages.length !== 0}
     <History {messages} />
   {:else}
     <h1>NO HISTORY</h1>
