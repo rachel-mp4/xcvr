@@ -295,6 +295,7 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
             const authorHandle = lex.authorHandle
             const startedAt = Date.parse(lex.startedAt)
             ctx.addSignet({
+                $type: "org.xcvr.lrc.defs#signetView",
                 uri: uri,
                 issuerHandle: issuerHandle,
                 channelURI: channelURI,

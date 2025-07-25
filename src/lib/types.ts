@@ -48,7 +48,7 @@ export type LogItem = {
 }
 
 export type SignetView = {
-    $type: string
+    $type?: string
     uri: string
     issuerHandle: string
     channelURI: string
