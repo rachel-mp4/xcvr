@@ -3,18 +3,8 @@
   import History from "$lib/components/History.svelte";
   let { data }: PageProps = $props();
   let messages = $state(data.messages);
-  $effect(() => {
-    if (data.messages) {
-      messages = data.messages;
-    }
-  });
   let nextCursor = $state(data.cursor);
-  $effect(() => {
-    if (data.cursor) {
-      nextCursor = data.cursor;
-    }
-  });
-  let hasMore = $derived(nextCursor);
+  let hasMore = $derived(!!nextCursor);
   let loading = $state(false);
   const base = import.meta.env.VITE_API_URL;
   const endpoint = "/xrpc/org.xcvr.lrc.getMessages";
