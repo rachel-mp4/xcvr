@@ -206,6 +206,7 @@
       </div>
       <div>
         <input
+          style:margin-top="1rem"
           type="submit"
           value="i'm done"
           disabled={!nickValid || !displayNameValid || !statusValid}
@@ -223,6 +224,7 @@
       action="{import.meta.env.VITE_API_URL}/xcvr/beep"
       method="POST"
       onsubmit={handleBeep}
+      style:margin-top="4rem"
     >
       <input type="submit" value="push_to_beep_" />
       {#if beep !== ""}
