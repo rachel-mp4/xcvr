@@ -20,8 +20,12 @@
 </script>
 
 <main id="transceiver">
+  <a href="history"> view history </a>
   {#if ctx.topic}
     <div>{ctx.topic}</div>
+  {:else}
+    loading (if you have enough time to read this, then likely something went
+    wrong)
   {/if}
 
   <Receiever messages={ctx.messages} />
