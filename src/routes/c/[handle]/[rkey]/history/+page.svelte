@@ -11,7 +11,7 @@
   let nextCursor = $state(data.cursor);
   $effect(() => {
     if (data.cursor) {
-      messages = data.cursor;
+      nextCursor = data.cursor;
     }
   });
   let hasMore = $derived(nextCursor);
