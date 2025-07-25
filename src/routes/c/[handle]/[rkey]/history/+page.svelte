@@ -6,6 +6,10 @@
   let nextCursor = $state(data.cursor);
   let hasMore = $state(!!data.cursor);
   let loading = $state(false);
+  const base = import.meta.env.VITE_API_URL;
+  const endpoint = "/xrpc/org.xcvr.lrc.getMessages";
+  const query = `?channelURI=${data.uri}&cursor=${nextCursor}`;
+  console.log(`${base}${endpoint}${query}`);
   const loadMore = async () => {
     if (loading || !hasMore || !nextCursor) return;
     loading = true;
