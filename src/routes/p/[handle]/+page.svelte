@@ -64,7 +64,7 @@
       if (browser) {
         document.documentElement.style.removeProperty("--bg");
         document.documentElement.style.removeProperty("--fg");
-        document.documentElement.style.removeProperty("--ml");
+        document.documentElement.style.removeProperty("--fl");
         document.documentElement.style.removeProperty("--bl");
       }
     };
