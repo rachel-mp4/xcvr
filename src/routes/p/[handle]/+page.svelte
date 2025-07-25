@@ -104,9 +104,25 @@
       currentlySubmitting = false;
     }
   };
-  let beep = $state(0);
-  const handleBeep = (e: Event) => {
-    beep = beep + 1;
+  let beep = $state("");
+  let beeping = $state(false);
+  const handleBeep = async (e: Event) => {
+    e.preventDefault();
+    if (beeping) {
+      return;
+    }
+    const endpoint = `${import.meta.env.VITE_API_URL}/xcvr/beep`;
+    try {
+      beeping = true;
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw Error;
+      }
+      beep += "beep_";
+    } catch {
+    } finally {
+      beeping = false;
+    }
   };
 </script>
 
@@ -196,7 +212,7 @@
         />
       </div>
       {#if currentlySubmitting}
-        <div>loading...</div>
+        <div>submitting...</div>
       {:else if submitState !== "pre"}
         <div>
           {submitState}
@@ -209,7 +225,9 @@
       onsubmit={handleBeep}
     >
       <input type="submit" value="push_to_beep_" />
-      {"beep_".repeat(beep)}
+      {#if beep !== ""}
+        {beep}
+      {/if}
     </form>
   </aside>
 {/if}
