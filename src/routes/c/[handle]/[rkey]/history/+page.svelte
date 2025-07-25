@@ -67,10 +67,15 @@
     font-size: 4rem;
   }
   button {
-    font-size: 1rem;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
     padding: 0;
     margin: 0;
     background: var(--fg);
     color: var(--bg);
+  }
+  button:hover {
+    font-weight: 700;
   }
 </style>
