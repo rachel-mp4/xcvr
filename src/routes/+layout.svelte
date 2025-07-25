@@ -145,6 +145,7 @@
 		position: sticky;
 		top: 0;
 		background: var(--bg);
+		z-index: 1;
 	}
 	.tab-container {
 		display: flex;
