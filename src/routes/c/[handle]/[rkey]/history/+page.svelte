@@ -10,6 +10,7 @@
   const endpoint = "/xrpc/org.xcvr.lrc.getMessages";
   let query = $derived(`?channelURI=${data.uri}&cursor=${nextCursor}`);
   $effect(() => console.log(`${base}${endpoint}${query}`));
+  $effect(() => console.log(messages));
   const loadMore = async () => {
     if (loading || !hasMore || !nextCursor) return;
     loading = true;
