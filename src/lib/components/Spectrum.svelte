@@ -21,7 +21,7 @@
 				class="channel"
 				href={getChannelUrl(channel) ?? "/"}
 				onclick={() => {
-					tabContext.gotoB;
+					tabContext.gotoB();
 				}}
 			>
 				<span class="title">{channel.title}</span>
