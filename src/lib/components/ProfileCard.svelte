@@ -22,6 +22,7 @@
   .profile {
     background: var(--bg);
     width: 16rem;
+    color: var(--fg);
   }
   h3 {
     margin: 0;
