@@ -20,14 +20,18 @@
 </script>
 
 <main id="transceiver">
-  <a href="history"> view history </a>
+  <div>
+    <a href="history"> view history </a>
+  </div>
   {#if ctx.topic}
     <div>{ctx.topic}</div>
-  {:else}
-    loading (if you have enough time to read this, then likely something went
-    wrong)
   {/if}
-
+  {#if !ctx.connected}
+    <div>
+      loading... probably something went wrong if you can read me, maybe
+      refresh?
+    </div>
+  {/if}
   <Receiever messages={ctx.messages} />
   <Transmitter {ctx} defaultNick={data.myProfile.defaultNick} />
 </main>

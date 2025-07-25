@@ -59,4 +59,5 @@
   {:else}
     <h1>NO HISTORY</h1>
   {/if}
+  <a href=".">go back</a>
 </main>
