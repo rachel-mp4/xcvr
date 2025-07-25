@@ -139,6 +139,9 @@ export class WSContext {
     }
 
     addSignet = (signet: SignetView) => {
+        if (signet.lrcId === this.myID) {
+            this.mySignet = signet
+        }
         console.log("now we are signing")
         const arrayIdx = this.messages.findIndex(msg => msg.id === signet.lrcId)
         if (arrayIdx !== -1) {
