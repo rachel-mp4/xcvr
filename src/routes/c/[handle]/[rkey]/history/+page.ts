@@ -1,32 +1,31 @@
 import type { PageLoad } from './$types'
+import { error } from '@sveltejs/kit'
 
 export const load: PageLoad = async ({ params, fetch }) => {
   const base = import.meta.env.VITE_API_URL
-  const endpoint1 = "/xrpc/org.xcvr.actor.resolveChannel"
-  const query1 = `?handle=${params.handle}&rkey=${params.rkey}`
-  const url1 = `${base}${endpoint1}${query1}`
-  const res1 = await fetch(url1)
-  if (!res1.ok) {
-    return
+
+  if (!base || !params.handle || !params.rkey) {
+    throw error(400, 'Missing required parameters')
   }
 
-  const response1 = await res1.json()
-  const uri = response1.uri
-  const endpoint = "/xrpc/org.xcvr.lrc.getMessages"
-  const query = `?channelURI=${uri}`
-  const url = `${base}${endpoint}${query}`
-  const res = await fetch(url)
+  try {
+    // Resolve channel
+    const channelRes = await fetch(`${base}/xrpc/org.xcvr.actor.resolveChannel?handle=${params.handle}&rkey=${params.rkey}`)
+    if (!channelRes.ok) throw error(channelRes.status, 'Channel not found')
 
-  if (!res.ok) {
-    return
-  }
+    const { uri } = await channelRes.json()
+    if (!uri) throw error(500, 'Invalid channel response')
 
-  const response = await res.json()
-  const messages = response.messages
-  const cursor = response.cursor
-  return {
-    messages,
-    cursor,
-    uri,
+    // Get messages
+    const messagesRes = await fetch(`${base}/xrpc/org.xcvr.lrc.getMessages?channelURI=${uri}`)
+    if (!messagesRes.ok) throw error(messagesRes.status, 'Failed to load messages')
+
+    const { messages = [], cursor } = await messagesRes.json()
+
+    return { messages, cursor, uri }
+
+  } catch (err) {
+    throw error(500, 'Unexpected error')
   }
 }
+
