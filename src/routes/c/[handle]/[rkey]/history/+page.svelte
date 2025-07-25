@@ -61,3 +61,16 @@
   {/if}
   <a href=".">go back</a>
 </main>
+
+<style>
+  h1 {
+    font-size: 4rem;
+  }
+  button {
+    font-size: 1rem;
+    padding: 0;
+    margin: 0;
+    background: var(--fg);
+    color: var(--bg);
+  }
+</style>
