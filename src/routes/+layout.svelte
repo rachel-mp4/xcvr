@@ -47,52 +47,54 @@
 
 <div id="content" class={curClass}>
 	<aside id="left-sidebar">
-		<nav>
+		<div id="canton">
+			<nav>
+				<a
+					class="block-link"
+					href="/"
+					onclick={() => {
+						tabContext.gotoB();
+					}}
+				>
+					{#if $page.url.pathname === "/"}
+						& now you're home
+					{:else}
+						go home
+					{/if}
+				</a>
+				{#if data.myProfile.handle !== "xcvr.org"}
+					<a
+						class="block-link"
+						href="/p/{data.myProfile.handle}"
+						onclick={() => {
+							tabContext.gotoB();
+						}}
+					>
+						i know who you are
+					</a>
+				{:else}
+					<a
+						class="block-link"
+						href="/login"
+						onclick={() => {
+							tabContext.gotoB();
+						}}
+					>
+						log in with atproto
+					</a>
+				{/if}
+			</nav>
 			<a
 				class="block-link"
-				href="/"
+				href="/c/create"
 				onclick={() => {
 					tabContext.gotoB();
 				}}
 			>
-				{#if $page.url.pathname === "/"}
-					& now you're home
-				{:else}
-					go home
-				{/if}
-			</a>
-			{#if data.myProfile.handle !== "xcvr.org"}
-				<a
-					class="block-link"
-					href="/p/{data.myProfile.handle}"
-					onclick={() => {
-						tabContext.gotoB();
-					}}
-				>
-					i know who you are
-				</a>
-			{:else}
-				<a
-					class="block-link"
-					href="/login"
-					onclick={() => {
-						tabContext.gotoB();
-					}}
-				>
-					log in with atproto
-				</a>
-			{/if}
-		</nav>
+				create a channel</a
+			>
+		</div>
 
-		<a
-			class="block-link"
-			href="/c/create"
-			onclick={() => {
-				tabContext.gotoB();
-			}}
-		>
-			create a channel</a
-		>
 		<div class="beep">here's what's been happening recently</div>
 		<Spectrum channels={data.channels}></Spectrum>
 	</aside>
@@ -136,6 +138,10 @@
 
 <style>
 	#left-sidebar {
+		position: sticky;
+		top: 0;
+	}
+	#canton {
 		position: sticky;
 		top: 0;
 	}
