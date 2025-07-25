@@ -1,4 +1,5 @@
 import type { PageLoad } from './$types'
+export const trailingSlash = 'always'
 
 export const load: PageLoad = async ({ params, fetch }) => {
   const base = import.meta.env.VITE_API_URL
