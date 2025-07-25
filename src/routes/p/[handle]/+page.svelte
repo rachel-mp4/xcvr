@@ -114,7 +114,7 @@
     const endpoint = `${import.meta.env.VITE_API_URL}/xcvr/beep`;
     try {
       beeping = true;
-      const response = await fetch(endpoint);
+      const response = await fetch(endpoint, { method: "POST" });
       if (!response.ok) {
         throw Error;
       }
