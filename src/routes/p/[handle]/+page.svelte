@@ -69,25 +69,44 @@
       }
     };
   });
+  let currentlySubmitting = $state(false);
+  let submitState = $state("pre");
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/xcvr/profile`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    if (currentlySubmitting) {
+      return;
+    }
+    try {
+      currentlySubmitting = true;
+      submitState = "pre";
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/xcvr/profile`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            displayName: editedProfile.displayName,
+            defaultNick: editedProfile.defaultNick,
+            status: editedProfile.status,
+            color: colorasint,
+          }),
         },
-        body: JSON.stringify({
-          displayName: editedProfile.displayName,
-          defaultNick: editedProfile.defaultNick,
-          status: editedProfile.status,
-          color: colorasint,
-        }),
-      },
-    );
-    const result = await response.json();
-    console.log(result);
+      );
+      if (!response.ok) {
+        throw Error;
+      }
+      submitState = "success";
+    } catch {
+      submitState = "fail";
+    } finally {
+      currentlySubmitting = false;
+    }
+  };
+  let beep = $state(0);
+  const handleBeep = (e: Event) => {
+    beep = beep + 1;
   };
 </script>
 
@@ -176,9 +195,21 @@
           disabled={!nickValid || !displayNameValid || !statusValid}
         />
       </div>
+      {#if currentlySubmitting}
+        <div>loading...</div>
+      {:else if submitState !== "pre"}
+        <div>
+          {submitState}
+        </div>
+      {/if}
     </form>
-    <form action="{import.meta.env.VITE_API_URL}/xcvr/beep" method="POST">
+    <form
+      action="{import.meta.env.VITE_API_URL}/xcvr/beep"
+      method="POST"
+      onsubmit={handleBeep}
+    >
       <input type="submit" value="push_to_beep_" />
+      {"beep_".repeat(beep)}
     </form>
   </aside>
 {/if}

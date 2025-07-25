@@ -97,6 +97,12 @@ export class WSContext {
     setNick = (nick: string) => {
         setNick(nick, this)
     }
+    setColor = (color: number) => {
+        setColor(color, this)
+    }
+    setHandle = (handle: string) => {
+        setHandle(handle, this)
+    }
 
     setTopic = (topic: string) => {
         console.log("new topic:", topic)
