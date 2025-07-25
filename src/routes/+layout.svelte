@@ -144,6 +144,7 @@
 	#canton {
 		position: sticky;
 		top: 0;
+		background: var(--bg);
 	}
 	.tab-container {
 		display: flex;
