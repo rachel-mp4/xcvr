@@ -523,20 +523,20 @@
 	p:not(:first-of-type) {
 		margin-top: 1rem;
 	}
-	main.fp-blurb::after {
-		content: "xcvr";
-		font-size: 25rem;
-		position: fixed;
-		bottom: 0;
-		right: 0;
-		transform: rotate(349deg);
-		transform-origin: bottom left;
-		-webkit-text-stroke-color: var(--fg);
-		-webkit-text-stroke-width: 0.25rem;
-		color: transparent;
-		z-index: -1;
-	}
-	.backgrounded {
-		background: var(--bg);
-	}
+	/* main.fp-blurb::after { */
+	/* 	content: "xcvr"; */
+	/* 	font-size: 25rem; */
+	/* 	position: fixed; */
+	/* 	bottom: 0; */
+	/* 	right: 0; */
+	/* 	transform: rotate(349deg); */
+	/* 	transform-origin: bottom left; */
+	/* 	-webkit-text-stroke-color: var(--fg); */
+	/* 	-webkit-text-stroke-width: 0.25rem; */
+	/* 	color: transparent; */
+	/* 	z-index: -1; */
+	/* } */
+	/* .backgrounded { */
+	/* 	background: var(--bg); */
+	/* } */
 </style>
