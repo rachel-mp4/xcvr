@@ -1,7 +1,7 @@
 <script lang="ts">
     import AutoGrowInput from "$lib/components/AutoGrowInput.svelte";
     import { WSContext } from "$lib/wscontext.svelte";
-    import { ansiToHex } from "$lib/colors";
+    import { numToHex } from "$lib/colors";
     import AutoGrowTextArea from "$lib/components/AutoGrowTextArea.svelte";
     import { getPrevCharBoundary, getNextCharBoundary } from "$lib/utils";
     interface Props {
@@ -32,7 +32,7 @@
         }
     });
 
-    let color = $derived(ansiToHex(ctx.color));
+    let color = $derived(numToHex(ctx.color));
 
     const bi = (event: InputEvent) => {
         const el = event.target as HTMLInputElement;
