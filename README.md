@@ -23,3 +23,5 @@ cleaner if others are interested in contributing.
 
 as for licenses, i think this is probably under mit, but i don't know all too
 much about that crap.
+
+beep test
