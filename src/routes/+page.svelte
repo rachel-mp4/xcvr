@@ -151,6 +151,10 @@
 		<span class="mobile">(press aaaaa)</span> and start chatting, make your own,
 		or login with atproto if you'd like (it's optional, but recommended)
 	</p>
+	<p>
+		at this point in history (saturday july 26) probably most things work like
+		70% but expect it to be a bit unpredictable!
+	</p>
 	<p style="border-bottom: .25rem solid var(--fg)">
 		don't be weird, don't be mean, you're on our computer screens<span
 			class="footnote">5</span
