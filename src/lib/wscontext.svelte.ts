@@ -181,7 +181,7 @@ export class WSContext {
     verifyMessage = (message: MessageView) => {
         console.log("now we are verifying!")
         console.log(message.signetURI)
-        const arrayIdx = this.messages.findIndex(msg => msg.signetView?.uri === message.signetURI)
+        const arrayIdx = this.messages.findIndex(msg => msg.signetView?.uri === message.signetURI && msg.signetView?.authorHandle === message.author.handle)
         if (arrayIdx !== -1) {
             console.log("found appropriate message c:")
             this.messages = this.messages.map((msg: Message) => {
