@@ -7,8 +7,9 @@
     interface Props {
         ctx: WSContext;
         defaultNick?: string;
+        defaultHandle?: string;
     }
-    let { ctx, defaultNick }: Props = $props();
+    let { ctx, defaultNick, defaultHandle }: Props = $props();
     let nick = $state(defaultNick ?? "wanderer");
     $effect(() => {
         if (ctx) {
@@ -20,6 +21,16 @@
         const el = event.target as HTMLInputElement;
         ctx.nick = el.value;
     };
+    let handle = $state(defaultHandle ?? "xcvr.org");
+    const setHandle = (event: Event) => {
+        const el = event.target as HTMLInputElement;
+        ctx.handle = el.value;
+    };
+    $effect(() => {
+        if (ctx) {
+            ctx.setHandle(handle);
+        }
+    });
 
     let color = $derived(ansiToHex(ctx.color));
 
@@ -128,7 +139,15 @@
 
 <div id="transmitter">
     <div class="wrapper" style:--theme={color}>
-        <input type="range" min="0" max="255" bind:value={ctx.color} />
+        <input
+            type="range"
+            min="0"
+            max="16777215"
+            bind:value={ctx.color}
+            onchange={() => {
+                ctx.setColor(ctx.color);
+            }}
+        />
         <AutoGrowInput
             bind:value={nick}
             {color}
@@ -136,6 +155,14 @@
             onInput={setName}
             maxlength={12}
             bold={true}
+        />
+        @
+        <AutoGrowInput
+            bind:value={handle}
+            placeholder="alice.com"
+            onInput={setHandle}
+            maxlength={253}
+            bold={false}
         />
     </div>
     <AutoGrowTextArea
