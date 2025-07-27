@@ -36,18 +36,32 @@ export class WSContext {
         this.ws?.close()
         this.ls?.close()
         connectTo(url, this)
-
+        this.ls?.close()
     }
 
     reconnect = (url: string) => {
         this.ws?.close()
         this.ls?.close()
         connectTo(url, this)
+        this.messages = []
+        this.orphanedMessages = new Map()
+        this.orphanedSignets = new Map()
+        this.mySignet = undefined
+        this.myID = undefined
+        this.myNonce = undefined
     }
 
     disconnect = () => {
         this.ws?.close()
+        this.ws = null
         this.ls?.close()
+        this.ls = null
+        this.messages = []
+        this.orphanedMessages = new Map()
+        this.orphanedSignets = new Map()
+        this.mySignet = undefined
+        this.myID = undefined
+        this.myNonce = undefined
     }
 
     insertLineBreak = () => {
