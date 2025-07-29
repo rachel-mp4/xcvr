@@ -62,6 +62,14 @@ a {
 a:hover {
   font-weight: 700;
 }
+
+input[type="submit"] {
+  cursor: pointer
+}
+input[type="submit"]:hover {
+  font-weight:700
+}
+
 #content.desktop>* {
 	max-height: 100vh;
 	overflow-y: scroll;
