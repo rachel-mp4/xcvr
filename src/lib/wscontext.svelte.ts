@@ -36,7 +36,6 @@ export class WSContext {
         this.ws?.close()
         this.ls?.close()
         connectTo(url, this)
-        this.ls?.close()
     }
 
     reconnect = (url: string) => {
