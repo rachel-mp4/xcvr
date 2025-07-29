@@ -7,3 +7,12 @@
     <input type="submit" value="log out" />
   </form>
 </main>
+
+<style>
+  input {
+    padding: 0;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: 2rem;
+  }
+</style>

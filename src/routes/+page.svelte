@@ -153,7 +153,10 @@
 	</p>
 	<p>
 		at this point in history (saturday july 26) probably most things work like
-		70% but expect it to be a bit unpredictable!
+		70% but expect it to be a bit unpredictable! this is certainly out of date
+		and counterproductive but this contains a list of things i'm going <a
+			href="/todo">todo.</a
+		>
 	</p>
 	<p style="border-bottom: .25rem solid var(--fg)">
 		don't be weird, don't be mean, you're on our computer screens<span

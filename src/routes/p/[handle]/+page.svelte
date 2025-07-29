@@ -233,6 +233,13 @@
         {beep}
       {/if}
     </form>
+    <form
+      action="{import.meta.env.VITE_API_URL}/oauth/logout"
+      method="POST"
+      style:margin-top="2rem"
+    >
+      <input type="submit" value="log out" />
+    </form>
   </aside>
 {/if}
 
