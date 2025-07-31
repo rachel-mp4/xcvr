@@ -5,49 +5,42 @@
   import Receiever from "$lib/components/Receiever.svelte";
   import Transmitter from "$lib/components/Transmitter.svelte";
   let { data }: PageProps = $props();
-  let ctx = new WSContext(
-    data.uri,
-    data.myProfile.defaultNick,
-    data.myProfile.color,
-    data.myProfile.handle,
-  );
+  let ctx = $state<WSContext>();
+
   $effect(() => {
+    ctx?.disconnect();
+    ctx = new WSContext(
+      data.uri,
+      data.myProfile.defaultNick,
+      data.myProfile.color,
+      data.myProfile.handle,
+    );
     if (data.address) {
       ctx.connect(data.address);
-    } else {
-      ctx.disconnect();
     }
   });
-  onDestroy(() => ctx.disconnect());
+  onDestroy(() => ctx?.disconnect());
 </script>
 
 <main id="transceiver">
   <div>
     <a href="history"> view history </a>
   </div>
-  {#if ctx.topic}
-    <div>{ctx.topic}</div>
+  {#if ctx?.topic}
+    <div>{ctx?.topic}</div>
   {/if}
-  {#if !ctx.connected}
+  {#if !ctx?.connected}
     <div>
       loading... probably something went wrong if you can read me, maybe
       refresh?
     </div>
   {/if}
-  <Receiever messages={ctx.messages} />
-  <Transmitter
-    {ctx}
-    defaultNick={data.myProfile.defaultNick}
-    defaultHandle={data.myProfile.handle}
-  />
+  {#if ctx}
+    <Receiever messages={ctx.messages} />
+    <Transmitter
+      {ctx}
+      defaultNick={data.myProfile.defaultNick}
+      defaultHandle={data.myProfile.handle}
+    />
+  {/if}
 </main>
-<aside id="transceiver-log"></aside>
-
-<style>
-  #transceiver-log {
-    word-break: break-all;
-    text-wrap: wrap;
-    position: sticky;
-    bottom: 0;
-  }
-</style>
