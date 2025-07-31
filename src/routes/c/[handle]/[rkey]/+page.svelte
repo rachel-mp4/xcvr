@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
+  import { onDestroy } from "svelte";
   import { WSContext } from "$lib/wscontext.svelte";
   import Receiever from "$lib/components/Receiever.svelte";
   import Transmitter from "$lib/components/Transmitter.svelte";
@@ -17,6 +18,7 @@
       ctx.disconnect();
     }
   });
+  onDestroy(() => ctx.disconnect());
 </script>
 
 <main id="transceiver">
@@ -33,7 +35,11 @@
     </div>
   {/if}
   <Receiever messages={ctx.messages} />
-  <Transmitter {ctx} defaultNick={data.myProfile.defaultNick} />
+  <Transmitter
+    {ctx}
+    defaultNick={data.myProfile.defaultNick}
+    defaultHandle={data.myProfile.handle}
+  />
 </main>
 <aside id="transceiver-log"></aside>
 
