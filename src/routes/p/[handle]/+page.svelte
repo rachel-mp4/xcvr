@@ -140,6 +140,14 @@
       {editedProfile.status}
     </p>
   {/if}
+  {#if data.lastSeen}
+    last seen {#if data.lastSeen.where}
+      {data.lastSeen.where}
+    {/if}
+    {#if data.lastSeen.when}
+      {data.lastSeen.when}
+    {/if}
+  {/if}
 </main>
 
 {#if data?.myProfile?.handle && data?.profile?.handle && data.myProfile.handle === data.profile.handle && data.myProfile.loggedIn}
