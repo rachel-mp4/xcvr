@@ -153,10 +153,11 @@
 	</p>
 	<p>
 		at this point in history (saturday july 26) probably most things work like
-		70% but expect it to be a bit unpredictable! this is certainly out of date
-		and counterproductive but this contains a list of things i'm going <a
-			href="/todo">todo.</a
-		>
+		70% but expect it to be a bit unpredictable! if anything goes wrong just
+		<a href="/oauth/logout">logout</a> and <a href="/login">login</a> again.
+		this is certainly out of date and thus counterproductive but this contains a
+		list of things i'm going
+		<a href="/todo">todo.</a>
 	</p>
 	<p>
 		<a href="https://github.com/rachel-mp4/xcvr">here</a>
