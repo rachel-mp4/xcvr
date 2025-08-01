@@ -5,15 +5,19 @@
   import Receiever from "$lib/components/Receiever.svelte";
   import Transmitter from "$lib/components/Transmitter.svelte";
   let { data }: PageProps = $props();
-  let ctx = $derived(new WSContext(data.uri));
+  let ctx = $derived(
+    new WSContext(
+      data.uri,
+      data.myProfile.handle,
+      data.myProfile.defaultNick,
+      data.myProfile.color,
+    ),
+  );
 
   $effect(() => {
     ctx?.disconnect();
     if (data.address) {
       ctx.connect(data.address);
-      ctx.setNick(data.myProfile.defaultNick);
-      ctx.setHandle(data.myProfile.handle);
-      ctx.setColor(data.myProfile.color);
     }
   });
   onDestroy(() => ctx?.disconnect());
