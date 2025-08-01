@@ -158,6 +158,15 @@
 			href="/todo">todo.</a
 		>
 	</p>
+	<p>
+		<a href="https://github.com/rachel-mp4/xcvr">here</a>
+		<a href="https://github.com/rachel-mp4/rvcx">are</a>
+		<a href="https://github.com/rachel-mp4/lrcd">the</a>
+		<a href="https://github.com/rachel-mp4/lrcproto">relevant</a>
+		<a href="https://github.com/rachel-mp4/beeper">codes</a> for this website, don't
+		judge me too much for them please, i'll probably put them on tangled.sh soon
+		but i mostly wanted to get this out before i start experimenting with those things
+	</p>
 	<p style="border-bottom: .25rem solid var(--fg)">
 		don't be weird, don't be mean, you're on our computer screens<span
 			class="footnote">5</span

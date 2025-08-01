@@ -1,10 +1,11 @@
 <main>
   <p>
-    xcvr uses atproto oauth, so enter your atproto handle below, and then i'll
-    look up your personal data server, and direct you to your login page with
-    them. i won't even get a sniff of your password, instead they will instead
-    send me a temporary key instead which lets me add or subtract stuff from
-    your account respository.
+    xcvr uses atproto oauth, so enter your atproto handle below (if on bsky you
+    are Jay 🦋@jay.bsky.team, then you'd enter "jay.bsky.team" without the
+    quotes), and then i'll look up your personal data server, and direct you to
+    your login page with them. i won't even get a sniff of your password,
+    instead they will instead send me a temporary key instead which lets me add
+    or subtract stuff from your account respository.
   </p>
   <p class="big" style="margin-top:1rem">your handle goes there
      |   |                      |
@@ -14,7 +15,7 @@
       type="text"
       name="handle"
       id="handle"
-      placeholder="@alice.com"
+      placeholder="alice.com"
       required
     />
     &lt;—
