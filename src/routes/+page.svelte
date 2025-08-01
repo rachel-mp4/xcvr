@@ -509,6 +509,7 @@
 		margin-block: 0 1rem;
 	}
 	h1 .zizz {
+		cursor: pointer;
 		color: transparent;
 		text-shadow:
 			0rem 0rem var(--bg),
