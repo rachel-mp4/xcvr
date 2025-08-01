@@ -168,6 +168,9 @@
 		judge me too much for them please, i'll probably put them on tangled.sh soon
 		but i mostly wanted to get this out before i start experimenting with those things
 	</p>
+	<p>
+		<a href="https://discord.gg/uvAmBtpdKd">join the email list</a>
+	</p>
 	<p style="border-bottom: .25rem solid var(--fg)">
 		don't be weird, don't be mean, you're on our computer screens<span
 			class="footnote">5</span
