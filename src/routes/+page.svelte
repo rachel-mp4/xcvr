@@ -154,17 +154,9 @@
 	<p>
 		at this point in history (saturday july 26) probably most things work like
 		70% but expect it to be a bit unpredictable! if anything goes wrong just
-	</p>
-	<form
-		style:display="inline"
-		action="{import.meta.env.VITE_API_URL}/oauth/logout"
-		method="POST"
-	>
-		<input type="submit" value="log out" />
-	</form>
-	<p>
-		and<a href="/login">login</a> again. this is certainly out of date and thus
-		counterproductive but this contains a list of things i'm going
+		logout (you can do this from settings) and login again. this is certainly
+		out of date and thus counterproductive but this contains a list of things
+		i'm going
 		<a href="/todo">todo.</a>
 	</p>
 	<p>
