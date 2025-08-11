@@ -24,7 +24,9 @@
 
 <style>
   .logitem {
-    position: absolute;
+    font-size: 2rem;
+    position: fixed;
+    z-index: -1;
     pointer-events: none;
     line-height: 1;
     opacity: 0;
@@ -33,7 +35,7 @@
 
   @keyframes fadeout {
     from {
-      opacity: 0.9;
+      opacity: 0.7;
     }
     to {
       opacity: 0;
