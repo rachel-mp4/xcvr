@@ -222,8 +222,8 @@ export class WSContext {
         const time = Date.now()
         this.log.push({ id: id, binary: bstring, time: time, type: type })
     }
-    deleteFromLog = (logItem: LogItem) => {
-        this.log = this.log.slice(this.log.findIndex(li => li === logItem))
+    deleteFromLog = (time: number) => {
+        this.log = this.log.slice(this.log.findIndex(li => li.time > time))
     }
 }
 
