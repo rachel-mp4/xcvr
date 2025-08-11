@@ -25,7 +25,9 @@
 <style>
   .logitem {
     font-size: 2rem;
-    font-weight: 200;
+    font-weight: 900;
+    max-width: 39rem;
+    word-wrap: break-word;
     position: fixed;
     z-index: -1;
     pointer-events: none;
