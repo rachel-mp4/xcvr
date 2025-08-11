@@ -3,6 +3,7 @@
     import { WSContext } from "$lib/wscontext.svelte";
     import { numToHex } from "$lib/colors";
     import AutoGrowTextArea from "$lib/components/AutoGrowTextArea.svelte";
+    import diff from "fast-diff";
     import { getPrevCharBoundary, getNextCharBoundary } from "$lib/utils";
     interface Props {
         ctx: WSContext;
@@ -33,6 +34,27 @@
     });
 
     let color = $derived(numToHex(ctx.color));
+    const diffAndSend = (event: InputEvent) => {
+        const el = event.target as HTMLInputElement;
+        const result = diff(message, el.value);
+        var idx = 0;
+        result.forEach((d) => {
+            switch (d[0]) {
+                case -1:
+                    const idx2 = idx + d[1].length;
+                    ctx.delete(idx, idx2);
+                    break;
+                case 0:
+                    idx = idx + d[1].length;
+                    break;
+                case 1:
+                    ctx.insert(idx, d[1]);
+                    idx = idx + d[1].length;
+                    break;
+            }
+        });
+        message = el.value;
+    };
 
     const bi = (event: InputEvent) => {
         const el = event.target as HTMLInputElement;
@@ -45,93 +67,8 @@
                 ctx.insertLineBreak();
                 el.value = "";
                 event.preventDefault();
+                message = "";
                 return;
-            }
-
-            case "insertText": {
-                const { selectionStart } = el;
-                const { selectionEnd } = el;
-
-                if (
-                    selectionStart !== selectionEnd &&
-                    selectionEnd !== null &&
-                    selectionStart !== null
-                ) {
-                    ctx.delete(selectionStart, selectionEnd);
-                }
-                ctx.insert(selectionStart ?? 0, event.data ?? "");
-                return;
-            }
-
-            case "insertFromPaste": {
-                const { selectionStart } = el;
-                const { selectionEnd } = el;
-                if (
-                    selectionStart !== selectionEnd &&
-                    selectionEnd !== null &&
-                    selectionStart !== null
-                ) {
-                    ctx.delete(selectionStart, selectionEnd);
-                }
-                ctx.insert(selectionStart ?? 0, event.data ?? "");
-                return;
-            }
-
-            case "deleteContent": {
-                const { selectionStart } = el;
-                const { selectionEnd } = el;
-                if (
-                    selectionStart !== selectionEnd &&
-                    selectionStart !== null &&
-                    selectionEnd !== null
-                ) {
-                    ctx.delete(selectionStart, selectionEnd);
-                }
-            }
-
-            case "deleteContentBackward": {
-                const { selectionStart } = el;
-                const { selectionEnd } = el;
-                if (selectionStart !== null && selectionEnd !== null) {
-                    if (selectionStart !== selectionEnd) {
-                        ctx.delete(selectionStart, selectionEnd);
-                    } else if (selectionStart !== 0) {
-                        event.preventDefault();
-                        const realStart = getPrevCharBoundary(
-                            el.value,
-                            selectionStart,
-                        );
-                        ctx.delete(realStart, selectionEnd);
-                        el.value =
-                            el.value.slice(0, realStart) +
-                            el.value.slice(selectionEnd);
-                        el.setSelectionRange(realStart, realStart);
-                    }
-                }
-            }
-
-            case "deleteContentForward": {
-                const { selectionStart } = el;
-                const { selectionEnd } = el;
-                if (selectionStart !== null && selectionEnd !== null) {
-                    if (selectionStart !== selectionEnd) {
-                        ctx.delete(selectionStart, selectionEnd);
-                    } else if (selectionEnd !== el.value.length) {
-                        event.preventDefault();
-                        const realEnd = getNextCharBoundary(
-                            el.value,
-                            selectionEnd,
-                        );
-                        ctx.delete(selectionStart, realEnd);
-                        el.value =
-                            el.value.slice(0, selectionStart) +
-                            el.value.slice(realEnd);
-                        el.setSelectionRange(selectionStart, selectionStart);
-                    }
-                }
-            }
-
-            case "historyUndo": {
             }
         }
     };
@@ -166,9 +103,9 @@
         />
     </div>
     <AutoGrowTextArea
-        bind:value={message}
         placeholder="start typing..."
         onBeforeInput={bi}
+        onInput={diffAndSend}
         maxlength={65535}
     />
 </div>

@@ -3,7 +3,7 @@
 
     interface Props {
         onBeforeInput?: (event: InputEvent) => void;
-        onInput?: (event: Event) => void;
+        onInput?: (event: InputEvent) => void;
         placeholder?: string;
         value?: string;
         maxlength?: number;
@@ -23,7 +23,7 @@
 
     let inputEl: HTMLElement;
     function adjust(event: Event) {
-        onInput?.(event);
+        onInput?.(event as InputEvent);
     }
 
     function adjustHeight() {
@@ -62,4 +62,3 @@
         border: none;
     }
 </style>
-
