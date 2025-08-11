@@ -46,6 +46,7 @@ export type LogItem = {
     binary: string
     time: number
     type: string
+    key: number
 }
 
 export type SignetView = {

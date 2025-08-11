@@ -220,7 +220,7 @@ export class WSContext {
     pushToLog = (id: number, ba: Uint8Array, type: string) => {
         const bstring = btoa(Array.from(ba).map(byte => String.fromCharCode(byte)).join(''))
         const time = Date.now()
-        this.log = [...this.log.filter(li => li.time > Date.now() - 3000), { id: id, binary: bstring, time: time, type: type }]
+        this.log = [...this.log.filter(li => li.time > Date.now() - 3000), { id: id, binary: bstring, time: time, type: type, key: Math.random() }]
         console.log(this.log.length)
     }
 }
