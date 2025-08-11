@@ -4,6 +4,12 @@
     log: Array<LogItem>;
   }
   let { log }: Props = $props();
+
+  const removeItem = (logitem: LogItem) => {
+    log = log.filter((li) => {
+      li !== logitem;
+    });
+  };
   const randPosition = (l: LogItem): string => {
     const top =
       Math.abs((999.999 * Math.sin(l.id * l.id * 11.11)) % 1) * 95 +
@@ -16,7 +22,11 @@
 </script>
 
 {#each log as logitem}
-  <span style={randPosition(logitem)} class="logitem {logitem.type}">
+  <span
+    style={randPosition(logitem)}
+    class="logitem {logitem.type}"
+    onanimationend={() => removeItem(logitem)}
+  >
     0x{logitem.binary}
   </span>
 {/each}
@@ -31,7 +41,7 @@
 
   @keyframes fadeout {
     from {
-      opacity: 0.5;
+      opacity: 0.9;
     }
     to {
       opacity: 0;

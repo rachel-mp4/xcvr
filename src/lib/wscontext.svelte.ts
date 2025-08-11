@@ -581,9 +581,4 @@ const pushToLog = (id: number, ba: Uint8Array, type: string, ctx: WSContext) => 
     const bstring = btoa(Array.from(ba).map(byte => String.fromCharCode(byte)).join(''))
     const time = Date.now()
     ctx.log.push({ id: id, binary: bstring, time: time, type: type })
-    setTimeout(() => {
-        ctx.log = ctx.log.filter(item => item.time !== time)
-    },
-        3333
-    )
 }
