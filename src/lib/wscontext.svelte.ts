@@ -222,8 +222,8 @@ export class WSContext {
         const time = Date.now()
         this.log.push({ id: id, binary: bstring, time: time, type: type })
     }
-    deleteFromLog = (time: number) => {
-        this.log = this.log.filter(li => li.time > time)
+    deleteFromLog = () => {
+        this.log = this.log.filter(li => li.time > Date.now() - 3000)
     }
 }
 

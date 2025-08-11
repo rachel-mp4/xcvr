@@ -2,7 +2,7 @@
   import type { LogItem } from "$lib/types";
   interface Props {
     log: Array<LogItem>;
-    removeItem: (t: number) => void;
+    removeItem: () => void;
   }
   let { log, removeItem }: Props = $props();
 
@@ -21,7 +21,7 @@
   <span
     style={randPosition(logitem)}
     class="logitem {logitem.type}"
-    onanimationend={() => removeItem(Date.now() - 3350)}
+    onanimationend={removeItem}
   >
     0x{logitem.binary}
   </span>
