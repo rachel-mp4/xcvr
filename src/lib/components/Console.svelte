@@ -2,9 +2,8 @@
   import type { LogItem } from "$lib/types";
   interface Props {
     log: Array<LogItem>;
-    removeItem: () => void;
   }
-  let { log, removeItem }: Props = $props();
+  let { log }: Props = $props();
 
   const randPosition = (l: LogItem): string => {
     const top =
@@ -18,11 +17,7 @@
 </script>
 
 {#each log as logitem}
-  <span
-    style={randPosition(logitem)}
-    class="logitem {logitem.type}"
-    onanimationend={removeItem}
-  >
+  <span style={randPosition(logitem)} class="logitem {logitem.type}">
     0x{logitem.binary}
   </span>
 {/each}
