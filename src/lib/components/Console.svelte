@@ -2,14 +2,10 @@
   import type { LogItem } from "$lib/types";
   interface Props {
     log: Array<LogItem>;
+    removeItem: (li: LogItem) => void;
   }
-  let { log }: Props = $props();
+  let { log, removeItem }: Props = $props();
 
-  const removeItem = (logitem: LogItem) => {
-    log = log.filter((li) => {
-      li !== logitem;
-    });
-  };
   const randPosition = (l: LogItem): string => {
     const top =
       Math.abs((999.999 * Math.sin(l.id * l.id * 11.11)) % 1) * 95 +

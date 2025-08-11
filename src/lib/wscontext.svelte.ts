@@ -217,6 +217,14 @@ export class WSContext {
             }
         }
     }
+    pushToLog = (id: number, ba: Uint8Array, type: string) => {
+        const bstring = btoa(Array.from(ba).map(byte => String.fromCharCode(byte)).join(''))
+        const time = Date.now()
+        this.log.push({ id: id, binary: bstring, time: time, type: type })
+    }
+    deleteFromLog = (logItem: LogItem) => {
+        this.log = this.log.filter(li => li !== logItem)
+    }
 }
 
 const b64encodebytearray = (u8: Uint8Array): string => {
@@ -509,7 +517,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
                 startedAt: startedAt
             }
             ctx.pushMessage(msg)
-            pushToLog(id, byteArray, "init", ctx)
+            ctx.pushToLog(id, byteArray, "init")
             return true
         }
 
@@ -517,7 +525,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const id = event.msg.pub.id ?? 0
             if (id === 0) return false
             ctx.pubMessage(id)
-            pushToLog(id, byteArray, "pub", ctx)
+            ctx.pushToLog(id, byteArray, "pub")
             return false
         }
 
@@ -527,7 +535,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const idx = event.msg.insert.utf16Index
             const s = event.msg.insert.body
             ctx.insertMessage(id, idx, s)
-            pushToLog(id, byteArray, "insert", ctx)
+            ctx.pushToLog(id, byteArray, "insert")
             return false
         }
 
@@ -537,7 +545,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const idx = event.msg.delete.utf16Start
             const idx2 = event.msg.delete.utf16End
             ctx.deleteMessage(id, idx, idx2)
-            pushToLog(id, byteArray, "delete", ctx)
+            ctx.pushToLog(id, byteArray, "delete")
             return false
         }
 
@@ -577,8 +585,3 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
     return false
 }
 
-const pushToLog = (id: number, ba: Uint8Array, type: string, ctx: WSContext) => {
-    const bstring = btoa(Array.from(ba).map(byte => String.fromCharCode(byte)).join(''))
-    const time = Date.now()
-    ctx.log.push({ id: id, binary: bstring, time: time, type: type })
-}

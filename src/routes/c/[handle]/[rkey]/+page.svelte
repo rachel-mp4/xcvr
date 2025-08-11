@@ -44,7 +44,7 @@
       defaultNick={data.myProfile.defaultNick}
       defaultHandle={data.myProfile.handle}
     />
-    <Console log={ctx.log} />
+    <Console log={ctx.log} removeItem={ctx.deleteFromLog} />
   {/if}
 </main>
 
