@@ -25,6 +25,7 @@
 <style>
   .logitem {
     font-size: 2rem;
+    font-weight: 200;
     position: fixed;
     z-index: -1;
     pointer-events: none;

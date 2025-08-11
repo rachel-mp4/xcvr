@@ -4,6 +4,13 @@
   --fl: #ffffff80;
   --bl: #00000080;
 }
+:root {
+  font-family: Inter, sans-serif;
+  font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
+}
+@supports (font-variation-settings: normal) {
+  :root { font-family: InterVariable, sans-serif; }
+}
 * {
   scrollbar-width: none;
 }
@@ -42,7 +49,6 @@ input::placeholder {
 }
 
 body {
-  font-family: sans-serif;
   color: var(--fg);
   background: var(--bg);
   margin: 0;
