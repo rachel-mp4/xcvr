@@ -12,7 +12,7 @@
     const left =
       Math.abs((999.999 * Math.sin(l.id * l.id * 22.22)) % 1) * 90 +
       5 * (Math.sin(l.time * 14.14) % 1);
-    return `top: ${top}%; left: ${left}%`;
+    return `top: ${top}%; left: ${left}%; `;
   };
 </script>
 
