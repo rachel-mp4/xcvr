@@ -16,13 +16,18 @@
   };
 </script>
 
-{#each log as logitem (logitem.key)}
-  <span style={randPosition(logitem)} class="logitem {logitem.type}">
-    0x{logitem.binary}
-  </span>
-{/each}
+<div id="log-group">
+  {#each log as logitem (logitem.key)}
+    <span style={randPosition(logitem)} class="logitem {logitem.type}">
+      0x{logitem.binary}
+    </span>
+  {/each}
+</div>
 
 <style>
+  #log-group {
+    filter: blur(1rem);
+  }
   .logitem {
     font-size: 2rem;
     font-weight: 900;
@@ -31,7 +36,7 @@
     position: fixed;
     z-index: -1;
     pointer-events: none;
-    line-height: 1;
+    line-height: 0.7;
     opacity: 0;
     animation: 3.35s ease-out fadeout;
   }
