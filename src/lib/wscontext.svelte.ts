@@ -223,8 +223,7 @@ export class WSContext {
         this.log.push({ id: id, binary: bstring, time: time, type: type })
     }
     deleteFromLog = (logItem: LogItem) => {
-        console.log("removing: ", logItem)
-        this.log = this.log.filter(li => li !== logItem)
+        this.log = this.log.slice(this.log.findIndex(li => li === logItem))
     }
 }
 
