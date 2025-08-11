@@ -223,7 +223,7 @@ export class WSContext {
         this.log.push({ id: id, binary: bstring, time: time, type: type })
     }
     deleteFromLog = (logItem: LogItem) => {
-        this.log = this.log.filter(li => li.time <= logItem.time)
+        this.log = this.log.filter(li => li.time > logItem.time)
     }
 }
 
