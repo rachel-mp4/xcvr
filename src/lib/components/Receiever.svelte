@@ -1,7 +1,6 @@
 <script lang="ts">
   import Transmission from "$lib/components/Transmission.svelte";
   import type { Message } from "$lib/types";
-  import { calculateMarginTop } from "$lib/utils";
   interface Props {
     messages: Array<Message>;
   }

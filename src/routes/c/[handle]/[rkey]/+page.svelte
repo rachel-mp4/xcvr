@@ -4,6 +4,7 @@
   import { WSContext } from "$lib/wscontext.svelte";
   import Receiever from "$lib/components/Receiever.svelte";
   import Transmitter from "$lib/components/Transmitter.svelte";
+  import Console from "$lib/components/Console.svelte";
   let { data }: PageProps = $props();
   let ctx = $derived(
     new WSContext(
@@ -43,5 +44,12 @@
       defaultNick={data.myProfile.defaultNick}
       defaultHandle={data.myProfile.handle}
     />
+    <Console log={ctx.log} />
   {/if}
 </main>
+
+<style>
+  #transceiver {
+    position: relative;
+  }
+</style>

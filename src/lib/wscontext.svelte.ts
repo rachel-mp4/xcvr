@@ -509,8 +509,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
                 startedAt: startedAt
             }
             ctx.pushMessage(msg)
-            // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
-            // ctx.log.push({event:event, binary: bstring, color:"init"})
+            pushToLog(id, byteArray, "init", ctx)
             return true
         }
 
@@ -518,8 +517,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const id = event.msg.pub.id ?? 0
             if (id === 0) return false
             ctx.pubMessage(id)
-            // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
-            // ctx.log.push({event:event, binary: bstring, color:"pub"})
+            pushToLog(id, byteArray, "pub", ctx)
             return false
         }
 
@@ -529,8 +527,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const idx = event.msg.insert.utf16Index
             const s = event.msg.insert.body
             ctx.insertMessage(id, idx, s)
-            // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
-            // ctx.log.push({event:event, binary: bstring, color:"insert"})
+            pushToLog(id, byteArray, "insert", ctx)
             return false
         }
 
@@ -540,8 +537,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const idx = event.msg.delete.utf16Start
             const idx2 = event.msg.delete.utf16End
             ctx.deleteMessage(id, idx, idx2)
-            // const bstring = btoa(Array.from(byteArray).map(byte => String.fromCharCode(byte)).join(''))
-            // ctx.log.push({event:event, binary: bstring, color:"delete"})
+            pushToLog(id, byteArray, "delete", ctx)
             return false
         }
 
@@ -579,4 +575,15 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
 
     }
     return false
+}
+
+const pushToLog = (id: number, ba: Uint8Array, type: string, ctx: WSContext) => {
+    const bstring = btoa(Array.from(ba).map(byte => String.fromCharCode(byte)).join(''))
+    const time = Date.now()
+    ctx.log.push({ id: id, binary: bstring, time: time, type: type })
+    setTimeout(() => {
+        ctx.log = ctx.log.filter(item => item.time !== time)
+    },
+        3333
+    )
 }

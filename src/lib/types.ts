@@ -42,9 +42,10 @@ export type Message = {
 }
 
 export type LogItem = {
-    event: lrc.Event
+    id: number
     binary: string
-    color: string
+    time: number
+    type: string
 }
 
 export type SignetView = {
