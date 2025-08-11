@@ -17,7 +17,10 @@
 </script>
 
 {#each log as logitem}
-  <span style={randPosition(logitem)} class="logitem {logitem.type}">
+  <span
+    style={randPosition(logitem) + "animation: 3.35s ease-out fadeout;"}
+    class="logitem {logitem.type}"
+  >
     0x{logitem.binary}
   </span>
 {/each}
@@ -28,7 +31,6 @@
     pointer-events: none;
     line-height: 1;
     opacity: 0;
-    animation: 3.35s ease-out fadeout;
   }
 
   @keyframes fadeout {
