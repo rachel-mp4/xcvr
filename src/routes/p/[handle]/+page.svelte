@@ -160,13 +160,13 @@
       const sansprefix = aturi.slice(5);
       const splitted = sansprefix.split("/");
       const did = splitted[0];
-      const handle = await didres.resolve(did);
-      if (!handle) {
+      const data = await didres.resolveAtprotoData(did);
+      if (!data) {
         throw new Error();
       }
       const base = import.meta.env.VITE_API_URL;
       const rkey = splitted[2];
-      return `${base}/c/${handle.id}/${rkey}`;
+      return `${base}/c/${data.handle}/${rkey}`;
     } catch {
       return null;
     }
