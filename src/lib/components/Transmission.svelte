@@ -45,7 +45,7 @@
         }
         let res = [];
         let idx = 0;
-        links.forEach((link, i) => {
+        links.forEach((link) => {
             if (link.start > idx) {
                 const beforeText = body.substring(idx, link.start);
                 res.push({
@@ -59,7 +59,7 @@
                 isLink: true,
                 key: res.length,
             });
-            idx: link.end;
+            idx = link.end;
         });
         if (idx < body.length) {
             const afterText = body.substring(idx);
