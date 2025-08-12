@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { DidResolver } from "@atproto/identity";
   import type { PageProps } from "./$types";
   import { numToHex, hexToNum, hexToContrast } from "$lib/colors";
   import { browser } from "$app/environment";
@@ -151,7 +150,6 @@
       return "now";
     }
   };
-  const didres = new DidResolver({});
   const getPathToChannel = async (aturi: string): Promise<string | null> => {
     try {
       if (!aturi.startsWith("at://")) {
@@ -160,13 +158,26 @@
       const sansprefix = aturi.slice(5);
       const splitted = sansprefix.split("/");
       const did = splitted[0];
-      const data = await didres.resolveAtprotoData(did);
-      if (!data) {
+      const res = await fetch(`https://plc.directory/${did}`);
+      if (!res.ok) {
         throw new Error();
       }
+      const didDoc = await res.json();
+      const pdsService = didDoc?.find((s: any) => s.id === "#atproto_pds");
+      if (!pdsService) {
+        throw new Error();
+      }
+      const pdsUrl = pdsService.serviceEndpoint;
+      const pr = await fetch(
+        `${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`,
+      );
+      if (!pr.ok) {
+        throw new Error();
+      }
+      const profile = await pr.json();
       const base = import.meta.env.VITE_API_URL;
       const rkey = splitted[2];
-      return `${base}/c/${data.handle}/${rkey}`;
+      return `${base}/c/${profile.handle}/${rkey}`;
     } catch {
       return null;
     }
