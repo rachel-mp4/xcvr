@@ -41,7 +41,7 @@
         const links = linkify.find(body, "url");
         const ll = links.length;
         if (ll === 0) {
-            return [{ text: ebody, isLink: false, key: 0 }];
+            return [{ text: ebody, isLink: false, href: "", key: 0 }];
         }
         let res = [];
         let idx = 0;
@@ -51,11 +51,13 @@
                 res.push({
                     text: escapeHTML(beforeText),
                     isLink: false,
+                    href: "",
                     key: res.length,
                 });
             }
             res.push({
                 text: link.value,
+                href: link.href,
                 isLink: true,
                 key: res.length,
             });
@@ -67,6 +69,7 @@
                 text: escapeHTML(afterText),
                 isLink: false,
                 key: res.length,
+                href: "",
             });
         }
         return res;
@@ -115,7 +118,7 @@
     <div class="body">
         {#each mfrags as part (part.key)}
             {#if part.isLink}
-                <a href={part.text} target="_blank" rel="noopener"
+                <a href={part.href} target="_blank" rel="noopener"
                     >{part.text}</a
                 >
             {:else}
