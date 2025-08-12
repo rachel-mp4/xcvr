@@ -142,6 +142,9 @@
     .active.signed .handle {
         color: var(--tcontrast);
     }
+    .active a {
+        color: var(--fg);
+    }
     .signed .handle {
         color: var(--fg);
     }
