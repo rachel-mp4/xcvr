@@ -12,10 +12,6 @@
     <b> whitelist / blacklist </b> is something that i'll probably add soon
   </p>
   <p>
-    <b>last confirmed sighting</b> seems like a fun easy lexicon, probably will do
-    that p soon
-  </p>
-  <p>
     <b>bsky/follow</b> is something i really want to add, i think bsky is inherently
     a very striated space and a pillar of this project is for it to be a smoother
     space that makes it easier to make friends that you can carry to other parts
