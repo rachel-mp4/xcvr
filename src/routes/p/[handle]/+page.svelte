@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { DidResolver } from "@atproto/identity";
   import type { PageProps } from "./$types";
   import { numToHex, hexToNum, hexToContrast } from "$lib/colors";
   import { browser } from "$app/environment";
@@ -150,6 +151,28 @@
       return "now";
     }
   };
+  const didres = new DidResolver({});
+  const getPathToChannel = async (aturi: string): Promise<string | null> => {
+    try {
+      if (!aturi.startsWith("at://")) {
+        throw new Error();
+      }
+      const sansprefix = aturi.slice(5);
+      const splitted = sansprefix.split("/");
+      const did = splitted[0];
+      const handle = await didres.resolve(did);
+      if (!handle) {
+        throw new Error();
+      }
+      const base = import.meta.env.MY_BASE_URL;
+      const rkey = splitted[2];
+      return `${base}/c/${handle.id}/${rkey}`;
+    } catch {
+      return null;
+    }
+  };
+  // @ts-expect-error - Svelte 5.36 experimental async support
+  let lastSeenLocation = $derived(await getPathToChannel(data.lastSeen.where));
 </script>
 
 <main>
@@ -167,11 +190,12 @@
     </p>
   {/if}
   {#if data.lastSeen}
-    last seen {#if data.lastSeen.where}
-      {data.lastSeen.where}
-    {/if}
+    last seen
     {#if data.lastSeen.when}
-      {timeSince(data.lastSeen.when)}
+      {timeSince(data.lastSeen.when) + " ago"}
+    {/if}
+    {#if lastSeenLocation !== null}
+      <a href={lastSeenLocation}> in this channel</a>
     {/if}
   {/if}
 </main>

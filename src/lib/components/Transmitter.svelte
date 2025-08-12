@@ -37,7 +37,7 @@
     const diffAndSend = (event: InputEvent) => {
         const el = event.target as HTMLInputElement;
         const result = diff(message, el.value);
-        var idx = 0;
+        let idx = 0;
         result.forEach((d) => {
             switch (d[0]) {
                 case -1:

@@ -160,13 +160,12 @@
 		<a href="/todo">todo.</a>
 	</p>
 	<p>
-		<a href="https://github.com/rachel-mp4/xcvr">here</a>
-		<a href="https://github.com/rachel-mp4/rvcx">are</a>
-		<a href="https://github.com/rachel-mp4/lrcd">the</a>
-		<a href="https://github.com/rachel-mp4/lrcproto">relevant</a>
+		<a href="https://tangled.sh/@moth11.net/xcvr">here</a>
+		<a href="https://tangled.sh/@moth11.net/rvcx">are</a>
+		<a href="https://tangled.sh/@moth11.net/lrcd">the</a>
+		<a href="https://tangled.sh/@moth11.net/lrcproto">relevant</a>
 		<a href="https://github.com/rachel-mp4/beeper">codes</a> for this website, don't
-		judge me too much for them please, i'll probably put them on tangled.sh soon
-		but i mostly wanted to get this out before i start experimenting with those things
+		judge me too much for them please
 	</p>
 	<p>
 		<a href="https://discord.gg/uvAmBtpdKd">join the email list</a>
