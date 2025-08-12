@@ -164,7 +164,7 @@
       if (!handle) {
         throw new Error();
       }
-      const base = import.meta.env.MY_BASE_URL;
+      const base = import.meta.env.VITE_API_URL;
       const rkey = splitted[2];
       return `${base}/c/${handle.id}/${rkey}`;
     } catch {
