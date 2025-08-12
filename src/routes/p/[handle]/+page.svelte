@@ -153,6 +153,7 @@
   const getPathToChannel = async (aturi: string): Promise<string | null> => {
     try {
       if (!aturi.startsWith("at://")) {
+        console.log("bad at uri");
         throw new Error();
       }
       const sansprefix = aturi.slice(5);
@@ -160,11 +161,13 @@
       const did = splitted[0];
       const res = await fetch(`https://plc.directory/${did}`);
       if (!res.ok) {
+        console.log("failed to fetch plc.directory");
         throw new Error();
       }
       const didDoc = await res.json();
       const pdsService = didDoc?.find((s: any) => s.id === "#atproto_pds");
       if (!pdsService) {
+        console.log("failed to find #atproto_pds");
         throw new Error();
       }
       const pdsUrl = pdsService.serviceEndpoint;
@@ -172,6 +175,7 @@
         `${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`,
       );
       if (!pr.ok) {
+        console.log("failed to make xrpc req");
         throw new Error();
       }
       const profile = await pr.json();
@@ -194,7 +198,7 @@
         {data.profile.handle}
       </a>
     </h2>
-    <p class="status">
+    <p style="border-bottom: solid var(--fg) .25rem" class="status">
       {editedProfile.status}
     </p>
   {/if}
