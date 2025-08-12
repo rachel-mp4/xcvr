@@ -1,5 +1,5 @@
 #!/bin/bash
-npm run build
-rsync -av --delete ./build/ /var/www/xcvr-frontend/build/
+pnpm run build
+rsync -av --delete --compress --partial ./build/ /var/www/xcvr-frontend/build/
 chown -R www-data:www-data /var/www/xcvr-frontend/build/
-systemctl restart nginx
+systemctl reload nginx
