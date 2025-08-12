@@ -15,11 +15,6 @@ const config = {
 			fallback: 'index.html'
 		})
 	},
-	compilerOptions: {
-		experimental: {
-			async: true
-		}
-	}
 };
 
 export default config;

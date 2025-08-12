@@ -171,8 +171,6 @@
       return null;
     }
   };
-  // @ts-expect-error - Svelte 5.36 experimental async support
-  let lastSeenLocation = $derived(await getPathToChannel(data.lastSeen.where));
 </script>
 
 <main>
@@ -194,8 +192,10 @@
     {#if data.lastSeen.when}
       {timeSince(data.lastSeen.when) + " ago"}
     {/if}
-    {#if lastSeenLocation !== null}
-      <a href={lastSeenLocation}> in this channel</a>
+    {#if data.lastSeen.where}
+      {#await getPathToChannel(data.lastSeen.where) then location}
+        <a href={location}> in this channel</a>
+      {/await}
     {/if}
   {/if}
 </main>
