@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { Message } from "$lib/types";
+    import * as linkify from "linkifyjs";
     import { computePosition, flip, shift, offset } from "@floating-ui/dom";
     import { hexToContrast, hexToTransparent, numToHex } from "$lib/colors";
     import ProfileCard from "./ProfileCard.svelte";
@@ -30,6 +31,47 @@
             updatePosition();
         }
     });
+    const escapeHTML = (text: string): string => {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+    };
+    const convertLinksToMessageFrags = (body: string) => {
+        const ebody = escapeHTML(body);
+        const links = linkify.find(body, "url");
+        const ll = links.length;
+        if (ll === 0) {
+            return [{ text: ebody, isLink: false, key: 0 }];
+        }
+        let res = [];
+        let idx = 0;
+        links.forEach((link, i) => {
+            if (link.start > idx) {
+                const beforeText = body.substring(idx, link.start);
+                res.push({
+                    text: escapeHTML(beforeText),
+                    isLink: false,
+                    key: res.length,
+                });
+            }
+            res.push({
+                text: link.value,
+                isLink: true,
+                key: res.length,
+            });
+            idx: link.end;
+        });
+        if (idx < body.length) {
+            const afterText = body.substring(idx);
+            res.push({
+                text: escapeHTML(afterText),
+                isLink: false,
+                key: res.length,
+            });
+        }
+        return res;
+    };
+    let mfrags = $derived(convertLinksToMessageFrags(message.body));
 </script>
 
 <div
@@ -70,7 +112,17 @@
             {/if}
         {/if}
     </div>
-    <div class="body">{message.body}</div>
+    <div class="body">
+        {#each mfrags as part (part.key)}
+            {#if part.isLink}
+                <a href={part.text} target="_blank" rel="noopener"
+                    >{part.text}</a
+                >
+            {:else}
+                {part.text}
+            {/if}
+        {/each}
+    </div>
 </div>
 
 <style>
