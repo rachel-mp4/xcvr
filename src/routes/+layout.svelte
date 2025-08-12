@@ -95,8 +95,10 @@
 			>
 		</div>
 
-		<div class="beep">here's what's been happening recently</div>
-		<Spectrum channels={data.channels}></Spectrum>
+		<div id="channels-below-canton">
+			<div class="beep">here's what's been happening recently</div>
+			<Spectrum channels={data.channels}></Spectrum>
+		</div>
 	</aside>
 	{@render children()}
 </div>
@@ -140,11 +142,11 @@
 	#left-sidebar {
 		position: sticky;
 		top: 0;
+		display: grid;
+		grid-template-rows: auto, 1fr;
 	}
-	#canton {
-		position: sticky;
-		top: 0;
-		background: var(--bg);
+	#channels-below-canton {
+		overflow-y: auto;
 		z-index: 1;
 	}
 	.tab-container {
