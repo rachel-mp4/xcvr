@@ -165,7 +165,9 @@
         throw new Error();
       }
       const didDoc = await res.json();
-      const pdsService = didDoc?.find((s: any) => s.id === "#atproto_pds");
+      const pdsService = didDoc.service?.find(
+        (s: any) => s.id === "#atproto_pds",
+      );
       if (!pdsService) {
         console.log("failed to find #atproto_pds");
         throw new Error();
