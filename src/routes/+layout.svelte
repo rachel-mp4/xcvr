@@ -98,6 +98,7 @@
 		<div id="channels-below-canton">
 			<div class="beep">here's what's been happening recently</div>
 			<Spectrum channels={data.channels}></Spectrum>
+			<div class="boop">show more (not implemented)</div>
 		</div>
 	</aside>
 	{@render children()}
@@ -143,7 +144,7 @@
 		position: sticky;
 		top: 0;
 		display: grid;
-		grid-template-rows: auto, 1fr;
+		grid-template-rows: auto 1fr;
 	}
 	#channels-below-canton {
 		overflow-y: auto;
@@ -178,6 +179,9 @@
 	}
 	.beep {
 		margin-top: 16rem;
+	}
+	.boop {
+		margin-bottom: 16rem;
 	}
 	nav {
 		top: 0rem;
