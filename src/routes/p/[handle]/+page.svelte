@@ -211,7 +211,11 @@
     {/if}
     {#if data.lastSeen.where}
       {#await getPathToChannel(data.lastSeen.where) then location}
-        <a href={location}> in this channel</a>
+        {#if location}
+          <a href={location}> in this channel</a>
+        {:else}
+          somewhere ._.
+        {/if}
       {:catch}
         somewhere ._.
       {/await}
