@@ -85,7 +85,7 @@
     style:--tcontrast={contrast}
     style:--tpartial={partial}
     style:--margin={margin + "rem"}
-    style:background={`radial-gradient(circle at ${xpos}% 0, var(--theme), var(--themep))`}
+    style:--xpos={xpos + "%"}
     class="{message.active ? 'active' : ''} 
     {message.profileView ? 'signed' : ''} 
     transmission"
@@ -134,7 +134,11 @@
 
 <style>
     .active {
-        background: var(--theme);
+        background: radial-gradient(
+            circle at var(--xpos) 0,
+            var(--theme),
+            var(--themep)
+        );
         color: var(--tcontrast);
     }
     .header {
