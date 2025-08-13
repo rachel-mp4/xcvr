@@ -259,6 +259,7 @@
         border: none;
         color: var(--fg);
         padding: 0;
+        cursor: pointer;
     }
     button:hover {
         font-weight: 700;
