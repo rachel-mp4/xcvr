@@ -278,7 +278,7 @@ export const connectTo = (url: string, ctx: WSContext) => {
     };
     ws.onmessage = (event) => {
         console.log(event)
-        setTimeout(() => { parseEvent(event, ctx) }, 100)
+        parseEvent(event, ctx)
         // if (shouldScroll) {
         //     setTimeout(() => {
         //         window.scrollTo(0, document.body.scrollHeight)
