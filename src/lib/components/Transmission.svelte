@@ -134,8 +134,11 @@
                     class="atproto-lrc-toggler"
                     onclick={() => {
                         showinglrc = !showinglrc;
-                    }}>show {showinglrc ? "atproto" : "lrc"}</button
-                >{/if}
+                    }}
+                    >{showinglrc
+                        ? "go back to atproto"
+                        : "I WAS THERE!"}</button
+                > (difference between atproto + lrc detected){/if}
         {/if}
     </div>
     <div class="body">
