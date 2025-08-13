@@ -39,7 +39,7 @@
         div.textContent = text;
         return div.innerHTML;
     };
-    let canshownotlrc = $derived(message.mbody === undefined);
+    let canshownotlrc = $derived(message.mbody !== message.body);
     let showinglrc = $state(message.mbody === undefined);
     const convertLinksToMessageFrags = (body: string) => {
         const ebody = escapeHTML(body);
