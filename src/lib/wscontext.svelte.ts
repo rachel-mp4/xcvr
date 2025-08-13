@@ -20,6 +20,7 @@ export class WSContext {
     active: boolean = false
     nick: string = "wanderer"
     handle: string = ""
+    audio: HTMLAudioElement = new Audio('%sveltekit.assets%/notif.wav')
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
         console.log(channelUri)
@@ -126,6 +127,8 @@ export class WSContext {
     // theoretically this could occur _after we have an orphaned signet or an orphanedmessage or both! so,
     // TODO: make it work in that case
     pushMessage = (message: Message) => {
+        this.audio.currentTime = 0
+        this.audio.play()
         if (this.messages.length > 200) {
             this.messages = [...this.messages.slice(this.messages.length - 199), message]
         }
