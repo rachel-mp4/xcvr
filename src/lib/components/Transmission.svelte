@@ -42,7 +42,7 @@
     let canshownotlrc = $derived(
         message.mbody !== undefined && message.mbody !== message.body,
     );
-    let showinglrc = $state(message.mbody === undefined);
+    let showinglrc = $state(message.mbody !== undefined);
     const convertLinksToMessageFrags = (body: string) => {
         const ebody = escapeHTML(body);
         const links = linkify.find(body, "url");
