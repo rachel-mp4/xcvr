@@ -21,6 +21,7 @@ export class WSContext {
     nick: string = "wanderer"
     handle: string = ""
     audio: HTMLAudioElement = new Audio('/notif.wav')
+    beepcoefficient: number = 0.1
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
         console.log(channelUri)
@@ -65,6 +66,17 @@ export class WSContext {
         if (this.active) {
             pubMessage(this)
             const api = import.meta.env.VITE_API_URL
+            let body = this.curMsg
+            if (this.beepcoefficient > 0.0) {
+                if (body.length < 5) {
+                    body = "beep"
+                }
+                const nb = Math.floor(body.length * this.beepcoefficient * 0.25)
+                for (let i = 0; i < nb; i++) {
+                    const start = Math.floor((body.length - 4) * Math.random())
+                    body = body.slice(0, start) + "beep" + body.slice(start + 4)
+                }
+            }
             const record = {
                 ...(this.mySignet && { signetURI: this.mySignet.uri }),
                 ...(this.channelUri && { channelURI: this.channelUri }),
