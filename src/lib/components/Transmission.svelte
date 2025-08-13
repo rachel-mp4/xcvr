@@ -110,11 +110,7 @@
             {#if !message.profileView}
                 <span class="handle">
                     @{message.handle}
-                </span>{#if canshownotlrc}<button
-                        onclick={() => {
-                            showinglrc = !showinglrc;
-                        }}>show {showinglrc ? "atproto" : "lrc"}</button
-                    >{/if}
+                </span>
             {:else}
                 <div
                     role="button"
@@ -136,9 +132,13 @@
                     {/if}
                 </div>
             {/if}
+            {#if canshownotlrc}<button
+                    onclick={() => {
+                        showinglrc = !showinglrc;
+                    }}>show {showinglrc ? "atproto" : "lrc"}</button
+                >{/if}
         {/if}
     </div>
-    {message.mbody}
     <div class="body">
         {#if diffs}
             {#each diffs as diff}
