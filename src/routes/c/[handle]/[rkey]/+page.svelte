@@ -38,7 +38,7 @@
     </div>
   {/if}
   {#if ctx}
-    <Receiever messages={ctx.messages} />
+    <Receiever messages={ctx.messages} mylocaltext={ctx.curMsg} />
     <Transmitter
       {ctx}
       defaultNick={data.myProfile.defaultNick}

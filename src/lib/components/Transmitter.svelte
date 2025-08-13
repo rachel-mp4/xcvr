@@ -4,7 +4,6 @@
     import { numToHex } from "$lib/colors";
     import AutoGrowTextArea from "$lib/components/AutoGrowTextArea.svelte";
     import diff from "fast-diff";
-    import { getPrevCharBoundary, getNextCharBoundary } from "$lib/utils";
     interface Props {
         ctx: WSContext;
         defaultNick?: string;

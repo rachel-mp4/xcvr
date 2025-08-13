@@ -16,7 +16,7 @@ export class WSContext {
     mySignet: undefined | SignetView
     myNonce: undefined | Uint8Array
     channelUri: string
-    curMsg: string = ""
+    curMsg: string = $state("")
     active: boolean = false
     nick: string = "wanderer"
     handle: string = ""
@@ -278,7 +278,7 @@ export const connectTo = (url: string, ctx: WSContext) => {
     };
     ws.onmessage = (event) => {
         console.log(event)
-        parseEvent(event, ctx)
+        setTimeout(() => { parseEvent(event, ctx) }, 100)
         // if (shouldScroll) {
         //     setTimeout(() => {
         //         window.scrollTo(0, document.body.scrollHeight)
