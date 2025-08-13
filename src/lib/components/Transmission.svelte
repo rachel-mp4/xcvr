@@ -142,7 +142,6 @@
         inset: 0;
         z-index: -1;
         background-color: var(--theme);
-        filter: url(#vblur);
     }
 
     .header {
