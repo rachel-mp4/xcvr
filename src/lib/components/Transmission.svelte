@@ -39,6 +39,8 @@
         div.textContent = text;
         return div.innerHTML;
     };
+    let canshownotlrc = $derived(message.mbody === undefined);
+    let showinglrc = $state(message.mbody === undefined);
     const convertLinksToMessageFrags = (body: string) => {
         const ebody = escapeHTML(body);
         const links = linkify.find(body, "url");
@@ -77,7 +79,13 @@
         }
         return res;
     };
-    let mfrags = $derived(convertLinksToMessageFrags(message.body));
+    let mfrags = $derived(
+        convertLinksToMessageFrags(
+            showinglrc
+                ? message.body
+                : (message.mbody ?? "something went wrong"),
+        ),
+    );
     let diffs = $derived(
         message.active && message.mine && mylocaltext
             ? diff(message.body, mylocaltext)
@@ -100,7 +108,11 @@
             {#if !message.profileView}
                 <span class="handle">
                     @{message.handle}
-                </span>
+                </span>{#if canshownotlrc}<button
+                        onclick={() => {
+                            showinglrc = !showinglrc;
+                        }}>show {showinglrc ? "atproto" : "lrc"}</button
+                    >{/if}
             {:else}
                 <div
                     role="button"
@@ -231,5 +243,15 @@
     .handle-container {
         display: inline-block;
         color: var(--fg);
+    }
+    button {
+        font-size: 1rem;
+        background-color: transparent;
+        border: none;
+        color: var(--fg);
+        padding: 0;
+    }
+    button:hover {
+        font-weight: 700;
     }
 </style>

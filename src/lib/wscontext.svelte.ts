@@ -218,7 +218,7 @@ export class WSContext {
             console.log("found appropriate message c:")
             this.messages = this.messages.map((msg: Message) => {
                 return msg.signetView?.uri === message.signetURI ?
-                    makeMessageFromSignetAndMessageViews(message, msg.signetView) : msg
+                    { ...makeMessageFromSignetAndMessageViews(message, msg.signetView), body: msg.body } : msg
             })
         }
         else {
@@ -254,7 +254,8 @@ const b64encodebytearray = (u8: Uint8Array): string => {
 const makeMessageFromSignetAndMessageViews = (m: MessageView, s: SignetView): Message => {
     return {
         uri: m.uri,
-        body: m.body,
+        body: "i didn't catch the lrc message body :c",
+        mbody: m.body,
         id: s.lrcId,
         active: false,
         mine: false,

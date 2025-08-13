@@ -29,6 +29,7 @@ export type ProfileView = {
 export type Message = {
     uri?: string
     body: string
+    mbody?: string
     id: number
     active: boolean
     mine: boolean
