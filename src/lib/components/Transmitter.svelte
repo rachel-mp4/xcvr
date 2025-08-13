@@ -87,7 +87,7 @@
         <AutoGrowInput
             bind:value={nick}
             {color}
-            placeholder="your name"
+            placeholder="alice"
             onInput={setName}
             maxlength={12}
             bold={true}
@@ -96,6 +96,7 @@
         <AutoGrowInput
             bind:value={handle}
             placeholder="alice.com"
+            size={10}
             onInput={setHandle}
             maxlength={253}
             bold={false}

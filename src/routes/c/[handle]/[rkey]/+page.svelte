@@ -63,7 +63,7 @@
     <p>in case you want to be forgotten...</p>
     <div id="obfuscation-settings">
       <div id="beepifier">
-        <div><AutoGrowInput bind:value={ctx.junkword} />ifier</div>
+        <div><AutoGrowInput size={1} bind:value={ctx.junkword} />ifier</div>
         <input
           type="range"
           min="0"
@@ -78,7 +78,7 @@
       </div>
       <div id="replacer">
         <div>replace message with</div>
-        <div><AutoGrowInput bind:value={ctx.defaultmessage} /></div>
+        <div><AutoGrowInput size={5} bind:value={ctx.defaultmessage} /></div>
       </div>
     </div>
   </aside>
@@ -87,6 +87,10 @@
 <style>
   #transceiver {
     position: relative;
+  }
+  #obfuscation-settings {
+    display: flex;
+    gap: 1rem;
   }
   button {
     font-size: 1rem;

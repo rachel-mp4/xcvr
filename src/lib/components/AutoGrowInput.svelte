@@ -1,11 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { hexToTransparent } from "$lib/colors";
 
     interface Props {
         onBeforeInput?: (event: InputEvent) => void;
         onInput?: (event: Event) => void;
         placeholder?: string;
         value?: string;
+        size?: number;
         maxlength?: number;
         bold?: boolean;
         color?: string;
@@ -17,6 +19,7 @@
         value = $bindable(""),
         onInput,
         maxlength,
+        size = 5,
         bold = false,
         color,
     }: Props = $props();
@@ -43,10 +46,12 @@
     bind:value
     bind:this={inputEl}
     {maxlength}
+    {size}
     oninput={adjust}
     onbeforeinput={onBeforeInput}
     style:font-weight={bold ? "700" : "inherit"}
     style:--theme={color}
+    style:--themep={hexToTransparent(color ?? "#ffffff")}
     {placeholder}
 />
 
@@ -56,5 +61,8 @@
         color: var(--theme);
         background-color: transparent;
         border: none;
+    }
+    input::placeholder {
+        color: var(--themep);
     }
 </style>
