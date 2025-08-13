@@ -6,6 +6,7 @@
   import Receiever from "$lib/components/Receiever.svelte";
   import Transmitter from "$lib/components/Transmitter.svelte";
   import Console from "$lib/components/Console.svelte";
+  import { numToHex } from "$lib/colors";
   let { data }: PageProps = $props();
   let ctx = $derived(
     new WSContext(
@@ -49,7 +50,7 @@
   {/if}
 </main>
 {#if ctx}
-  <aside>
+  <aside style:--theme={numToHex(ctx.color)}>
     <div><AutoGrowInput bind:value={ctx.junkword} />ifier</div>
     <input
       type="range"
@@ -66,5 +67,8 @@
 <style>
   #transceiver {
     position: relative;
+  }
+  input {
+    accent-color: var(--theme);
   }
 </style>

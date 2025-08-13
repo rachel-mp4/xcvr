@@ -6,7 +6,6 @@
         onInput?: (event: Event) => void;
         placeholder?: string;
         value?: string;
-        size?: number;
         maxlength?: number;
         bold?: boolean;
         color?: string;
@@ -17,7 +16,6 @@
         placeholder,
         value = $bindable(""),
         onInput,
-        size = 5,
         maxlength,
         bold = false,
         color,
@@ -44,7 +42,6 @@
 <input
     bind:value
     bind:this={inputEl}
-    {size}
     {maxlength}
     oninput={adjust}
     onbeforeinput={onBeforeInput}
