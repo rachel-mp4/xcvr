@@ -138,6 +138,7 @@
             {/if}
         {/if}
     </div>
+    {message.mbody}
     <div class="body">
         {#if diffs}
             {#each diffs as diff}
