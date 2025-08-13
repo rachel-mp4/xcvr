@@ -76,7 +76,6 @@
         return res;
     };
     let mfrags = $derived(convertLinksToMessageFrags(message.body));
-    const xpos = Math.floor(Math.random() * 100);
 </script>
 
 <div
@@ -85,7 +84,6 @@
     style:--tcontrast={contrast}
     style:--tpartial={partial}
     style:--margin={margin + "rem"}
-    style:--xpos={xpos + "%"}
     class="{message.active ? 'active' : ''} 
     {message.profileView ? 'signed' : ''} 
     transmission"
@@ -134,13 +132,19 @@
 
 <style>
     .active {
-        background: radial-gradient(
-            circle at var(--xpos) 0,
-            var(--theme),
-            var(--themep)
-        );
+        position: relative;
+        background-color: var(--themep);
         color: var(--tcontrast);
     }
+    .active::before {
+        position: absolute;
+        content: "";
+        inset: 0;
+        z-index: -1;
+        background-color: var(--theme);
+        filter: blur(1rem);
+    }
+
     .header {
         font-weight: 700;
     }
