@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
+  import AutoGrowInput from "$lib/components/AutoGrowInput.svelte";
   import { onDestroy } from "svelte";
   import { WSContext } from "$lib/wscontext.svelte";
   import Receiever from "$lib/components/Receiever.svelte";
@@ -49,7 +50,7 @@
 </main>
 {#if ctx}
   <aside>
-    <div>beepifier</div>
+    <div><AutoGrowInput bind:value={ctx.junkword} />ifier</div>
     <input
       type="range"
       min="0"

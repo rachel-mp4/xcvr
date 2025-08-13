@@ -22,6 +22,7 @@ export class WSContext {
     handle: string = ""
     audio: HTMLAudioElement = new Audio('/notif.wav')
     beepcoefficient: number = 0.0
+    junkword: string = "beep"
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
         console.log(channelUri)
@@ -67,14 +68,14 @@ export class WSContext {
             pubMessage(this)
             const api = import.meta.env.VITE_API_URL
             let body = this.curMsg
-            if (this.beepcoefficient > 0.0) {
-                if (body.length < 5) {
+            if (this.beepcoefficient > 0.0 && this.junkword != "") {
+                if (body.length < (this.junkword.length + 1)) {
                     body = "beep"
                 }
-                const nb = Math.floor(body.length * this.beepcoefficient * 0.25)
+                const nb = Math.floor(1.0 * body.length * this.beepcoefficient / this.junkword.length)
                 for (let i = 0; i < nb; i++) {
-                    const start = Math.floor((body.length - 4) * Math.random())
-                    body = body.slice(0, start) + "beep" + body.slice(start + 4)
+                    const start = Math.floor((body.length - this.junkword.length) * Math.random())
+                    body = body.slice(0, start) + this.junkword + body.slice(start + 4)
                 }
             }
             console.log(body)
