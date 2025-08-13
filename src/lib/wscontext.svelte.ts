@@ -77,6 +77,7 @@ export class WSContext {
                     body = body.slice(0, start) + "beep" + body.slice(start + 4)
                 }
             }
+            console.log(body)
             const record = {
                 ...(this.mySignet && { signetURI: this.mySignet.uri }),
                 ...(this.channelUri && { channelURI: this.channelUri }),
