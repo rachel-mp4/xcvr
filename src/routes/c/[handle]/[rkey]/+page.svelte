@@ -24,6 +24,7 @@
     }
   });
   onDestroy(() => ctx?.disconnect());
+  let showSettings = $state(false);
 </script>
 
 <main id="transceiver">
@@ -46,10 +47,13 @@
       defaultNick={data.myProfile.defaultNick}
       defaultHandle={data.myProfile.handle}
     />
+    <button>
+      {showSettings ? "hide" : "show"} settings
+    </button>
     <Console log={ctx.log} />
   {/if}
 </main>
-{#if ctx}
+{#if ctx && showSettings}
   <aside style:--theme={numToHex(ctx.color)}>
     <div><AutoGrowInput bind:value={ctx.junkword} />ifier</div>
     <input

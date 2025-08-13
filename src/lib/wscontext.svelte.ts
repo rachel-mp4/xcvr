@@ -21,8 +21,8 @@ export class WSContext {
     nick: string = "wanderer"
     handle: string = ""
     audio: HTMLAudioElement = new Audio('/notif.wav')
-    beepcoefficient: number = 0.0
-    junkword: string = "beep"
+    beepcoefficient: number = $state(0.0)
+    junkword: string = $state("beep")
     shouldSend: boolean = true
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
