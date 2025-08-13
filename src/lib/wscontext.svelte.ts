@@ -127,7 +127,7 @@ export class WSContext {
     // theoretically this could occur _after we have an orphaned signet or an orphanedmessage or both! so,
     // TODO: make it work in that case
     pushMessage = (message: Message) => {
-        if (document.hidden) {
+        if (document.hidden || !document.hasFocus()) {
             this.audio.currentTime = 0
             this.audio.play()
         }
