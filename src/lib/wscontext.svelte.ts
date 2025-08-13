@@ -23,6 +23,7 @@ export class WSContext {
     audio: HTMLAudioElement = new Audio('/notif.wav')
     beepcoefficient: number = 0.0
     junkword: string = "beep"
+    shouldSend: boolean = true
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
         console.log(channelUri)
@@ -88,13 +89,15 @@ export class WSContext {
                 ...(this.nick && { nick: this.nick }),
                 ...(this.color && { color: this.color }),
             }
-            fetch(`${api}/lrc/message`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(record),
-            }).then((val) => console.log(val), (val) => console.log(val))
+            if (this.shouldSend) {
+                fetch(`${api}/lrc/message`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(record),
+                }).then((val) => console.log(val), (val) => console.log(val))
+            }
             this.active = false
             this.curMsg = ""
             this.mySignet = undefined

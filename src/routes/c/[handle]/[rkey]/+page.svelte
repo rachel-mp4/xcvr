@@ -58,6 +58,8 @@
       step=".01"
       bind:value={ctx.beepcoefficient}
     />
+    <div>should i save my message?</div>
+    <input type="checkbox" bind:checked={ctx.shouldSend} />
   </aside>
 {/if}
 
