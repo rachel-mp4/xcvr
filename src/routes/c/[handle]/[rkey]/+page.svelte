@@ -59,16 +59,28 @@
 </main>
 {#if ctx && showSettings}
   <aside style:--theme={numToHex(ctx.color)}>
-    <div><AutoGrowInput bind:value={ctx.junkword} />ifier</div>
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step=".01"
-      bind:value={ctx.beepcoefficient}
-    />
-    <div>should i save my message?</div>
-    <input type="checkbox" bind:checked={ctx.shouldSend} />
+    <h2>message obfuscation</h2>
+    <p>in case you want to be forgotten...</p>
+    <div id="obfuscation-settings">
+      <div id="beepifier">
+        <div><AutoGrowInput bind:value={ctx.junkword} />ifier</div>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step=".01"
+          bind:value={ctx.beepcoefficient}
+        />
+      </div>
+      <div id="writer">
+        <div>try to write message to atproto user repo</div>
+        <input type="checkbox" bind:checked={ctx.shouldSend} />
+      </div>
+      <div id="replacer">
+        <div>replace message with</div>
+        <div><AutoGrowInput bind:value={ctx.defaultmessage} /></div>
+      </div>
+    </div>
   </aside>
 {/if}
 

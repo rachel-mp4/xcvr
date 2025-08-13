@@ -24,6 +24,7 @@ export class WSContext {
     beepcoefficient: number = $state(0.0)
     junkword: string = $state("beep")
     shouldSend: boolean = true
+    defaultmessage: string = $state("")
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
         console.log(channelUri)
@@ -68,7 +69,7 @@ export class WSContext {
         if (this.active) {
             pubMessage(this)
             const api = import.meta.env.VITE_API_URL
-            let body = this.curMsg
+            let body = this.defaultmessage != "" ? this.defaultmessage : this.curMsg
             if (this.beepcoefficient > 0.0 && this.junkword != "") {
                 if (body.length < (this.junkword.length + 1)) {
                     body = "beep"
