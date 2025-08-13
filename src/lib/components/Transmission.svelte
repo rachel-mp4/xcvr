@@ -124,7 +124,7 @@
                     >{part.text}</a
                 >
             {:else}
-                {part.text}
+                {@html part.text}
             {/if}
         {/each}
     </div>
