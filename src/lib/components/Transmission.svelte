@@ -83,9 +83,7 @@
     };
     let mfrags = $derived(
         convertLinksToMessageFrags(
-            showinglrc
-                ? message.body
-                : (message.mbody ?? "something went wrong"),
+            showinglrc ? message.body : (message.mbody ?? message.body),
         ),
     );
     let diffs = $derived(
