@@ -130,15 +130,16 @@
                     {/if}
                 </div>
             {/if}
-            {#if canshownotlrc}<button
-                    class="atproto-lrc-toggler"
-                    onclick={() => {
-                        showinglrc = !showinglrc;
-                    }}
-                    >{showinglrc
-                        ? "go back to atproto"
-                        : "I WAS THERE!"}</button
-                > (difference between atproto + lrc detected){/if}
+            {#if canshownotlrc}<span class="atproto-lrc-toggler"
+                    ><button
+                        onclick={() => {
+                            showinglrc = !showinglrc;
+                        }}
+                        >{showinglrc
+                            ? "go back to atproto"
+                            : "I WAS THERE!"}</button
+                    > (difference between atproto + lrc detected)</span
+                >{/if}
         {/if}
     </div>
     <div class="body">
