@@ -47,7 +47,11 @@
       defaultNick={data.myProfile.defaultNick}
       defaultHandle={data.myProfile.handle}
     />
-    <button>
+    <button
+      onclick={() => {
+        showSettings = !showSettings;
+      }}
+    >
       {showSettings ? "hide" : "show"} settings
     </button>
     <Console log={ctx.log} />
@@ -72,7 +76,21 @@
   #transceiver {
     position: relative;
   }
+  button {
+    font-size: 1rem;
+    background-color: transparent;
+    border: none;
+    color: var(--fg);
+    padding: 0;
+  }
+  button:hover {
+    font-weight: 700;
+  }
   input {
     accent-color: var(--theme);
+  }
+  main {
+    margin-bottom: 70vh;
+    margin-bottom: 70dvh;
   }
 </style>

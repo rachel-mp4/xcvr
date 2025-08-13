@@ -110,10 +110,6 @@
 </div>
 
 <style>
-    #transmitter {
-        margin-bottom: 70vh;
-        margin-bottom: 70dvh;
-    }
     .wrapper {
         position: relative;
         display: inline-block;
