@@ -82,7 +82,7 @@ export class WSContext {
                 ...(this.channelUri && { channelURI: this.channelUri }),
                 ...(this.myID && { messageID: this.myID }),
                 ...(this.myNonce && { nonce: b64encodebytearray(this.myNonce) }),
-                body: this.curMsg,
+                body: body,
                 ...(this.nick && { nick: this.nick }),
                 ...(this.color && { color: this.color }),
             }
