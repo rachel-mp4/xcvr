@@ -20,7 +20,7 @@ export class WSContext {
     active: boolean = false
     nick: string = "wanderer"
     handle: string = ""
-    audio: HTMLAudioElement = new Audio('%sveltekit.assets%/notif.wav')
+    audio: HTMLAudioElement = new Audio('/notif.wav')
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
         console.log(channelUri)
