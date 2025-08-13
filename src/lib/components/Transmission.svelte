@@ -131,6 +131,7 @@
                 </div>
             {/if}
             {#if canshownotlrc}<button
+                    class="atproto-lrc-toggler"
                     onclick={() => {
                         showinglrc = !showinglrc;
                     }}>show {showinglrc ? "atproto" : "lrc"}</button
@@ -163,6 +164,9 @@
 </div>
 
 <style>
+    .transmission:not(:hover) .atproto-lrc-toggler {
+        display: none;
+    }
     .active {
         position: relative;
         background-color: var(--themep);
