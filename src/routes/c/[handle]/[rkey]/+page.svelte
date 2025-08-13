@@ -47,6 +47,16 @@
     <Console log={ctx.log} />
   {/if}
 </main>
+{#if ctx}
+  <div>beepifier</div>
+  <input
+    type="range"
+    min="0"
+    max="1"
+    step=".01"
+    bind:value={ctx.beepcoefficient}
+  />
+{/if}
 
 <style>
   #transceiver {
