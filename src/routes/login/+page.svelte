@@ -21,12 +21,12 @@
     &lt;—
     <input class="beep" type="submit" value="this is my handle" />
   </form>
-  <p class="big">yup...       ^       ^                                  ^
-               │     │                                │
-               │     └  that's your handle  │
-               │            alright...                │
-               │                                         │
-               │                                     ┌┘
+  <p class="big">yup...       ^       ^                                   ^
+               │     │                                 │
+               │     └  that's your handle│
+               │            alright...                 │
+               │                                          │
+               │                                      ┌┘
                │                           click that "this is my handle"
                └────when that handle is your handle
   </p>
