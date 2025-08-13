@@ -7,6 +7,13 @@
   import Transmitter from "$lib/components/Transmitter.svelte";
   import Console from "$lib/components/Console.svelte";
   import { numToHex } from "$lib/colors";
+  import { getContext } from "svelte";
+  const tabContext = getContext<{
+    curTab: string;
+    gotoA: () => void;
+    gotoB: () => void;
+    gotoC: () => void;
+  }>("tabs");
   let { data }: PageProps = $props();
   let ctx = $derived(
     new WSContext(
@@ -50,6 +57,9 @@
     <button
       onclick={() => {
         showSettings = !showSettings;
+        if (showSettings) {
+          tabContext.gotoC();
+        }
       }}
     >
       {showSettings ? "hide" : "show"} settings
