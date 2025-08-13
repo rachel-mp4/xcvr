@@ -10,6 +10,7 @@
     }
     let { message, margin }: Props = $props();
     let color: string = numToHex(message.color ?? 16777215);
+    let cpartial: string = hexToTransparent(color);
     let contrast: string = hexToContrast(color);
     let partial: string = hexToTransparent(contrast);
     let triggerEl: HTMLElement | undefined = $state();
@@ -75,13 +76,16 @@
         return res;
     };
     let mfrags = $derived(convertLinksToMessageFrags(message.body));
+    const xpos = Math.floor(Math.random() * 100);
 </script>
 
 <div
     style:--theme={color}
+    style:--themep={cpartial}
     style:--tcontrast={contrast}
     style:--tpartial={partial}
     style:--margin={margin + "rem"}
+    style:background={`radial-gradient(circle at ${xpos}% 0, var(--theme), var(--themep))`}
     class="{message.active ? 'active' : ''} 
     {message.profileView ? 'signed' : ''} 
     transmission"
@@ -130,7 +134,7 @@
 
 <style>
     .active {
-        background-color: var(--theme);
+        background: var(--theme);
         color: var(--tcontrast);
     }
     .header {
