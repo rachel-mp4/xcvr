@@ -64,6 +64,10 @@
         border: none;
         background: var(--fl);
     }
+    .autogrowwrapper {
+        position: relative;
+    }
+
     .autogrowwrapper::before {
         content: "";
         position: absolute;
