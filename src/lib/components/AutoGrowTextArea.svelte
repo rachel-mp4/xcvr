@@ -60,5 +60,13 @@
         display: block;
         resize: none;
         border: none;
+        background-color: var(--fl);
+    }
+    textarea::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: var(--fg);
+        z-index: -1;
     }
 </style>

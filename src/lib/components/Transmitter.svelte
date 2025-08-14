@@ -96,7 +96,7 @@
         <AutoGrowInput
             bind:value={handle}
             placeholder="alice.com"
-            size={10}
+            size={8}
             onInput={setHandle}
             maxlength={253}
             bold={false}
