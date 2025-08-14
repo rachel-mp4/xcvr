@@ -99,7 +99,7 @@
       <div id="wanderer">
         <div>
           try to write message to xcvr's user repo (make sure to set handle
-          prior to initialization!)
+          before you start typing, that's when the signet is created!)
         </div>
         <input type="checkbox" bind:checked={ctx.postToMyRepo} />
       </div>
