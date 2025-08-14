@@ -28,7 +28,7 @@
 
     function adjustHeight() {
         if (inputEl) {
-            console.log("height adjust");
+            console.log("height adjust, now val is ", value);
             inputEl.style.height = "auto";
             inputEl.style.height = inputEl.scrollHeight + "px";
         }
