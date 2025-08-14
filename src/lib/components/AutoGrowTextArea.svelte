@@ -39,17 +39,19 @@
     });
 </script>
 
-<textarea
-    rows="1"
-    bind:value
-    bind:this={inputEl}
-    {maxlength}
-    oninput={adjust}
-    onbeforeinput={onBeforeInput}
-    style:font-weight={bold ? "700" : "inherit"}
-    style:--theme={color}
-    {placeholder}
-></textarea>
+<div class="autogrowwrapper">
+    <textarea
+        rows="1"
+        bind:value
+        bind:this={inputEl}
+        {maxlength}
+        oninput={adjust}
+        onbeforeinput={onBeforeInput}
+        style:font-weight={bold ? "700" : "inherit"}
+        style:--theme={color}
+        {placeholder}
+    ></textarea>
+</div>
 
 <style>
     textarea {
@@ -60,13 +62,13 @@
         display: block;
         resize: none;
         border: none;
-        background-color: var(--fl);
+        background: var(--fl);
     }
-    textarea::before {
+    .autogrowwrapper::before {
         content: "";
         position: absolute;
         inset: 0;
-        background-color: var(--fg);
+        background: var(--fg);
         z-index: -1;
     }
 </style>
