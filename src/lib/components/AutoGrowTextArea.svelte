@@ -28,6 +28,7 @@
 
     function adjustHeight() {
         if (inputEl) {
+            console.log("height adjust");
             inputEl.style.height = "auto";
             inputEl.style.height = inputEl.scrollHeight + "px";
         }
@@ -35,6 +36,7 @@
     onMount(adjustHeight);
     $effect(() => {
         value;
+        console.log("effect trigger");
         adjustHeight();
         setTimeout(() => adjustHeight());
     });
