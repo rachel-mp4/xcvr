@@ -144,7 +144,8 @@
 		>
 	</h2>
 	<p>
-		hi! i'm rachel and i'd like to welcome you to xcvr (pronounced transceiver)!
+		hi! i'm <a href="/p/moth11.net">rachel</a> and i'd like to welcome you to xcvr
+		(pronounced transceiver)!
 	</p>
 	<p>
 		tune in to a channel <span class="desktop">(to the left)</span>
