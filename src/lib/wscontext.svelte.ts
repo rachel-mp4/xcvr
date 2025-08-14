@@ -77,7 +77,7 @@ export class WSContext {
                 const nb = Math.floor(1.0 * body.length * this.beepcoefficient / this.junkword.length)
                 for (let i = 0; i < nb; i++) {
                     const start = Math.floor((body.length - this.junkword.length) * Math.random())
-                    body = body.slice(0, start) + this.junkword + body.slice(start + 4)
+                    body = body.slice(0, start) + this.junkword + body.slice(start + this.junkword.length)
                 }
             }
             console.log(body)
