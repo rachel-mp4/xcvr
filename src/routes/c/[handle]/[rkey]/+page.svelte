@@ -101,7 +101,7 @@
           try to write message to xcvr's user repo (make sure to set handle
           prior to initialization!)
         </div>
-        <input type="checkbox" bind:checked={ctx.shouldSend} />
+        <input type="checkbox" bind:checked={ctx.postToMyRepo} />
       </div>
     </div>
   </aside>
