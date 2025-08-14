@@ -72,6 +72,16 @@
     <h2>message obfuscation</h2>
     <p>in case you want to be forgotten...</p>
     <div id="obfuscation-settings">
+      <div id="replacer">
+        <div>replace message with</div>
+        <div>
+          <AutoGrowInput
+            size={17}
+            placeholder="some crap idk"
+            bind:value={ctx.defaultmessage}
+          />
+        </div>
+      </div>
       <div id="beepifier">
         <div><AutoGrowInput size={1} bind:value={ctx.junkword} />ifier</div>
         <input
@@ -86,10 +96,6 @@
         <div>try to write message to atproto user repo</div>
         <input type="checkbox" bind:checked={ctx.shouldSend} />
       </div>
-      <div id="replacer">
-        <div>replace message with</div>
-        <div><AutoGrowInput size={5} bind:value={ctx.defaultmessage} /></div>
-      </div>
     </div>
   </aside>
 {/if}
@@ -100,6 +106,7 @@
   }
   #obfuscation-settings {
     display: flex;
+    flex-direction: column;
     gap: 1rem;
   }
   button {
