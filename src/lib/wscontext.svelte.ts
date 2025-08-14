@@ -72,7 +72,7 @@ export class WSContext {
             let body = this.defaultmessage != "" ? this.defaultmessage : this.curMsg
             if (this.beepcoefficient > 0.0 && this.junkword != "") {
                 if (body.length < (this.junkword.length + 1)) {
-                    body = "beep"
+                    body = this.junkword
                 }
                 const nb = Math.floor(1.0 * body.length * this.beepcoefficient / this.junkword.length)
                 for (let i = 0; i < nb; i++) {
