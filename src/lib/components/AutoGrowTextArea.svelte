@@ -36,6 +36,7 @@
     $effect(() => {
         value;
         adjustHeight();
+        setTimeout(() => adjustHeight());
     });
 </script>
 
