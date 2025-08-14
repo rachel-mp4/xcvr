@@ -29,6 +29,7 @@
     function bi(event: InputEvent) {
         onBeforeInput?.(event);
         adjustHeight();
+        // setTimeout(() => adjustHeight(), 0);
     }
 
     function adjustHeight() {
@@ -51,7 +52,7 @@
         bind:this={inputEl}
         {maxlength}
         oninput={adjust}
-        onbeforeinput={onBeforeInput}
+        onbeforeinput={bi}
         style:font-weight={bold ? "700" : "inherit"}
         style:--theme={color}
         {placeholder}
