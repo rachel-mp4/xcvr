@@ -1,14 +1,15 @@
 <main>
   <h2>known bugs</h2>
   <p>
-    <s
-      ><b> inability to validate messages </b> occurs at some points in time, possibly
-      after the backend restarts, but i'm not totally sure how or why, oauth is a
-      bit mysterious to me still and it's likely a silly error somewhere but if you
-      suddenly are unable to make any records while logged in, then you should log
-      out and log back in</s
-    > i actually believe that this should be fixed now! please let me know if it's
-    funky
+    <b> inability to validate messages </b> occurs at some points in time,
+    possibly after the backend restarts, but i'm not totally sure how or why,
+    oauth is a bit mysterious to me still and it's likely a silly error
+    somewhere but if you suddenly are unable to make any records while logged
+    in, then you should log out and log back in
+    <s>
+      i actually believe that this should be fixed now! please let me know if
+      it's funky
+    </s> it was not fixed
   </p>
   <h2>upcoming features</h2>
   <p>
