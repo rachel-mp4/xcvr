@@ -29,7 +29,6 @@
     function bi(event: InputEvent) {
         onBeforeInput?.(event);
         adjustHeight();
-        // setTimeout(() => adjustHeight(), 0);
     }
 
     function adjustHeight() {

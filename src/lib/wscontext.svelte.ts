@@ -23,8 +23,9 @@ export class WSContext {
     audio: HTMLAudioElement = new Audio('/notif.wav')
     beepcoefficient: number = $state(0.0)
     junkword: string = $state("beep")
-    shouldSend: boolean = true
+    shouldSend: boolean = $state(true)
     defaultmessage: string = $state("")
+    postToMyRepo: boolean = $state(false)
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
         console.log(channelUri)
@@ -90,8 +91,9 @@ export class WSContext {
                 ...(this.nick && { nick: this.nick }),
                 ...(this.color && { color: this.color }),
             }
+            const endpoint = this.postToMyRepo ? `${api}/lrc/mymessage` : `${api}/lrc/message`
             if (this.shouldSend) {
-                fetch(`${api}/lrc/message`, {
+                fetch(endpoint, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

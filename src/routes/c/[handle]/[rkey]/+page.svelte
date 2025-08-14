@@ -96,6 +96,13 @@
         <div>try to write message to atproto user repo</div>
         <input type="checkbox" bind:checked={ctx.shouldSend} />
       </div>
+      <div id="wanderer">
+        <div>
+          try to write message to xcvr's user repo (make sure to set handle
+          prior to initialization!)
+        </div>
+        <input type="checkbox" bind:checked={ctx.shouldSend} />
+      </div>
     </div>
   </aside>
 {/if}
