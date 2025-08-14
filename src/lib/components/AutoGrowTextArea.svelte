@@ -26,9 +26,13 @@
         onInput?.(event as InputEvent);
     }
 
+    function bi(event: InputEvent) {
+        onBeforeInput?.(event);
+        adjustHeight();
+    }
+
     function adjustHeight() {
         if (inputEl) {
-            console.log("height adjust, now val is ", value);
             inputEl.style.height = "auto";
             inputEl.style.height = inputEl.scrollHeight + "px";
         }
@@ -36,9 +40,7 @@
     onMount(adjustHeight);
     $effect(() => {
         value;
-        console.log("effect trigger");
         adjustHeight();
-        setTimeout(() => adjustHeight());
     });
 </script>
 
