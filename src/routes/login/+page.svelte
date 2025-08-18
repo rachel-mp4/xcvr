@@ -13,8 +13,8 @@
   <form action="{import.meta.env.VITE_API_URL}/oauth/login" method="POST">
     <input
       type="text"
-      name="handle"
-      id="handle"
+      name="identifier"
+      id="identifier"
       placeholder="alice.com"
       required
     />
