@@ -62,7 +62,7 @@
 						go home
 					{/if}
 				</a>
-				{#if data.myProfile.handle !== "xcvr.org"}
+				{#if data.myProfile.loggedIn}
 					<a
 						class="block-link"
 						href="/p/{data.myProfile.handle}"
