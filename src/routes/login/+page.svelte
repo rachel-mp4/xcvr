@@ -1,3 +1,12 @@
+<script lang="ts">
+  import { sanitizeHandle } from "$lib/utils";
+  function handleSubmit(event: SubmitEvent) {
+    const inputel = document.querySelector(".beep")
+    if (inputel instanceof HTMLInputElement) {
+      inputel.value = sanitizeHandle(inputel.value)
+    }
+  }
+</script>
 <main>
   <p>
     xcvr uses atproto oauth, so enter your atproto handle below (if on bsky you
@@ -10,7 +19,7 @@
   <p class="big" style="margin-top:1rem">your handle goes there
      |   |                      |
     V  V                    V    </p>
-  <form action="{import.meta.env.VITE_API_URL}/oauth/login" method="POST">
+  <form action="{import.meta.env.VITE_API_URL}/oauth/login" onsubmit={handleSubmit} method="POST">
     <input
       type="text"
       name="identifier"

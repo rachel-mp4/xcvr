@@ -72,6 +72,14 @@ export function signedMessageViewToMessage(sm: SignedMessageView): Message {
     profileView: sm.author,
     signetView: sm.signet,
     ...(sm.nick && { nick: sm.nick }),
-    startedAt: Date.parse(sm.postedAt)
+    startedAt: sm.signet.startedAt,
   }
+}
+export function sanitizeHandle(input: string) {
+  return input
+    .normalize('NFKC') // Unicode normalization
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Control characters
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F]/g, '') // Invisible/directional
+    .replace(/[\uFEFF]/g, '') // Byte order mark
+    .trim();
 }
