@@ -72,7 +72,7 @@ export function signedMessageViewToMessage(sm: SignedMessageView): Message {
     profileView: sm.author,
     signetView: sm.signet,
     ...(sm.nick && { nick: sm.nick }),
-    startedAt: sm.signet.startedAt,
+    startedAt: Date.parse(sm.signet.startedAt),
   }
 }
 export function sanitizeHandle(input: string) {

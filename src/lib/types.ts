@@ -57,7 +57,7 @@ export type SignetView = {
     channelURI: string
     lrcId: number
     authorHandle: string
-    startedAt: number
+    startedAt: string
 }
 
 export type MessageView = {

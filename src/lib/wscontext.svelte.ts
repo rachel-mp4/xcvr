@@ -268,7 +268,7 @@ const makeMessageFromSignetAndMessageViews = (m: MessageView, s: SignetView): Me
         profileView: m.author,
         signetView: s,
         ...(m.nick && { nick: m.nick }),
-        startedAt: s.startedAt
+        startedAt: Date.parse(s.startedAt)
     }
 }
 
@@ -348,7 +348,7 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
             const channelURI = lex.channelURI
             const lrcID = lex.lrcID
             const authorHandle = lex.authorHandle
-            const startedAt = Date.parse(lex.startedAt)
+            const startedAt = lex.startedAt
             ctx.addSignet({
                 $type: "org.xcvr.lrc.defs#signetView",
                 uri: uri,
