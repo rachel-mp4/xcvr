@@ -103,10 +103,12 @@
     style:--margin={margin + "rem"}
     class="{message.active ? 'active' : ''} 
     {message.profileView ? 'signed' : ''} 
+    {message.nick ? '' : 'late'} 
     transmission"
 >
     <div class="header">
-        {message.nick}{#if message.handle}
+        <span class="nick">{message.nick ?? "???"}</span>
+        {#if message.handle}
             {#if !message.profileView}
                 <span class="handle">
                     @{message.handle}
@@ -184,6 +186,9 @@
 </div>
 
 <style>
+    .late {
+        filter: url("#pearly");
+    }
     .active {
         position: relative;
         background-color: var(--themep);

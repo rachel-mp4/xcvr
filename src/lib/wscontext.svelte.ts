@@ -153,8 +153,7 @@ export class WSContext {
         }
         if (this.messages.length > 200) {
             this.messages = [...this.messages.slice(this.messages.length - 199), message]
-        }
-        else {
+        } else {
             this.messages.push(message)
         }
     }
@@ -172,15 +171,31 @@ export class WSContext {
     }
 
     insertMessage = (id: number, idx: number, s: string) => {
+        this.ensureExistenceOf(id)
         this.messages = this.messages.map((msg: Message) => {
             return msg.id === id ? { ...msg, body: insertSIntoAStringAtIdx(s, msg.body, idx) } : msg
         })
     }
 
     deleteMessage = (id: number, idx1: number, idx2: number) => {
+        this.ensureExistenceOf(id)
         this.messages = this.messages.map((msg: Message) => {
             return msg.id === id ? { ...msg, body: deleteFromAStringBetweenIdxs(msg.body, idx1, idx2) } : msg
         })
+    }
+
+    ensureExistenceOf = (id: number) => {
+        const idx = this.messages.findIndex((msg) => { return msg.id === id })
+        if (idx === -1) {
+            this.pushMessage({
+                body: "",
+                id: id,
+                active: true,
+                mine: false,
+                muted: false,
+                startedAt: Date.now(),
+            })
+        }
     }
 
     addSignet = (signet: SignetView) => {
