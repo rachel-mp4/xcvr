@@ -85,8 +85,8 @@ export function sanitizeHandle(input: string) {
 }
 
 export function smartAbsoluteTimestamp(then: number): string {
+  const now = Date.now()
   try {
-    const now = Date.now()
     if (then > now) {
       return "in the future"
     } else if (now - then < 1000 * 60 * 60 * 18) {
@@ -106,7 +106,7 @@ export function smartAbsoluteTimestamp(then: number): string {
       return `a ${formatter1.format(then)} in ${formatter2.format(then)} ${formatter3.format(then)}`.toLocaleLowerCase()
     }
   } catch {
-    return "sometime"
+    return `sometime ${then} (${now})`
   }
 }
 
