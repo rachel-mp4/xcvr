@@ -97,8 +97,9 @@ export function smartAbsoluteTimestamp(then: number): string {
       return formatter.format(then).toLocaleLowerCase()
     } else if (now - then < 1000 * 60 * 60 * 24 * 333) {
       const formatter1 = new Intl.DateTimeFormat("en-us", { weekday: "long" })
-      const formatter2 = new Intl.DateTimeFormat("en-us", { month: "long", dayPeriod: "long" })
-      return `a ${formatter1.format(then)} in ${formatter2.format(then)}`.toLocaleLowerCase()
+      const formatter2 = new Intl.DateTimeFormat("en-us", { month: "long" })
+      const formatter3 = new Intl.DateTimeFormat("en-us", { dayPeriod: "long" })
+      return `a ${formatter1.format(then)} in ${formatter2.format(then)} ${formatter3.format(then)}`.toLocaleLowerCase()
     } else {
       const formatter1 = new Intl.DateTimeFormat("en-us", { weekday: "long" })
       const formatter2 = new Intl.DateTimeFormat("en-us", { month: "long" })
@@ -106,7 +107,7 @@ export function smartAbsoluteTimestamp(then: number): string {
       return `a ${formatter1.format(then)} in ${formatter2.format(then)} ${formatter3.format(then)}`.toLocaleLowerCase()
     }
   } catch {
-    return `sometime ${then} (${now})`
+    return `sometime who cares`
   }
 }
 
