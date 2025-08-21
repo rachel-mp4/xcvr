@@ -124,6 +124,13 @@ export class WSContext {
         deleteMessage(idx, idx2, this)
         this.curMsg = deleteFromAStringBetweenIdxs(this.curMsg, idx, idx2)
     }
+    mute = (id: number) => {
+        muteMessage(id, this)
+    }
+
+    unmute = (id: number) => {
+        unmuteMessage(id, this)
+    }
 
     setNick = (nick: string) => {
         setNick(nick, this)
@@ -460,6 +467,32 @@ export const deleteMessage = (idx: number, idx2: number, ctx: WSContext) => {
     ctx.ws?.send(byteArray)
 }
 
+export const muteMessage = (id: number, ctx: WSContext) => {
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "mute",
+            mute: {
+                id: id,
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
+}
+
+export const unmuteMessage = (id: number, ctx: WSContext) => {
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "unmute",
+            unmute: {
+                id: id,
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
+}
+
 export const getTopic = (ctx: WSContext) => {
     const evt: lrc.Event = {
         msg: {
@@ -592,15 +625,12 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
         case "mute": {
             const id = event.msg.mute.id ?? 0
             if (id === 0) return false
-            const nick = ""
             const muted = true
             const active = false
             const mine = false
-            const color = 0
-            const handle = ""
             const body = ""
             const startedAt = Date.now()
-            ctx.pushMessage({ id, body, nick, muted, active, mine, color, handle, startedAt })
+            ctx.pushMessage({ id, body, muted, active, mine, startedAt })
         }
 
         case "unmute": {

@@ -48,7 +48,12 @@
     </div>
   {/if}
   {#if ctx}
-    <Receiever messages={ctx.messages} mylocaltext={ctx.curMsg} />
+    <Receiever
+      messages={ctx.messages}
+      mylocaltext={ctx.curMsg}
+      onmute={ctx.mute}
+      onunmute={ctx.unmute}
+    />
     <Transmitter
       {ctx}
       defaultNick={data.myProfile.defaultNick}

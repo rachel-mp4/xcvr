@@ -4,8 +4,10 @@
   interface Props {
     messages: Array<Message>;
     mylocaltext?: string;
+    onmute?: (id: number) => void;
+    onunmute?: (id: number) => void;
   }
-  let { messages, mylocaltext }: Props = $props();
+  let { messages, mylocaltext, onmute, onunmute }: Props = $props();
 </script>
 
 <div id="receiver">
@@ -14,6 +16,8 @@
       {message}
       mylocaltext={message.active && message.mine ? mylocaltext : undefined}
       margin={0}
+      {onmute}
+      {onunmute}
     />
   {/each}
 </div>

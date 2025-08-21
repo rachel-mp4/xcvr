@@ -10,8 +10,10 @@
         message: Message;
         margin: number;
         mylocaltext?: string;
+        onmute?: (id: number) => void;
+        onunmute?: (id: number) => void;
     }
-    let { message, margin, mylocaltext }: Props = $props();
+    let { message, margin, mylocaltext, onmute, onunmute }: Props = $props();
     let color: string = numToHex(message.color ?? 16777215);
     let cpartial: string = hexToTransparent(color);
     let contrast: string = hexToContrast(color);
@@ -95,95 +97,120 @@
     let pinned = $state(false);
 </script>
 
-<div
-    style:--theme={color}
-    style:--themep={cpartial}
-    style:--tcontrast={contrast}
-    style:--tpartial={partial}
-    style:--margin={margin + "rem"}
-    class="{message.active ? 'active' : ''} 
+{#if message.muted}
+    <div
+        style:--theme={color}
+        style:--themep={cpartial}
+        style:--tcontrast={contrast}
+        style:--tpartial={partial}
+        style:--margin={margin + "rem"}
+        class="{message.active ? 'active' : ''} 
     {message.profileView ? 'signed' : ''} 
     {message.nick ? '' : 'late'} 
     transmission"
->
-    <div class="header">
-        <span class="nick">{message.nick ?? "???"}</span>
-        {#if message.handle}
-            {#if !message.profileView}
-                <span class="handle">
-                    @{message.handle}
-                </span>
-            {:else}
-                <div
-                    role="button"
-                    tabindex="0"
-                    class="handle-container"
-                    onmouseenter={() => (showProfile = true)}
-                    onmouseleave={() => (showProfile = false)}
-                >
-                    <a
-                        bind:this={triggerEl}
-                        class="handle"
-                        href={`/p/${message.handle}`}
-                        >@{message.handle}
-                    </a>
-                    {#if showProfile}
-                        <div class="profile-container" bind:this={profileEl}>
-                            <ProfileCard profile={message.profileView} />
-                        </div>
-                    {/if}
-                </div>
-            {/if}
-            <span
-                class="time clickable"
-                title={dumbAbsoluteTimestamp(message.startedAt)}
-            >
-                {smartAbsoluteTimestamp(message.startedAt)}
-            </span>
-            <button
-                class={pinned ? "pinned" : ""}
-                onclick={() => {
-                    pinned = !pinned;
-                }}
-            >
-                {pinned ? "unpin" : "pin"}
-            </button>
-            {#if canshownotlrc}<span class="clickable"
-                    ><button
-                        onclick={() => {
-                            showinglrc = !showinglrc;
-                        }}
-                        >{showinglrc
-                            ? "go back to atproto"
-                            : "I WAS THERE!"}</button
-                    > (difference between atproto + lrc detected)</span
-                >{/if}
-        {/if}
-    </div>
-    <div class="body">
-        {#if diffs}
-            {#each diffs as diff}
-                {#if diff[0] === -1}
-                    <span class="removed">{diff[1]}</span>
-                {:else if diff[0] === 0}
-                    <span>{diff[1]}</span>
+    >
+        <div class="header">
+            <span class="nick">{message.nick ?? "???"}</span>
+            {#if message.handle}
+                {#if !message.profileView}
+                    <span class="handle">
+                        @{message.handle}
+                    </span>
                 {:else}
-                    <span class="appended">{diff[1]}</span>
-                {/if}
-            {/each}
-        {:else}
-            {#each mfrags as part (part.key)}
-                {#if part.isLink}
-                    <a href={part.href} target="_blank" rel="noopener"
-                        >{part.text}</a
+                    <div
+                        role="button"
+                        tabindex="0"
+                        class="handle-container"
+                        onmouseenter={() => (showProfile = true)}
+                        onmouseleave={() => (showProfile = false)}
                     >
-                {:else}
-                    {@html part.text}
+                        <a
+                            bind:this={triggerEl}
+                            class="handle"
+                            href={`/p/${message.handle}`}
+                            >@{message.handle}
+                        </a>
+                        {#if showProfile}
+                            <div
+                                class="profile-container"
+                                bind:this={profileEl}
+                            >
+                                <ProfileCard profile={message.profileView} />
+                            </div>
+                        {/if}
+                    </div>
                 {/if}
-            {/each}
-        {/if}
+                <span
+                    class="time clickable"
+                    title={dumbAbsoluteTimestamp(message.startedAt)}
+                >
+                    {smartAbsoluteTimestamp(message.startedAt)}
+                </span>
+                <button
+                    class={pinned ? "pinned" : ""}
+                    onclick={() => {
+                        pinned = !pinned;
+                    }}
+                >
+                    {pinned ? "unpin" : "pin"}
+                </button>
+                <button
+                    class="mute"
+                    onclick={() => {
+                        message.muted = true;
+                        onmute?.(message.id);
+                    }}
+                >
+                    mute
+                </button>
+                {#if canshownotlrc}<span class="clickable"
+                        ><button
+                            onclick={() => {
+                                showinglrc = !showinglrc;
+                            }}
+                            >{showinglrc
+                                ? "go back to atproto"
+                                : "I WAS THERE!"}</button
+                        > (difference between atproto + lrc detected)</span
+                    >{/if}
+            {/if}
+        </div>
+        <div class="body">
+            {#if diffs}
+                {#each diffs as diff}
+                    {#if diff[0] === -1}
+                        <span class="removed">{diff[1]}</span>
+                    {:else if diff[0] === 0}
+                        <span>{diff[1]}</span>
+                    {:else}
+                        <span class="appended">{diff[1]}</span>
+                    {/if}
+                {/each}
+            {:else}
+                {#each mfrags as part (part.key)}
+                    {#if part.isLink}
+                        <a href={part.href} target="_blank" rel="noopener"
+                            >{part.text}</a
+                        >
+                    {:else}
+                        {@html part.text}
+                    {/if}
+                {/each}
+            {/if}
+        </div>
     </div>
-</div>
+{:else}
+    muted.
+    <button
+        class="unmute"
+        onclick={() => {
+            message.muted = false;
+            onunmute?.(message.id);
+        }}
+    >
+        unmute
+    </button>
+{/if}
 
 <style>
     .late {
