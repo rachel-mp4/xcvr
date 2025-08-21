@@ -9,7 +9,7 @@
     <s>
       i actually believe that this should be fixed now! please let me know if
       it's funky
-    </s> it was not fixed
+    </s> <s> it was not fixed </s> IT MIGHT NOW BE FIXED
   </p>
   <h2>upcoming features</h2>
   <p>

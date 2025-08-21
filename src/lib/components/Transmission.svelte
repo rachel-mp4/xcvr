@@ -91,6 +91,13 @@
             ? diff(message.body, mylocaltext)
             : null,
     );
+    const formatter = new Intl.DateTimeFormat("en-US", {
+        calendar: "coptic",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long",
+    });
 </script>
 
 <div
@@ -130,6 +137,9 @@
                     {/if}
                 </div>
             {/if}
+            <span class="time">
+                {formatter.format(new Date(message.startedAt))}
+            </span>
             {#if canshownotlrc}<span class="atproto-lrc-toggler"
                     ><button
                         onclick={() => {
@@ -187,6 +197,12 @@
         text-decoration: line-through var(--tpartial);
     }
     .appended {
+        color: var(--tpartial);
+    }
+    .transmission:not(:hover) .time {
+        display: none;
+    }
+    .time {
         color: var(--tpartial);
     }
 

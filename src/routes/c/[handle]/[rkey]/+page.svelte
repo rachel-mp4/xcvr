@@ -93,7 +93,9 @@
         />
       </div>
       <div id="writer">
-        <div>try to write message to atproto user repo</div>
+        <div>
+          try to write message to your ({data.myProfile.handle}) user repo
+        </div>
         <input type="checkbox" bind:checked={ctx.shouldSend} />
       </div>
       <div id="wanderer">
