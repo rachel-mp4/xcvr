@@ -3,6 +3,7 @@
     import * as linkify from "linkifyjs";
     import { computePosition, flip, shift, offset } from "@floating-ui/dom";
     import { hexToContrast, hexToTransparent, numToHex } from "$lib/colors";
+    import { smartAbsoluteTimestamp, dumbAbsoluteTimestamp } from "$lib/utils";
     import ProfileCard from "./ProfileCard.svelte";
     import diff from "fast-diff";
     interface Props {
@@ -91,13 +92,6 @@
             ? diff(message.body, mylocaltext)
             : null,
     );
-    const formatter = new Intl.DateTimeFormat("en-US", {
-        calendar: "coptic",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        weekday: "long",
-    });
 </script>
 
 <div
@@ -137,8 +131,8 @@
                     {/if}
                 </div>
             {/if}
-            <span class="time">
-                {formatter.format(new Date(message.startedAt))}
+            <span class="time" title={dumbAbsoluteTimestamp(message.startedAt)}>
+                {smartAbsoluteTimestamp(message.startedAt)}
             </span>
             {#if canshownotlrc}<span class="atproto-lrc-toggler"
                     ><button
@@ -202,8 +196,11 @@
     .transmission:not(:hover) .time {
         display: none;
     }
-    .time {
+    .active .time {
         color: var(--tpartial);
+    }
+    .time {
+        color: var(--fl);
     }
 
     .header {
