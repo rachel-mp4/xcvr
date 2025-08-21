@@ -92,6 +92,7 @@
             ? diff(message.body, mylocaltext)
             : null,
     );
+    let pinned = $state(false);
 </script>
 
 <div
@@ -131,10 +132,21 @@
                     {/if}
                 </div>
             {/if}
-            <span class="time" title={dumbAbsoluteTimestamp(message.startedAt)}>
+            <span
+                class="time clickable"
+                title={dumbAbsoluteTimestamp(message.startedAt)}
+            >
                 {smartAbsoluteTimestamp(message.startedAt)}
             </span>
-            {#if canshownotlrc}<span class="atproto-lrc-toggler"
+            <button
+                class={pinned ? "pinned" : ""}
+                onclick={() => {
+                    pinned = !pinned;
+                }}
+            >
+                {pinned ? "unpin" : "pin"}
+            </button>
+            {#if canshownotlrc}<span class="clickable"
                     ><button
                         onclick={() => {
                             showinglrc = !showinglrc;
@@ -172,9 +184,6 @@
 </div>
 
 <style>
-    .transmission:not(:hover) .atproto-lrc-toggler {
-        display: none;
-    }
     .active {
         position: relative;
         background-color: var(--themep);
@@ -193,14 +202,24 @@
     .appended {
         color: var(--tpartial);
     }
-    .transmission:not(:hover) .time {
+    .transmission:not(:hover) .clickable {
         display: none;
     }
-    .active .time {
+    .active .clickable {
         color: var(--tpartial);
     }
-    .time {
+    .clickable {
         color: var(--fl);
+        cursor: pointer;
+    }
+    .clickable:hover {
+        color: var(--fg);
+    }
+    .active .clickable:hover {
+        color: var(--contrast);
+    }
+    .pinned {
+        order: 1;
     }
 
     .header {
