@@ -9,6 +9,8 @@
         maxlength?: number;
         bold?: boolean;
         color?: string;
+        shouldTransmit?: boolean;
+        transmitfunc?: (event: HTMLInputElement) => void;
     }
 
     let {
@@ -19,12 +21,23 @@
         maxlength,
         bold = false,
         color,
+        shouldTransmit,
+        transmitfunc,
     }: Props = $props();
 
     let inputEl: HTMLElement;
     function adjust(event: Event) {
-        onInput?.(event as InputEvent);
+        if (shouldTransmit) {
+            onInput?.(event as InputEvent);
+        }
     }
+    function transmit() {
+        transmitfunc?.(inputEl as HTMLInputElement);
+    }
+    $effect(() => {
+        shouldTransmit;
+        transmit();
+    });
 
     function bi(event: InputEvent) {
         onBeforeInput?.(event);

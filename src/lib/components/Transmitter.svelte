@@ -8,8 +8,9 @@
         ctx: WSContext;
         defaultNick?: string;
         defaultHandle?: string;
+        shouldTransmit?: boolean;
     }
-    let { ctx, defaultNick, defaultHandle }: Props = $props();
+    let { ctx, defaultNick, defaultHandle, shouldTransmit }: Props = $props();
     let nick = $state(defaultNick ?? "wanderer");
     $effect(() => {
         if (ctx) {
@@ -35,6 +36,9 @@
     let color = $derived(numToHex(ctx.color));
     const diffAndSend = (event: InputEvent) => {
         const el = event.target as HTMLInputElement;
+        diffAndSendEl(el);
+    };
+    const diffAndSendEl = (el: HTMLInputElement) => {
         const result = diff(message, el.value);
         let idx = 0;
         result.forEach((d) => {
@@ -106,6 +110,8 @@
         placeholder="start typing..."
         onBeforeInput={bi}
         onInput={diffAndSend}
+        {shouldTransmit}
+        transmitfunc={diffAndSendEl}
         maxlength={65535}
     />
 </div>

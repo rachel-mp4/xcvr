@@ -58,6 +58,7 @@
       {ctx}
       defaultNick={data.myProfile.defaultNick}
       defaultHandle={data.myProfile.handle}
+      shouldTransmit={ctx.shouldTransmit}
     />
     <button
       onclick={() => {
@@ -109,6 +110,10 @@
           before you start typing, that's when the signet is created!)
         </div>
         <input type="checkbox" bind:checked={ctx.postToMyRepo} />
+      </div>
+      <div id="transmittifier">
+        <div>halt transmissions</div>
+        <input type="checkbox" bind:checked={ctx.shouldTransmit} />
       </div>
     </div>
   </aside>
