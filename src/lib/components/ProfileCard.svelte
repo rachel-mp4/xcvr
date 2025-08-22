@@ -36,6 +36,14 @@
     margin: 0;
     font-size: 1.5rem;
   }
+  button {
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    background: var(--fg);
+    color: var(--bg);
+  }
   .bsky-follower {
     font-size: 1.5rem;
   }
