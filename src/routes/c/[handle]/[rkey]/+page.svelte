@@ -59,6 +59,7 @@
       defaultNick={data.myProfile.defaultNick}
       defaultHandle={data.myProfile.handle}
       shouldTransmit={ctx.shouldTransmit}
+      tryinit={ctx.tryinit}
     />
     <button
       onclick={() => {
@@ -112,7 +113,7 @@
         <input type="checkbox" bind:checked={ctx.postToMyRepo} />
       </div>
       <div id="transmittifier">
-        <div>halt transmissions</div>
+        <div>hyper-real-time transmission</div>
         <input type="checkbox" bind:checked={ctx.shouldTransmit} />
       </div>
     </div>

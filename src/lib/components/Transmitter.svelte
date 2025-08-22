@@ -9,8 +9,10 @@
         defaultNick?: string;
         defaultHandle?: string;
         shouldTransmit?: boolean;
+        tryinit?: () => void;
     }
-    let { ctx, defaultNick, defaultHandle, shouldTransmit }: Props = $props();
+    let { ctx, defaultNick, defaultHandle, shouldTransmit, tryinit }: Props =
+        $props();
     let nick = $state(defaultNick ?? "wanderer");
     $effect(() => {
         if (ctx) {
@@ -107,6 +109,7 @@
         />
     </div>
     <AutoGrowTextArea
+        {tryinit}
         placeholder="start typing..."
         onBeforeInput={bi}
         onInput={diffAndSend}

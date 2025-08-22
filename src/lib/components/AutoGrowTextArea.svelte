@@ -11,6 +11,7 @@
         color?: string;
         shouldTransmit?: boolean;
         transmitfunc?: (event: HTMLInputElement) => void;
+        tryinit?: () => void;
     }
 
     let {
@@ -23,11 +24,13 @@
         color,
         shouldTransmit,
         transmitfunc,
+        tryinit,
     }: Props = $props();
 
     let inputEl: HTMLElement;
     function adjust(event: Event) {
         if (shouldTransmit) {
+            tryinit?.();
             onInput?.(event as InputEvent);
         }
     }
@@ -35,6 +38,7 @@
         transmitfunc?.(inputEl as HTMLInputElement);
     }
     $effect(() => {
+        tryinit?.();
         shouldTransmit;
         transmit();
     });
