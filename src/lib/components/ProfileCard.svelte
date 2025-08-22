@@ -18,7 +18,7 @@
     <a href={`/a/${profile.handle}`}>@{profile.handle}</a>
     {#if profile.status}<div>{profile.status}</div>{/if}
   </div>
-  <div class="bsky-follower">bsky/follow</div>
+  <button class="bsky-follower">bsky/follow</button>
 </div>
 
 <style>
@@ -33,9 +33,6 @@
     font-size: 1.5rem;
   }
   .bsky-follower {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 </style>
