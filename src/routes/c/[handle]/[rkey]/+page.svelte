@@ -116,9 +116,7 @@
           type="checkbox"
           bind:checked={ctx.shouldTransmit}
           onclick={() => {
-            if (ctx.shouldTransmit) {
-              ctx.starttransmit();
-            }
+            ctx.starttransmit();
           }}
         />
       </div>
