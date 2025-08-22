@@ -626,7 +626,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const id = event.msg.mute.id ?? 0
             if (id === 0) return false
             const muted = true
-            const active = false
+            const active = true
             const mine = false
             const body = ""
             const startedAt = Date.now()
