@@ -138,7 +138,10 @@
                                 class="profile-container"
                                 bind:this={profileEl}
                             >
-                                <ProfileCard profile={message.profileView} />
+                                <ProfileCard
+                                    profile={message.profileView}
+                                    {myHandle}
+                                />
                             </div>
                         {/if}
                     </div>
