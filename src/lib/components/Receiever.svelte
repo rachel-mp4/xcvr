@@ -6,8 +6,9 @@
     mylocaltext?: string;
     onmute?: (id: number) => void;
     onunmute?: (id: number) => void;
+    myHandle?: string;
   }
-  let { messages, mylocaltext, onmute, onunmute }: Props = $props();
+  let { messages, mylocaltext, onmute, onunmute, myHandle }: Props = $props();
 </script>
 
 <div id="receiver">
@@ -16,6 +17,7 @@
       {message}
       mylocaltext={message.active && message.mine ? mylocaltext : undefined}
       margin={0}
+      {myHandle}
       {onmute}
       {onunmute}
     />

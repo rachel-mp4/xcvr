@@ -12,8 +12,10 @@
         mylocaltext?: string;
         onmute?: (id: number) => void;
         onunmute?: (id: number) => void;
+        myHandle?: string;
     }
-    let { message, margin, mylocaltext, onmute, onunmute }: Props = $props();
+    let { message, margin, mylocaltext, onmute, onunmute, myHandle }: Props =
+        $props();
     let color: string = numToHex(message.color ?? 16777215);
     let cpartial: string = hexToTransparent(color);
     let contrast: string = hexToContrast(color);

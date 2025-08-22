@@ -3,9 +3,10 @@
   import { hexToContrast, hexToTransparent, numToHex } from "$lib/colors";
   interface Props {
     profile: ProfileView;
+    myHandle?: string;
   }
 
-  let { profile }: Props = $props();
+  let { profile, myHandle }: Props = $props();
   let bg = $derived(numToHex(profile.color ?? 0));
   let bl = $derived(hexToTransparent(bg));
   let fg = $derived(hexToContrast(bg));
@@ -18,7 +19,9 @@
     <a href={`/a/${profile.handle}`}>@{profile.handle}</a>
     {#if profile.status}<div>{profile.status}</div>{/if}
   </div>
-  <button class="bsky-follower">bsky/follow</button>
+  {#if myHandle}
+    <button class="bsky-follower">bsky/</button>
+  {/if}
 </div>
 
 <style>
@@ -27,6 +30,7 @@
     width: 18rem;
     color: var(--fg);
     display: flex;
+    flex-direction: column;
   }
   h3 {
     margin: 0;
