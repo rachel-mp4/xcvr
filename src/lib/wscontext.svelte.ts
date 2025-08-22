@@ -24,7 +24,7 @@ export class WSContext {
     beepcoefficient: number = $state(0.0)
     junkword: string = $state("beep")
     shouldSend: boolean = $state(true)
-    shouldTransmit: boolean = $bindable(true)
+    shouldTransmit: boolean = $state(true)
     defaultmessage: string = $state("")
     postToMyRepo: boolean = $state(false)
     lrceventqueue: Array<Uint8Array> = []
