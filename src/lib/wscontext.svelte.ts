@@ -462,11 +462,7 @@ export const pubMessage = (ctx: WSContext) => {
         }
     }
     const byteArray = lrc.Event.toBinary(evt)
-    if (ctx.shouldTransmit) {
-        ctx.ws?.send(byteArray)
-    } else {
-        ctx.lrceventqueue.push(byteArray)
-    }
+    ctx.ws?.send(byteArray)
 }
 
 export const deleteMessage = (idx: number, idx2: number, ctx: WSContext) => {
@@ -480,7 +476,11 @@ export const deleteMessage = (idx: number, idx2: number, ctx: WSContext) => {
         }
     }
     const byteArray = lrc.Event.toBinary(evt)
-    ctx.ws?.send(byteArray)
+    if (ctx.shouldTransmit) {
+        ctx.ws?.send(byteArray)
+    } else {
+        ctx.lrceventqueue.push(byteArray)
+    }
 }
 
 export const muteMessage = (id: number, ctx: WSContext) => {
