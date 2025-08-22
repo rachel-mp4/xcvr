@@ -37,10 +37,11 @@
     this will get added through lrc
   </p>
   <p>
-    <b>impl all of lrc functionality</b> will happen, it's kinda funny that i don't
-    have this yet, all of the backend is there i think, maybe i'll work on this sooner
-    (this is just like mute, unmute, hug, and i think ban unban, not sure how those
-    2 will work they are not impl on backend)
+    <b>impl all of lrc functionality</b> will happen, it's kinda funny that i
+    don't have this yet, all of the backend is there i think, maybe i'll work on
+    this sooner (this is just like <s>mute, unmute,</s> hug, and i think ban unban,
+    not sure how those 2 will work they are not impl on backend) I have now implemented
+    lrc/mute and lrc/unmute
   </p>
   <p>
     <b>images, avis</b> also quite far off, not thinking tooooo hard about these

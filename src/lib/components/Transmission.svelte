@@ -216,9 +216,6 @@
 {/if}
 
 <style>
-    .late {
-        /* filter: url("#pearly"); */
-    }
     .active {
         position: relative;
         background-color: var(--themep);
