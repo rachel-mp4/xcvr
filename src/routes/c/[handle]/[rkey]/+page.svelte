@@ -59,7 +59,6 @@
       defaultNick={data.myProfile.defaultNick}
       defaultHandle={data.myProfile.handle}
       shouldTransmit={ctx.shouldTransmit}
-      tryinit={ctx.tryinit.bind(ctx)}
     />
     <button
       onclick={() => {
