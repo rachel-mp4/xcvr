@@ -147,7 +147,7 @@
                     {smartAbsoluteTimestamp(message.startedAt)}
                 </span>
                 <button
-                    class={pinned ? "pinned" : ""}
+                    class={pinned ? "pinned clickable" : "clickable"}
                     onclick={() => {
                         pinned = !pinned;
                     }}
@@ -155,7 +155,7 @@
                     {pinned ? "unpin" : "pin"}
                 </button>
                 <button
-                    class="mute"
+                    class="mute clickable"
                     onclick={() => {
                         message.muted = true;
                         onmute?.(message.id);
