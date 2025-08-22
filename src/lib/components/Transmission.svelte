@@ -97,7 +97,7 @@
     let pinned = $state(false);
 </script>
 
-{#if message.muted === true}
+{#if message.muted === false}
     <div
         style:--theme={color}
         style:--themep={cpartial}
