@@ -27,6 +27,7 @@ export class WSContext {
     shouldTransmit: boolean = $state(true)
     defaultmessage: string = $state("")
     postToMyRepo: boolean = $state(false)
+    lrceventqueue: Array<Uint8Array> = []
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
         console.log(channelUri)
@@ -67,8 +68,14 @@ export class WSContext {
         this.myNonce = undefined
     }
 
+    starttransmit = () => {
+        this.lrceventqueue.forEach((arr) => this.ws?.send(arr))
+        this.lrceventqueue = []
+    }
+
     insertLineBreak = () => {
         if (this.active) {
+            this.starttransmit()
             pubMessage(this)
             const api = import.meta.env.VITE_API_URL
             let body = this.defaultmessage != "" ? this.defaultmessage : this.curMsg
@@ -108,7 +115,6 @@ export class WSContext {
             this.myID = undefined
         }
     }
-
 
     insert = (idx: number, s: string) => {
         if (!this.active) {
@@ -440,7 +446,11 @@ export const insertMessage = (idx: number, s: string, ctx: WSContext) => {
         }
     }
     const byteArray = lrc.Event.toBinary(evt)
-    ctx.ws?.send(byteArray)
+    if (ctx.shouldTransmit) {
+        ctx.ws?.send(byteArray)
+    } else {
+        ctx.lrceventqueue.push(byteArray)
+    }
 }
 
 export const pubMessage = (ctx: WSContext) => {
@@ -452,7 +462,11 @@ export const pubMessage = (ctx: WSContext) => {
         }
     }
     const byteArray = lrc.Event.toBinary(evt)
-    ctx.ws?.send(byteArray)
+    if (ctx.shouldTransmit) {
+        ctx.ws?.send(byteArray)
+    } else {
+        ctx.lrceventqueue.push(byteArray)
+    }
 }
 
 export const deleteMessage = (idx: number, idx2: number, ctx: WSContext) => {

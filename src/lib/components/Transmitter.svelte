@@ -8,9 +8,8 @@
         ctx: WSContext;
         defaultNick?: string;
         defaultHandle?: string;
-        shouldTransmit?: boolean;
     }
-    let { ctx, defaultNick, defaultHandle, shouldTransmit }: Props = $props();
+    let { ctx, defaultNick, defaultHandle }: Props = $props();
     let nick = $state(defaultNick ?? "wanderer");
     $effect(() => {
         if (ctx) {
@@ -110,8 +109,6 @@
         placeholder="start typing..."
         onBeforeInput={bi}
         onInput={diffAndSend}
-        {shouldTransmit}
-        transmitfunc={diffAndSendEl}
         maxlength={65535}
     />
 </div>

@@ -58,7 +58,6 @@
       {ctx}
       defaultNick={data.myProfile.defaultNick}
       defaultHandle={data.myProfile.handle}
-      shouldTransmit={ctx.shouldTransmit}
     />
     <button
       onclick={() => {
@@ -113,7 +112,15 @@
       </div>
       <div id="transmittifier">
         <div>hyper-real-time transmission</div>
-        <input type="checkbox" bind:checked={ctx.shouldTransmit} />
+        <input
+          type="checkbox"
+          bind:checked={ctx.shouldTransmit}
+          onclick={() => {
+            if (ctx.shouldTransmit) {
+              ctx.starttransmit();
+            }
+          }}
+        />
       </div>
     </div>
   </aside>
