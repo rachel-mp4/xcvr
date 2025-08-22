@@ -243,7 +243,7 @@ export class WSContext {
             console.log("found appropriate message c:")
             this.messages = this.messages.map((msg: Message) => {
                 return msg.signetView?.uri === message.signetURI ?
-                    { ...makeMessageFromSignetAndMessageViews(message, msg.signetView), body: msg.body } : msg
+                    { ...makeMessageFromSignetAndMessageViews(message, msg.signetView), body: msg.body, mine: msg.mine } : msg
             })
         }
         else {
