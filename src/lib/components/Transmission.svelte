@@ -106,6 +106,7 @@
         style:--margin={margin + "rem"}
         class="{message.active ? 'active' : ''} 
     {message.profileView ? 'signed' : ''} 
+    {pinned ? 'pinned' : ''} 
     {message.nick ? '' : 'late'} 
     transmission"
     >
@@ -147,7 +148,7 @@
                     {smartAbsoluteTimestamp(message.startedAt)}
                 </span>
                 <button
-                    class={pinned ? "pinned clickable" : "clickable"}
+                    class="clickable"
                     onclick={() => {
                         pinned = !pinned;
                     }}
