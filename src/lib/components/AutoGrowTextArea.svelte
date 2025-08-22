@@ -30,6 +30,7 @@
     let inputEl: HTMLElement;
     function adjust(event: Event) {
         if (shouldTransmit) {
+            console.log(tryinit);
             tryinit?.();
             onInput?.(event as InputEvent);
         }
@@ -38,6 +39,7 @@
         transmitfunc?.(inputEl as HTMLInputElement);
     }
     $effect(() => {
+        console.log(tryinit);
         tryinit?.();
         shouldTransmit;
         transmit();
