@@ -217,7 +217,7 @@
 
 <style>
     .late {
-        filter: url("#pearly");
+        /* filter: url("#pearly"); */
     }
     .active {
         position: relative;
