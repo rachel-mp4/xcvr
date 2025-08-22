@@ -155,15 +155,17 @@
                 >
                     {pinned ? "unpin" : "pin"}
                 </button>
-                <button
-                    class="mute clickable"
-                    onclick={() => {
-                        message.muted = true;
-                        onmute?.(message.id);
-                    }}
-                >
-                    mute
-                </button>
+                {#if message.mine !== true}
+                    <button
+                        class="mute clickable"
+                        onclick={() => {
+                            message.muted = true;
+                            onmute?.(message.id);
+                        }}
+                    >
+                        mute
+                    </button>
+                {/if}
                 {#if canshownotlrc}<span class="clickable"
                         ><button
                             onclick={() => {
