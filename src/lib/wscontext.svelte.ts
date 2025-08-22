@@ -109,14 +109,12 @@ export class WSContext {
         }
     }
 
-    tryinit = () => {
+
+    insert = (idx: number, s: string) => {
         if (!this.active) {
             initMessage(this)
             this.active = true
         }
-    }
-
-    insert = (idx: number, s: string) => {
         insertMessage(idx, s, this)
         this.curMsg = insertSIntoAStringAtIdx(s, this.curMsg, idx)
     }
