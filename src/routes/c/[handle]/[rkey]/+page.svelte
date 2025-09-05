@@ -53,7 +53,6 @@
       mylocaltext={ctx.curMsg}
       onmute={ctx.mute}
       onunmute={ctx.unmute}
-      myHandle={data.myProfile.handle}
     />
     <Transmitter
       {ctx}
