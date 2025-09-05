@@ -13,9 +13,9 @@
 
 <div id="receiver">
   {#each messages as message, index}
-    {@const last = length - 22}
+    {@const last = length - 1}
     {@const diff = index - last}
-    {@const guess = 2 + diff * 0.012987}
+    {@const guess = 2 + (Math.atan((diff - 33) * 0.25) / 2.8 - 0.45)}
     {@const res = Math.min(Math.max(guess, 1), 2)}
     <Transmission
       {message}
