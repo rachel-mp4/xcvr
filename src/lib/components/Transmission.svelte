@@ -239,7 +239,6 @@
     }
     .transmission:not(:hover) .clickable {
         display: none;
-        font-size: var(--size);
     }
     .active .clickable {
         color: var(--tpartial);
@@ -302,6 +301,7 @@
     .transmission {
         padding-bottom: 1rem;
         margin-top: var(--margin);
+        font-size: var(--size);
     }
 
     .transmission:not(.active) .header {
