@@ -21,9 +21,10 @@
         color,
     }: Props = $props();
 
-    let inputEl: HTMLElement;
+    let inputEl: HTMLTextAreaElement;
     function adjust(event: Event) {
         onInput?.(event as InputEvent);
+        console.log(checkEmoji(inputEl.selectionStart, inputEl.selectionEnd));
     }
 
     function bi(event: InputEvent) {
@@ -42,6 +43,31 @@
         value;
         adjustHeight();
     });
+    function checkEmoji(
+        selectionStart: number,
+        selectionEnd: number,
+    ): string | null {
+        if (selectionStart !== selectionEnd || selectionStart === null) {
+            return null;
+        }
+        const text = inputEl.innerText;
+        const cursorPos = selectionStart;
+        let colonPos = -1;
+        for (let i = cursorPos; i > -1 && i > selectionStart - 16; i--) {
+            const char = text[i];
+            if (char === ":") {
+                colonPos = i;
+                break;
+            }
+            if (char === " " || char === "\n" || char === "\t") {
+                break;
+            }
+        }
+        if (colonPos === -1) {
+            return null;
+        }
+        return text.slice(colonPos, selectionStart);
+    }
 </script>
 
 <div class="autogrowwrapper">
