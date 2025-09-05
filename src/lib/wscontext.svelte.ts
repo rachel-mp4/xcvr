@@ -33,6 +33,7 @@ export class WSContext {
     mySignet: undefined | SignetView
 
     audio: HTMLAudioElement = new Audio('/notif.wav')
+    shortaudio: HTMLAudioElement = new Audio('/shortnotif.wav')
 
     beepcoefficient: number = $state(0.0)
     junkword: string = $state("beep")
@@ -206,6 +207,9 @@ export class WSContext {
         if (document.hidden || !document.hasFocus()) {
             this.audio.currentTime = 0
             this.audio.play()
+        } else {
+            this.shortaudio.currentTime = 0
+            this.shortaudio.play()
         }
         if (this.messages.length > 200) {
             this.messages = [...this.messages.slice(this.messages.length - 199), message]
