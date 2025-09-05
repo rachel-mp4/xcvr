@@ -112,6 +112,7 @@
       </div>
       <div id="transmittifier">
         <div>hyper-real-time transmission</div>
+        <!-- this seems sus with the onclick, idk -->
         <input
           type="checkbox"
           bind:checked={ctx.shouldTransmit}

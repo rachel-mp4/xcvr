@@ -1,4 +1,4 @@
-:root {
+:is(:root) {
   --bg: #000000;
   --fg: #ffffff;
   --fl: #ffffff80;

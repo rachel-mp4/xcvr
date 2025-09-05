@@ -3,9 +3,27 @@
 	import { page } from "$app/stores";
 	import type { LayoutProps } from "./$types";
 	import Spectrum from "$lib/components/Spectrum.svelte";
+	import { browser } from "$app/environment";
 	let { data, children }: LayoutProps = $props();
 	let innerWidth = $state(0);
 	let isDesktop = $derived(innerWidth > 1000);
+	const defaulttheme = "dark";
+	const initialtheme = browser
+		? (window.localStorage.getItem("theme") ?? defaulttheme)
+		: defaulttheme;
+	let theme = $state(initialtheme);
+	let bg = $derived(theme === "light" ? "#ffffff" : "#000000");
+	let fg = $derived(theme === "light" ? "#000000" : "#ffffff");
+	let bl = $derived(theme === "light" ? "#ffffff80" : "#00000080");
+	let fl = $derived(theme === "light" ? "#00000080" : "#ffffff80");
+	$effect(() => {
+		if (browser) {
+			document.documentElement.style.setProperty("--bg", bg);
+			document.documentElement.style.setProperty("--fg", fg);
+			document.documentElement.style.setProperty("--fl", fl);
+			document.documentElement.style.setProperty("--bl", bl);
+		}
+	});
 
 	let curTab = $state("bbbbb");
 	const tabContext = {

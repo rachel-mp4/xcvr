@@ -1,8 +1,23 @@
+<script lang="ts">
+  import { browser } from "$app/environment";
+  const defaulttheme = "dark";
+  const initialtheme = browser
+    ? (window.localStorage.getItem("theme") ?? defaulttheme)
+    : defaulttheme;
+  let themebool = $state(initialtheme === "light");
+  let theme = $derived(themebool ? "light" : "dark");
+  $effect(() => {
+    if (theme) {
+      window.localStorage.setItem("theme", theme);
+    }
+  });
+  // i think that i need to use writable or something to coordinate with the layout,
+  // but i just wanna see if this works for now without showing the changes immediately
+</script>
+
 <main>
-  <p>
-    there are no settings yet. if you need something, please let me know!
-    rachel@moth11.net or @moth11.net
-  </p>
+  <div>light theme</div>
+  <input type="checkbox" bind:checked={themebool} />
   <form action="{import.meta.env.VITE_API_URL}/oauth/logout" method="POST">
     <input type="submit" value="log out" />
   </form>
