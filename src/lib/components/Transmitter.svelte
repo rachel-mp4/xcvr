@@ -11,6 +11,8 @@
     }
     let { ctx, defaultNick, defaultHandle }: Props = $props();
     let nick = $state(defaultNick ?? "wanderer");
+    let innerWidth = $state(0);
+    let isDesktop = $derived(innerWidth > 1000);
     $effect(() => {
         if (ctx) {
             ctx.setNick(nick);
@@ -76,8 +78,14 @@
     };
 </script>
 
+<svelte:window bind:innerWidth />
+
 <div id="transmitter">
-    <div class="wrapper" style:--theme={color}>
+    <div
+        class="wrapper"
+        style:--theme={color}
+        style:font-size={isDesktop ? "2rem" : "1rem"}
+    >
         <input
             type="range"
             min="0"
@@ -86,6 +94,7 @@
             onchange={() => {
                 ctx.setColor(ctx.color);
             }}
+            style:font-size={isDesktop ? "2rem" : "1rem"}
         />
         <AutoGrowInput
             bind:value={nick}
@@ -94,6 +103,7 @@
             onInput={setName}
             maxlength={12}
             bold={true}
+            fs={isDesktop ? "2rem" : "1rem"}
         />
         @
         <AutoGrowInput
@@ -103,6 +113,7 @@
             onInput={setHandle}
             maxlength={253}
             bold={false}
+            fs={isDesktop ? "2rem" : "1rem"}
         />
     </div>
     <AutoGrowTextArea
@@ -110,6 +121,7 @@
         onBeforeInput={bi}
         onInput={diffAndSend}
         maxlength={65535}
+        fs={isDesktop ? "2rem" : "1rem"}
     />
 </div>
 

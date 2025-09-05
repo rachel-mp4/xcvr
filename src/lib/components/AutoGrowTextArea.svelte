@@ -9,6 +9,7 @@
         maxlength?: number;
         bold?: boolean;
         color?: string;
+        fs?: string;
     }
 
     let {
@@ -19,6 +20,7 @@
         maxlength,
         bold = false,
         color,
+        fs,
     }: Props = $props();
 
     let inputEl: HTMLTextAreaElement;
@@ -85,6 +87,7 @@
         onbeforeinput={bi}
         style:font-weight={bold ? "700" : "inherit"}
         style:--theme={color}
+        style:font-size={fs ?? "1rem"}
         {placeholder}
     ></textarea>
 </div>

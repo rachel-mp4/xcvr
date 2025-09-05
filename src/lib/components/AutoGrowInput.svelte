@@ -11,6 +11,7 @@
         maxlength?: number;
         bold?: boolean;
         color?: string;
+        fs?: string;
     }
 
     let {
@@ -22,6 +23,7 @@
         size = 5,
         bold = false,
         color,
+        fs,
     }: Props = $props();
 
     let inputEl: HTMLElement;
@@ -52,12 +54,12 @@
     style:font-weight={bold ? "700" : "inherit"}
     style:--theme={color}
     style:--themep={hexToTransparent(color ?? "#ffffff")}
+    style:font-size={fs ?? "1rem"}
     {placeholder}
 />
 
 <style>
     input {
-        font-size: 1rem;
         color: var(--theme);
         background-color: transparent;
         border: none;
