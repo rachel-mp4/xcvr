@@ -25,6 +25,7 @@
     function adjust(event: Event) {
         onInput?.(event as InputEvent);
         console.log("next message is emoji check: ");
+        console.log(inputEl.selectionStart, inputEl.selectionEnd);
         console.log(checkEmoji(inputEl.selectionStart, inputEl.selectionEnd));
     }
 
@@ -45,16 +46,15 @@
         adjustHeight();
     });
     function checkEmoji(
-        selectionStart: number,
-        selectionEnd: number,
+        selectionStart: number | null,
+        selectionEnd: number | null,
     ): string | null {
         if (selectionStart !== selectionEnd || selectionStart === null) {
             return null;
         }
         const text = inputEl.innerText;
-        const cursorPos = selectionStart;
         let colonPos = -1;
-        for (let i = cursorPos; i > -1 && i > selectionStart - 16; i--) {
+        for (let i = selectionStart; i > -1 && i > selectionStart - 16; i--) {
             const char = text[i];
             if (char === ":") {
                 colonPos = i;
