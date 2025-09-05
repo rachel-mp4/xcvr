@@ -125,13 +125,24 @@ export class WSContext {
             }
             const endpoint = this.postToMyRepo ? `${api}/lrc/mymessage` : `${api}/lrc/message`
             if (this.shouldSend) {
+                const recordstrungified = JSON.stringify(record)
                 fetch(endpoint, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(record),
-                }).then((val) => console.log(val), (val) => console.log(val))
+                    body: recordstrungified,
+                }).then((val) => console.log(val), () => {
+                    setTimeout(() => {
+                        fetch(endpoint, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: recordstrungified,
+                        }).then((val) => console.log(val), (val) => console.log(val))
+                    }, 100)
+                })
             }
             this.active = false
             this.curMsg = ""
