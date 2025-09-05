@@ -26,7 +26,7 @@
 </script>
 
 <main>
-  <div>light theme (refresh to get it to take effect for now i'm lazy)</div>
+  <div>light theme</div>
   <input type="checkbox" bind:checked={themebool} />
   <form action="{import.meta.env.VITE_API_URL}/oauth/logout" method="POST">
     <input type="submit" value="log out" />
