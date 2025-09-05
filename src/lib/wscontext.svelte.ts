@@ -132,7 +132,13 @@ export class WSContext {
                         "Content-Type": "application/json",
                     },
                     body: recordstrungified,
-                }).then((val) => console.log(val), () => {
+                }).then((response) => {
+                    if (response.ok) {
+                        console.log(response)
+                    } else {
+                        throw new Error(`HTTP ${response.status}`)
+                    }
+                }).catch(() => {
                     setTimeout(() => {
                         fetch(endpoint, {
                             method: "POST",
