@@ -12,8 +12,10 @@
         mylocaltext?: string;
         onmute?: (id: number) => void;
         onunmute?: (id: number) => void;
+        fs?: string;
     }
-    let { message, margin, mylocaltext, onmute, onunmute }: Props = $props();
+    let { message, margin, mylocaltext, onmute, onunmute, fs }: Props =
+        $props();
     let color: string = numToHex(message.color ?? 16777215);
     let cpartial: string = hexToTransparent(color);
     let contrast: string = hexToContrast(color);
@@ -104,6 +106,7 @@
         style:--tcontrast={contrast}
         style:--tpartial={partial}
         style:--margin={margin + "rem"}
+        style:--size={fs ?? "1rem"}
         class="{message.active ? 'active' : ''} 
     {message.profileView ? 'signed' : ''} 
     {pinned ? 'pinned' : ''} 
@@ -236,6 +239,7 @@
     }
     .transmission:not(:hover) .clickable {
         display: none;
+        font-size: var(--size);
     }
     .active .clickable {
         color: var(--tpartial);
@@ -281,8 +285,8 @@
         position: absolute;
         left: 0;
         right: 0;
-        top: calc(55% - 0.125rem);
-        bottom: calc(45% - 0.125rem);
+        top: calc(55% - calc(var(--size) / 8));
+        bottom: calc(45% - calc(var(--size) / 8));
         transform: scaleX(0);
         transform-origin: center left;
         transition: transform 0.17s 3s;
@@ -317,7 +321,7 @@
         color: var(--fg);
     }
     button {
-        font-size: 1rem;
+        font-size: var(--size);
         background-color: transparent;
         border: none;
         color: var(--fg);

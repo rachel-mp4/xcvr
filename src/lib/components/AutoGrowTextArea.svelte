@@ -54,7 +54,11 @@
         }
         const text = inputEl.innerText;
         let colonPos = -1;
-        for (let i = selectionStart; i > -1 && i > selectionStart - 16; i--) {
+        for (
+            let i = selectionStart - 1;
+            i > -1 && i > selectionStart - 16;
+            i--
+        ) {
             const char = text[i];
             if (char === ":") {
                 colonPos = i;
