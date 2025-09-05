@@ -8,15 +8,6 @@ import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 // however long it takes for atproto to propogate, you can't submit your
 // message either.
 // so i want to make that side of things better
-//
-// additionally, i realize that the way how i currently do the non hyper-real
-// -time messaging, it just saves all the lrc edits and then sends them all
-// at once, and this overwhelms the server. i think that ideally i'd create
-// a change to my protobuf to allow for a multiedit message, some sort of batch
-// which allows you to do non hyper-real-time and it all be ok. so i think that
-// is what i'm going to work on first, because it seems easier / more fun, get
-// to do some backend stuffs
-//
 
 export class WSContext {
     messages: Array<Message> = $state(new Array())
@@ -29,21 +20,26 @@ export class WSContext {
     ws: WebSocket | null = null
     ls: WebSocket | null = null
     color: number = $state(Math.floor(Math.random() * 16777216))
-    myID: undefined | number
-    mySignet: undefined | SignetView
-    myNonce: undefined | Uint8Array
+
     channelUri: string
-    curMsg: string = $state("")
     active: boolean = false
     nick: string = "wanderer"
     handle: string = ""
+
+    myID: undefined | number
+    myNonce: undefined | Uint8Array
+    curMsg: string = $state("")
+
+    mySignet: undefined | SignetView
+
     audio: HTMLAudioElement = new Audio('/notif.wav')
+
     beepcoefficient: number = $state(0.0)
     junkword: string = $state("beep")
     shouldSend: boolean = $state(true)
-    shouldTransmit: boolean = $state(true)
     defaultmessage: string = $state("")
     postToMyRepo: boolean = $state(false)
+    shouldTransmit: boolean = $state(true)
     lrceventqueue: Array<lrc.Edit> = []
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
