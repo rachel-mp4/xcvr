@@ -11,12 +11,10 @@
       window.localStorage.setItem("theme", theme);
     }
   });
-  // i think that i need to use writable or something to coordinate with the layout,
-  // but i just wanna see if this works for now without showing the changes immediately
 </script>
 
 <main>
-  <div>light theme</div>
+  <div>light theme (refresh to get it to take effect for now i'm lazy)</div>
   <input type="checkbox" bind:checked={themebool} />
   <form action="{import.meta.env.VITE_API_URL}/oauth/logout" method="POST">
     <input type="submit" value="log out" />
