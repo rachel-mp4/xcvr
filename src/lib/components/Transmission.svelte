@@ -302,7 +302,6 @@
 
     .transmission:not(.active) .header {
         color: var(--theme);
-        text-shadow: 0 0 1rem var(--fl);
     }
     .body {
         white-space: pre-wrap;
