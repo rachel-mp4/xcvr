@@ -1,5 +1,6 @@
 <script lang="ts">
   import { browser } from "$app/environment";
+  import { getContext } from "svelte";
   const defaulttheme = "dark";
   const initialtheme = browser
     ? (window.localStorage.getItem("theme") ?? defaulttheme)
@@ -9,8 +10,19 @@
   $effect(() => {
     if (theme) {
       window.localStorage.setItem("theme", theme);
+      if (theme === "light") {
+        themeContext.setLight();
+      }
+      if (theme === "dark") {
+        themeContext.setDark();
+      }
     }
   });
+  const themeContext = getContext<{
+    curTheme: string;
+    setLight: () => void;
+    setDark: () => void;
+  }>("theme");
 </script>
 
 <main>

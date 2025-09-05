@@ -40,8 +40,20 @@
 			curTab = "ccccc";
 		},
 	};
+	const themeContext = {
+		get curTheme() {
+			return theme;
+		},
+		setLight: () => {
+			theme = "light";
+		},
+		setDark: () => {
+			theme = "dark";
+		},
+	};
 
 	setContext("tabs", tabContext);
+	setContext("theme", themeContext);
 
 	const evaluateClass = () => {
 		if (isDesktop) {
