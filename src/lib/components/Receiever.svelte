@@ -13,7 +13,7 @@
 
 <div id="receiver">
   {#each messages as message, index}
-    {@const last = length - 1}
+    {@const last = length - 22}
     {@const diff = index - last}
     {@const guess = 2 + diff * 0.012987}
     {@const res = Math.min(Math.max(guess, 1), 2)}
