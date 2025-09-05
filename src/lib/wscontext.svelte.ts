@@ -141,7 +141,7 @@ export class WSContext {
                             },
                             body: recordstrungified,
                         }).then((val) => console.log(val), (val) => console.log(val))
-                    }, 100)
+                    }, 500)
                 })
             }
             this.active = false
