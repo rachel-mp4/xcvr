@@ -24,7 +24,7 @@
 	"dependencies": {
 		"@floating-ui/dom": "^1.7.2",
 		"@protobuf-ts/runtime": "^2.11.0",
-		"@rachel-mp4/lrcproto": "^1.0.3",
+		"@rachel-mp4/lrcproto": "^1.0.4",
 		"fast-diff": "^1.3.0",
 		"linkifyjs": "^4.3.2"
 	}

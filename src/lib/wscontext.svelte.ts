@@ -1,6 +1,23 @@
 import type { Message, LogItem, SignetView, MessageView } from "./types"
 import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 
+// so the thing with the current message is that i require a signet to post
+// which is not ideal because you might be in an lrc server that is working
+// but the atproto integration isn't, and i want it to still be somewhat ok
+// in that case. additionally, it means that in the first like round trip +
+// however long it takes for atproto to propogate, you can't submit your
+// message either.
+// so i want to make that side of things better
+//
+// additionally, i realize that the way how i currently do the non hyper-real
+// -time messaging, it just saves all the lrc edits and then sends them all
+// at once, and this overwhelms the server. i think that ideally i'd create
+// a change to my protobuf to allow for a multiedit message, some sort of batch
+// which allows you to do non hyper-real-time and it all be ok. so i think that
+// is what i'm going to work on first, because it seems easier / more fun, get
+// to do some backend stuffs
+//
+
 export class WSContext {
     messages: Array<Message> = $state(new Array())
     orphanedSignets: Map<string, SignetView> = new Map()
@@ -27,7 +44,7 @@ export class WSContext {
     shouldTransmit: boolean = $state(true)
     defaultmessage: string = $state("")
     postToMyRepo: boolean = $state(false)
-    lrceventqueue: Array<Uint8Array> = []
+    lrceventqueue: Array<lrc.Edit> = []
 
     constructor(channelUri: string, defaultHandle: string, defaultNick: string, defaultColor: number) {
         console.log(channelUri)
@@ -69,8 +86,19 @@ export class WSContext {
     }
 
     starttransmit = () => {
-        this.lrceventqueue.forEach((arr) => this.ws?.send(arr))
-        this.lrceventqueue = []
+        if (this.lrceventqueue.length != 0) {
+            const evt: lrc.Event = {
+                msg: {
+                    oneofKind: "editbatch",
+                    editbatch: {
+                        edits: this.lrceventqueue,
+                    }
+                }
+            }
+            const byteArray = lrc.Event.toBinary(evt)
+            this.ws?.send(byteArray)
+            this.lrceventqueue = []
+        }
     }
 
     insertLineBreak = () => {
@@ -436,20 +464,29 @@ export const initMessage = (ctx: WSContext) => {
 }
 
 export const insertMessage = (idx: number, s: string, ctx: WSContext) => {
-    const evt: lrc.Event = {
-        msg: {
-            oneofKind: "insert",
-            insert: {
-                utf16Index: idx,
-                body: s
+    if (ctx.shouldTransmit) {
+        const evt: lrc.Event = {
+            msg: {
+                oneofKind: "insert",
+                insert: {
+                    utf16Index: idx,
+                    body: s
+                }
             }
         }
-    }
-    const byteArray = lrc.Event.toBinary(evt)
-    if (ctx.shouldTransmit) {
+        const byteArray = lrc.Event.toBinary(evt)
         ctx.ws?.send(byteArray)
     } else {
-        ctx.lrceventqueue.push(byteArray)
+        const edit: lrc.Edit = {
+            edit: {
+                oneofKind: "insert",
+                insert: {
+                    utf16Index: idx,
+                    body: s
+                }
+            }
+        }
+        ctx.lrceventqueue.push(edit)
     }
 }
 
@@ -466,20 +503,30 @@ export const pubMessage = (ctx: WSContext) => {
 }
 
 export const deleteMessage = (idx: number, idx2: number, ctx: WSContext) => {
-    const evt: lrc.Event = {
-        msg: {
-            oneofKind: "delete",
-            delete: {
-                utf16Start: idx,
-                utf16End: idx2
+    if (ctx.shouldTransmit) {
+
+        const evt: lrc.Event = {
+            msg: {
+                oneofKind: "delete",
+                delete: {
+                    utf16Start: idx,
+                    utf16End: idx2
+                }
             }
         }
-    }
-    const byteArray = lrc.Event.toBinary(evt)
-    if (ctx.shouldTransmit) {
+        const byteArray = lrc.Event.toBinary(evt)
         ctx.ws?.send(byteArray)
     } else {
-        ctx.lrceventqueue.push(byteArray)
+        const edit: lrc.Edit = {
+            edit: {
+                oneofKind: "delete",
+                delete: {
+                    utf16Start: idx,
+                    utf16End: idx2
+                }
+            }
+        }
+        ctx.lrceventqueue.push(edit)
     }
 }
 
@@ -620,20 +667,16 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
         case "insert": {
             const id = event.msg.insert.id ?? 0
             if (id === 0) return false
-            const idx = event.msg.insert.utf16Index
-            const s = event.msg.insert.body
-            ctx.insertMessage(id, idx, s)
             ctx.pushToLog(id, byteArray, "insert")
+            doinsert(id, event.msg.insert, ctx)
             return false
         }
 
         case "delete": {
             const id = event.msg.delete.id ?? 0
             if (id === 0) return false
-            const idx = event.msg.delete.utf16Start
-            const idx2 = event.msg.delete.utf16End
-            ctx.deleteMessage(id, idx, idx2)
-            ctx.pushToLog(id, byteArray, "delete")
+            ctx.pushToLog(event.msg.delete.id ?? 0, byteArray, "delete")
+            dodelete(id, event.msg.delete, ctx)
             return false
         }
 
@@ -647,6 +690,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const body = ""
             const startedAt = Date.now()
             ctx.pushMessage({ id, body, muted, active, mine, startedAt })
+            return false
         }
 
         case "unmute": {
@@ -664,9 +708,44 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             if (event.msg.get.topic !== undefined) {
                 ctx.setTopic(event.msg.get.topic)
             }
+            return false
+        }
+        //TODO: better logging system so that way even non hrt messages
+        // can have the background effect!
+        case "editbatch": {
+            const id = event.id ?? 0
+            if (id === 0) {
+                return false
+            }
+            event.msg.editbatch.edits.forEach((edit: lrc.Edit) => {
+                switch (edit.edit.oneofKind) {
+                    case "insert": {
+                        doinsert(id, edit.edit.insert, ctx)
+                        return
+                    }
+                    case "delete": {
+                        dodelete(id, edit.edit.delete, ctx)
+                        return
+                    }
+                }
+            })
+            return false
+
         }
 
     }
     return false
+}
+
+function doinsert(id: number, insert: lrc.Insert, ctx: WSContext) {
+    const idx = insert.utf16Index
+    const s = insert.body
+    ctx.insertMessage(id, idx, s)
+}
+
+function dodelete(id: number, del: lrc.Delete, ctx: WSContext) {
+    const idx = del.utf16Start
+    const idx2 = del.utf16End
+    ctx.deleteMessage(id, idx, idx2)
 }
 
