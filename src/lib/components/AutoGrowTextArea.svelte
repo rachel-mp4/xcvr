@@ -24,6 +24,7 @@
     let inputEl: HTMLTextAreaElement;
     function adjust(event: Event) {
         onInput?.(event as InputEvent);
+        console.log("next message is emoji check: ");
         console.log(checkEmoji(inputEl.selectionStart, inputEl.selectionEnd));
     }
 
