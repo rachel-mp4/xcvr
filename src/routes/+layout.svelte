@@ -52,9 +52,22 @@
 			theme = "dark";
 		},
 	};
+	let cursorenabled = $state(true);
+	const cursorContext = {
+		get cursor() {
+			return cursorenabled;
+		},
+		setCursorTrue: () => {
+			cursorenabled = true;
+		},
+		setCursorFalse: () => {
+			cursorenabled = false;
+		},
+	};
 
 	setContext("tabs", tabContext);
 	setContext("theme", themeContext);
+	setContext("cursor", cursorContext);
 
 	const evaluateClass = () => {
 		if (isDesktop) {
