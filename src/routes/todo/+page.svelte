@@ -11,6 +11,10 @@
       it's funky
     </s> <s> it was not fixed </s> IT MIGHT NOW BE FIXED
   </p>
+  <p>
+    this isn't a serious bug but <b> color theming for user profiles </b> seems broken
+    right now, woops!
+  </p>
   <h2>upcoming features</h2>
   <p>
     <b>:emoji: with tab autocomplete</b> is a feature that i really miss from discord
