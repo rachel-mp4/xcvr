@@ -133,6 +133,7 @@
 		</div>
 	</aside>
 	{@render children()}
+	<CursorEffect enabled={true} />
 </div>
 
 {#if !isDesktop}
@@ -168,7 +169,6 @@
 			<label for="ccccc">ccccc</label>
 		</div>
 	</div>
-	<CursorEffect enabled={true} />
 {/if}
 
 <style>
