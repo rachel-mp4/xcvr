@@ -128,8 +128,12 @@
       {
         const renderer = new Renderer({ dpr: 2 });
         const gl = renderer.gl;
+        gl.canvas.id = 'cursor-canvas'
         document.body.appendChild(gl.canvas);
-        gl.clearColor(0.9, 0.9, 0.9, 1);
+        gl.clearColor(0, 0, 0, 0);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+
 
         const scene = new Transform();
 
@@ -160,7 +164,7 @@
         }
 
         // We're going to make a number of different coloured lines for fun.
-        ["#e18f39", "#c5c042", "#387f4d", "#1d4633", "#000000"].forEach(
+        ["#e18f39", "#c5c042", "#387f4d", "#1d4633"].forEach(
           (color, i) => {
             // Store a few values for each lines' randomised spring movement
             const line = {
@@ -180,7 +184,7 @@
               vertex,
               uniforms: {
                 uColor: { value: new Color(color) },
-                uThickness: { value: random(20, 50) },
+                uThickness: { value: random(14, 35) },
               },
             });
 
