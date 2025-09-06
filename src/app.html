@@ -129,7 +129,8 @@
         const renderer = new Renderer({ dpr: 2, alpha: true, premultipliedAlpha: false });
         const gl = renderer.gl;
         gl.canvas.id = 'cursor-canvas'
-        document.body.appendChild(gl.canvas);
+        const content = document.getElementById("content")
+        content.appendChild(gl.canvas);
         gl.clearColor(0, 0, 0, 0);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
