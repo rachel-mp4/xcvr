@@ -207,7 +207,7 @@ export class WSContext {
         if (document.hidden || !document.hasFocus()) {
             this.audio.currentTime = 0
             this.audio.play()
-        } else {
+        } else if (!message.mine) {
             this.shortaudio.currentTime = 0
             this.shortaudio.play()
         }
