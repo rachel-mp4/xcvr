@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
   import { numToHex, hexToNum, hexToContrast } from "$lib/colors";
+  import { getContext, onDestroy } from "svelte";
   import { browser } from "$app/environment";
   let { data }: PageProps = $props();
   const graphemes = (text: string) => {
@@ -69,6 +70,10 @@
       }
     };
   });
+  const themeContext = getContext<{
+    resetTheme: () => void;
+  }>("theme");
+  onDestroy(themeContext.resetTheme);
   let currentlySubmitting = $state(false);
   let submitState = $state("pre");
   const handleSubmit = async (e: Event) => {

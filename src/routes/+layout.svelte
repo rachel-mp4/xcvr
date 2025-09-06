@@ -51,6 +51,12 @@
 		setDark: () => {
 			theme = "dark";
 		},
+		resetTheme: () => {
+			document.documentElement.style.setProperty("--bg", bg);
+			document.documentElement.style.setProperty("--fg", fg);
+			document.documentElement.style.setProperty("--fl", fl);
+			document.documentElement.style.setProperty("--bl", bl);
+		},
 	};
 	let cursorenabled = $state(true);
 	const cursorContext = {
