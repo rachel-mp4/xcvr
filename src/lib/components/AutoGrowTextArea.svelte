@@ -54,7 +54,7 @@
         if (selectionStart !== selectionEnd || selectionStart === null) {
             return null;
         }
-        const text = inputEl.innerText;
+        const text = inputEl.value;
         let colonPos = -1;
         for (
             let i = selectionStart - 1;
