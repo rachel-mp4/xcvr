@@ -4,6 +4,7 @@
 	import type { LayoutProps } from "./$types";
 	import Spectrum from "$lib/components/Spectrum.svelte";
 	import { browser } from "$app/environment";
+	import CursorEffect from "$lib/components/CursorEffect.svelte";
 	let { data, children }: LayoutProps = $props();
 	let innerWidth = $state(0);
 	let isDesktop = $derived(innerWidth > 1000);
@@ -167,6 +168,7 @@
 			<label for="ccccc">ccccc</label>
 		</div>
 	</div>
+	<CursorEffect enabled={true} />
 {/if}
 
 <style>
