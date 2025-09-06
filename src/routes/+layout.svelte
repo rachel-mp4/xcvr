@@ -146,7 +146,9 @@
 		</div>
 	</aside>
 	{@render children()}
-	<CursorEffect enabled={true} />
+	{#if cursorenabled}
+		<CursorEffect />
+	{/if}
 </div>
 
 {#if !isDesktop}

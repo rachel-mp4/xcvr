@@ -3,12 +3,10 @@
   import { browser } from "$app/environment";
   import { Polyline, Renderer, Transform, Vec3, Color } from "ogl";
   interface Props {
-    enabled: boolean;
     colors?: Array<string>;
   }
 
-  let { enabled, colors = ["#e18f39", "#c5c042", "#387f4d", "#1d4633"] } =
-    $props();
+  let { colors = ["#e18f39", "#c5c042", "#387f4d", "#1d4633"] } = $props();
 
   let canvas: undefined | HTMLCanvasElement = $state();
   const thickness: [number, number] = [14, 35];
@@ -74,7 +72,7 @@
       premultipliedAlpha: true,
       canvas,
     });
-    if (!browser || !enabled) return;
+    if (!browser) return;
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
@@ -124,10 +122,6 @@
     );
   }
   function update() {
-    if (!enabled) {
-      animationId = null;
-      return;
-    }
     animationId = requestAnimationFrame(update);
     lines.forEach((line) => {
       for (let i = line.points.length - 1; i >= 0; i--) {
@@ -158,13 +152,6 @@
       animationId = null;
     }
   }
-  $effect(() => {
-    if (enabled) {
-      startAnimation();
-    } else {
-      stopAnimation();
-    }
-  });
   onMount(() => {
     if (!browser) return;
     initializeCursorEffect();
@@ -179,9 +166,7 @@
   });
 </script>
 
-{#if enabled}
-  <canvas bind:this={canvas} id="cursor-canvas"></canvas>
-{/if}
+<canvas bind:this={canvas} id="cursor-canvas"></canvas>
 
 <style>
   #cursor-canvas {

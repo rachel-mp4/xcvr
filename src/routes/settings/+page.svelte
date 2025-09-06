@@ -34,13 +34,11 @@
     : defaultCursor;
   let cursor = $state(initialCursor === "t");
   $effect(() => {
-    if (cursor !== undefined) {
-      window.localStorage.setItem("cursor", cursor ? "t" : "f");
-      if (cursor) {
-        cursorContext.setCursorTrue();
-      } else {
-        cursorContext.setCursorFalse();
-      }
+    window.localStorage.setItem("cursor", cursor ? "t" : "f");
+    if (cursor) {
+      cursorContext.setCursorTrue();
+    } else {
+      cursorContext.setCursorFalse();
     }
   });
 </script>
