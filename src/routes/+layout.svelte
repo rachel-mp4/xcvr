@@ -58,7 +58,11 @@
 			document.documentElement.style.setProperty("--bl", bl);
 		},
 	};
-	let cursorenabled = $state(true);
+	const defaultCursor = "t";
+	const initialCursor = browser
+		? (window.localStorage.getItem("cursor") ?? defaultCursor)
+		: defaultCursor;
+	let cursorenabled = $state(initialCursor === "t");
 	const cursorContext = {
 		get cursor() {
 			return cursorenabled;
