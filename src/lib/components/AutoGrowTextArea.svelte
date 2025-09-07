@@ -71,7 +71,9 @@
         if (colonPos === -1) {
             return null;
         }
-        return text.slice(colonPos, selectionStart);
+        const res = text.slice(colonPos + 1, selectionStart);
+        if (res.length < 3) return null;
+        return res;
     }
 </script>
 
