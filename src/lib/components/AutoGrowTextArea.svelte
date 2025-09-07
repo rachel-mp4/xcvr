@@ -1,5 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import Fuse from "fuse.js";
+    import emojis from "$lib/emojis.json";
 
     interface Props {
         onBeforeInput?: (event: InputEvent) => void;
@@ -26,7 +28,7 @@
     let inputEl: HTMLTextAreaElement;
     function adjust(event: Event) {
         onInput?.(event as InputEvent);
-        console.log(checkEmoji(inputEl.selectionStart, inputEl.selectionEnd));
+        console.log(checkAndSearch());
     }
 
     function bi(event: InputEvent) {
@@ -74,6 +76,24 @@
         const res = text.slice(colonPos + 1, selectionStart);
         if (res.length < 3) return null;
         return res;
+    }
+    const fuseOptions = {
+        keys: ["slug"],
+    };
+    const fuse = new Fuse(emojis, fuseOptions);
+    function searchEmoji(s: string): string | null {
+        const results = fuse.search(s);
+        if (results.length === 0) {
+            return null;
+        }
+        return results[0].item.emoji;
+    }
+    function checkAndSearch(): string | null {
+        const query = checkEmoji(inputEl.selectionStart, inputEl.selectionEnd);
+        if (query === null) {
+            return null;
+        }
+        return searchEmoji(query);
     }
 </script>
 
