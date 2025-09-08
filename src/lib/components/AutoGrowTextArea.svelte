@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import Fuse from "fuse.js";
-    import emojis from "$lib/emojis.json";
+    import emojis from "$lib/keyword-emojis.json";
 
     interface Props {
         onBeforeInput?: (event: InputEvent) => void;
@@ -78,7 +78,7 @@
         return res;
     }
     const fuseOptions = {
-        keys: ["slug"],
+        keys: ["keywords"],
     };
     const fuse = new Fuse(emojis, fuseOptions);
     function searchEmoji(s: string): string | null {
