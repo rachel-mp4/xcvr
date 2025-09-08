@@ -35,11 +35,7 @@
     });
 
     let color = $derived(numToHex(ctx.color));
-    const diffAndSend = (event: InputEvent) => {
-        const el = event.target as HTMLInputElement;
-        diffAndSendEl(el);
-    };
-    const diffAndSendEl = (el: HTMLInputElement) => {
+    const diffAndSendEl = (el: HTMLTextAreaElement) => {
         const result = diff(message, el.value);
         let idx = 0;
         result.forEach((d) => {
@@ -119,7 +115,7 @@
     <AutoGrowTextArea
         placeholder="start typing..."
         onBeforeInput={bi}
-        onInput={diffAndSend}
+        onInputEl={diffAndSendEl}
         maxlength={65535}
         fs={isDesktop ? "2rem" : "1rem"}
     />

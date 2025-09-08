@@ -5,7 +5,7 @@
 
     interface Props {
         onBeforeInput?: (event: InputEvent) => void;
-        onInput?: (event: InputEvent) => void;
+        onInputEl?: (el: HTMLTextAreaElement) => void;
         placeholder?: string;
         value?: string;
         maxlength?: number;
@@ -18,7 +18,7 @@
         onBeforeInput,
         placeholder,
         value = $bindable(""),
-        onInput,
+        onInputEl,
         maxlength,
         bold = false,
         color,
@@ -28,7 +28,7 @@
 
     let inputEl: HTMLTextAreaElement;
     function adjust(event: Event) {
-        onInput?.(event as InputEvent);
+        onInputEl?.(inputEl);
         curemoji = checkAndSearch();
     }
 
@@ -110,6 +110,7 @@
                     inputEl.value.slice(0, curemoji[1]) +
                     curemoji[0] +
                     inputEl.value.slice(curemoji[2]);
+                onInputEl?.(inputEl);
                 return;
         }
     }
