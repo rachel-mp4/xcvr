@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import Fuse from "fuse.js";
     import emojis from "$lib/keyword-emojis.json";
+    import { computePosition, flip } from "@floating-ui/dom";
 
     interface Props {
         onBeforeInput?: (event: InputEvent) => void;
@@ -24,12 +25,23 @@
         color,
         fs,
     }: Props = $props();
-    let curemoji: [string, number, number] | null = $state(null);
+    let curemojiresults: [EmojiSearchResults, number, number] | null =
+        $state(null);
+    let curemojinumber: null | number = $state(null);
+    let curemoji: null | string = $derived(
+        curemojiresults && curemojinumber
+            ? curemojiresults[0][curemojinumber]
+            : null,
+    );
 
     let inputEl: HTMLTextAreaElement;
+    let emojilist: HTMLElement | undefined = $state();
     function adjust(event: Event) {
         onInputEl?.(inputEl);
-        curemoji = checkAndSearch();
+        curemojiresults = checkAndSearch();
+        if (curemojiresults !== null) {
+            curemojinumber = 0;
+        }
     }
 
     function bi(event: InputEvent) {
@@ -79,17 +91,36 @@
         return [res, colonPos, selectionStart];
     }
     const fuseOptions = {
+        includeMatches: true,
         keys: ["keywords"],
     };
     const fuse = new Fuse(emojis, fuseOptions);
-    function searchEmoji(s: string): string | null {
+    type RangeTuple = [number, number];
+
+    type FuseResultMatch = {
+        indices: ReadonlyArray<RangeTuple>;
+        key?: string;
+        refIndex?: number;
+        value?: string;
+    };
+    type FuseResult<T> = {
+        item: T;
+        refIndex: number;
+        score?: number;
+        matches?: ReadonlyArray<FuseResultMatch>;
+    };
+    type EmojiSearchResults = FuseResult<{
+        emoji: string;
+        keywords: string[];
+    }>[];
+    function searchEmoji(s: string): null | EmojiSearchResults {
         const results = fuse.search(s);
         if (results.length === 0) {
             return null;
         }
-        return results[0].item.emoji;
+        return results;
     }
-    function checkAndSearch(): [string, number, number] | null {
+    function checkAndSearch(): [EmojiSearchResults, number, number] | null {
         const query = checkEmoji(inputEl.selectionStart, inputEl.selectionEnd);
         if (query === null) {
             return null;
@@ -99,7 +130,11 @@
         return [emoji, query[1], query[2]];
     }
     function emojifier(e: KeyboardEvent) {
-        if (curemoji === null) {
+        if (
+            curemojiresults === null ||
+            curemojinumber === null ||
+            curemoji === null
+        ) {
             return;
         }
         switch (e.key) {
@@ -107,13 +142,45 @@
                 e.preventDefault();
                 e.stopPropagation();
                 inputEl.value =
-                    inputEl.value.slice(0, curemoji[1]) +
-                    curemoji[0] +
-                    inputEl.value.slice(curemoji[2]);
+                    inputEl.value.slice(0, curemojiresults[1]) +
+                    curemoji +
+                    inputEl.value.slice(curemojiresults[2]);
                 onInputEl?.(inputEl);
+                curemoji = null;
+                curemojiresults = null;
+                curemojinumber = null;
+                return;
+            case "ArrowDown":
+                e.preventDefault();
+                e.stopPropagation();
+                curemojinumber = curemojinumber + 1;
+                if (curemojinumber > curemojiresults[0].length - 1)
+                    curemojinumber = 0;
+                return;
+            case "ArrowUp":
+                e.preventDefault();
+                e.stopPropagation();
+                curemojinumber = curemojinumber - 1;
+                if (curemojinumber < 0)
+                    curemojinumber = curemojiresults[0].length - 1;
                 return;
         }
     }
+    $effect(() => {
+        if (inputEl && emojilist) {
+            computePosition(inputEl, emojilist, {
+                placement: "top",
+                middleware: [flip()],
+            }).then(({ x, y }) => {
+                if (emojilist !== undefined) {
+                    Object.assign(emojilist.style, {
+                        left: `${x}px`,
+                        top: `${y}px`,
+                    });
+                }
+            });
+        }
+    });
 </script>
 
 <div class="autogrowwrapper">
@@ -130,9 +197,38 @@
         style:font-size={fs ?? "1rem"}
         {placeholder}
     ></textarea>
+    {#if curemojiresults !== null && curemojinumber !== null}
+        <div bind:this={emojilist} class="emoji-selector">
+            {#each curemojiresults[0] as result, idx}
+                <div
+                    class={curemojinumber === idx
+                        ? "selected emoji-result"
+                        : "emoji-result"}
+                >
+                    {result.item.emoji}
+                    {#if result.matches && result.matches[0] !== null}{result
+                            .matches[0].value}{/if}
+                </div>
+            {/each}
+        </div>
+    {/if}
 </div>
 
 <style>
+    .emoji-selector {
+        width: max-content;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .selected.emoji-result {
+        background: var(--fg);
+        color: var(--bg);
+    }
+    .emoji-result {
+        color: var(--fg);
+        background: var(--bg);
+    }
     textarea {
         width: 100%;
         font: inherit;
