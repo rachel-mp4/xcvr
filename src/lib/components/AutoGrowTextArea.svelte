@@ -92,6 +92,7 @@
     }
     const fuseOptions = {
         includeMatches: true,
+        threshold: 0.2,
         keys: ["keywords"],
     };
     const fuse = new Fuse(emojis, fuseOptions);
@@ -226,6 +227,7 @@
         color: var(--bg);
     }
     .emoji-result {
+        font-size: 2rem;
         color: var(--fg);
         background: var(--bg);
     }
