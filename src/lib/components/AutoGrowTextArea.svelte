@@ -92,7 +92,7 @@
     }
     const fuseOptions = {
         includeMatches: true,
-        threshold: 0.2,
+        threshold: 0.3,
         keys: ["keywords"],
     };
     const fuse = new Fuse(emojis, fuseOptions);
@@ -136,6 +136,7 @@
             curemojinumber === null ||
             curemoji === null
         ) {
+            console.log("i returned");
             return;
         }
         switch (e.key) {
