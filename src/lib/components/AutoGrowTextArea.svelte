@@ -24,11 +24,12 @@
         color,
         fs,
     }: Props = $props();
+    let curemoji: [string, number, number] | null = $state(null);
 
     let inputEl: HTMLTextAreaElement;
     function adjust(event: Event) {
         onInput?.(event as InputEvent);
-        console.log(checkAndSearch());
+        curemoji = checkAndSearch();
     }
 
     function bi(event: InputEvent) {
@@ -50,7 +51,7 @@
     function checkEmoji(
         selectionStart: number | null,
         selectionEnd: number | null,
-    ): string | null {
+    ): [string, number, number] | null {
         if (selectionStart !== selectionEnd || selectionStart === null) {
             return null;
         }
@@ -75,7 +76,7 @@
         }
         const res = text.slice(colonPos + 1, selectionStart);
         if (res.length < 3) return null;
-        return res;
+        return [res, colonPos, selectionStart];
     }
     const fuseOptions = {
         keys: ["keywords"],
@@ -88,12 +89,29 @@
         }
         return results[0].item.emoji;
     }
-    function checkAndSearch(): string | null {
+    function checkAndSearch(): [string, number, number] | null {
         const query = checkEmoji(inputEl.selectionStart, inputEl.selectionEnd);
         if (query === null) {
             return null;
         }
-        return searchEmoji(query);
+        const emoji = searchEmoji(query[0]);
+        if (emoji === null) return null;
+        return [emoji, query[1], query[2]];
+    }
+    function emojifier(e: KeyboardEvent) {
+        if (curemoji === null) {
+            return;
+        }
+        switch (e.key) {
+            case "Tab":
+                e.preventDefault();
+                e.stopPropagation();
+                inputEl.value =
+                    inputEl.value.slice(0, curemoji[1]) +
+                    curemoji[0] +
+                    inputEl.value.slice(curemoji[2]);
+                return;
+        }
     }
 </script>
 
@@ -104,6 +122,7 @@
         bind:this={inputEl}
         {maxlength}
         oninput={adjust}
+        onkeydown={emojifier}
         onbeforeinput={bi}
         style:font-weight={bold ? "700" : "inherit"}
         style:--theme={color}
