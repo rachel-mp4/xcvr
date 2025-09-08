@@ -28,11 +28,6 @@
     let curemojiresults: [EmojiSearchResults, number, number] | null =
         $state(null);
     let curemojinumber: null | number = $state(null);
-    let curemoji: null | string = $derived(
-        curemojiresults && curemojinumber
-            ? curemojiresults[0][curemojinumber]
-            : null,
-    );
 
     let inputEl: HTMLTextAreaElement;
     let emojilist: HTMLElement | undefined = $state();
@@ -131,11 +126,7 @@
         return [emoji, query[1], query[2]];
     }
     function emojifier(e: KeyboardEvent) {
-        if (
-            curemojiresults === null ||
-            curemojinumber === null ||
-            curemoji === null
-        ) {
+        if (curemojiresults === null || curemojinumber === null) {
             console.log("i returned");
             return;
         }
@@ -145,10 +136,9 @@
                 e.stopPropagation();
                 inputEl.value =
                     inputEl.value.slice(0, curemojiresults[1]) +
-                    curemoji +
+                    curemojiresults[0][curemojinumber].item.emoji +
                     inputEl.value.slice(curemojiresults[2]);
                 onInputEl?.(inputEl);
-                curemoji = null;
                 curemojiresults = null;
                 curemojinumber = null;
                 return;
