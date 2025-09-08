@@ -159,6 +159,7 @@
         }
     }
     $effect(() => {
+        curemojiresults;
         if (inputEl && emojilist) {
             computePosition(inputEl, emojilist, {
                 placement: "top",
