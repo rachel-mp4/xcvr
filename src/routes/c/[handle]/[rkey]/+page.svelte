@@ -72,7 +72,7 @@
     </h1>
   {/if}
   {#if ctx?.topic}
-    <h2>{ctx?.topic}</h2>
+    <h2 class="topic">{ctx?.topic}</h2>
   {/if}
   <div>
     <a href="history"> view history </a>
@@ -151,6 +151,9 @@
   }
   h2 {
     font-size: 2rem;
+  }
+  .topic {
+    margin-bottom: 0.25rem solid var(--fg);
   }
   h3 {
     font-size: 1.5rem;
