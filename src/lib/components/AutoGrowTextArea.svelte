@@ -88,7 +88,7 @@
     const fuseOptions = {
         includeMatches: true,
         threshold: 0.3,
-        keys: ["keywords"],
+        keys: ["slug"],
     };
     const fuse = new Fuse(emojis, fuseOptions);
     type RangeTuple = [number, number];
