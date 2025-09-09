@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import Fuse from "fuse.js";
-    import emojis from "$lib/keyword-emojis.json";
+    import emojis from "$lib/emojis.json";
     import { computePosition, flip } from "@floating-ui/dom";
 
     interface Props {
@@ -107,7 +107,7 @@
     };
     type EmojiSearchResults = FuseResult<{
         emoji: string;
-        keywords: string[];
+        slug: string;
     }>[];
     function searchEmoji(s: string): null | EmojiSearchResults {
         const results = fuse.search(s);
