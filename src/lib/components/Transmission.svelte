@@ -272,6 +272,10 @@
         position: relative;
     }
 
+    .nick {
+        white-space: pre-wrap;
+    }
+
     .handle::after {
         content: "";
         color: var(--fg);
