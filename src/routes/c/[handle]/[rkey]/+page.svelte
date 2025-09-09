@@ -114,7 +114,7 @@
     <h2 class="topic">{ctx?.topic}</h2>
   {/if}
   <div>
-    <a href="history">
+    <a class="history" href="history">
       view history <span class="hidden-hover">
         (i will delete your local lrc messages!)
       </span></a
