@@ -30,6 +30,6 @@ export const load: PageLoad = async ({ params, fetch }) => {
   return {
     address: addrURL,
     uri: channel?.uri,
-    channelView
+    channelView: channelView
   }
 }
