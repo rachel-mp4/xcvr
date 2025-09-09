@@ -32,14 +32,17 @@
   });
   onDestroy(() => ctx?.disconnect());
   let showSettings = $state(false);
+  $effect(() => {
+    console.log(data.channelView);
+  });
 </script>
 
 <main id="transceiver">
-  {#if data.channelView.title}
-    <h1>
-      {data.channelView.title}
-    </h1>
-  {/if}
+  <!-- {#if data.channelView.title} -->
+  <!-- <h1> -->
+  <!-- {data.channelView.title} -->
+  <!-- </h1> -->
+  <!-- {/if} -->
   {#if ctx?.topic}
     <div>{ctx?.topic}</div>
   {/if}
