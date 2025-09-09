@@ -38,6 +38,12 @@
 </script>
 
 <main id="transceiver">
+  {#if !ctx?.connected}
+    <div>
+      loading... probably something went wrong if you can read me, maybe
+      refresh?
+    </div>
+  {/if}
   {#if ctx}
     <Receiever
       messages={ctx.messages}
@@ -50,17 +56,6 @@
       defaultNick={data.myProfile.defaultNick}
       defaultHandle={data.myProfile.handle}
     />
-    <button
-      id="settingsifier"
-      onclick={() => {
-        showSettings = !showSettings;
-        if (showSettings) {
-          tabContext.gotoC();
-        }
-      }}
-    >
-      {showSettings ? "hide" : "show"} settings
-    </button>
     <Console log={ctx.log} />
   {/if}
 </main>
@@ -76,12 +71,17 @@
   <div>
     <a href="history"> view history </a>
   </div>
-  {#if !ctx?.connected}
-    <div>
-      loading... probably something went wrong if you can read me, maybe
-      refresh?
-    </div>
-  {/if}
+  <button
+    id="settingsifier"
+    onclick={() => {
+      showSettings = !showSettings;
+      if (showSettings) {
+        tabContext.gotoC();
+      }
+    }}
+  >
+    {showSettings ? "hide" : "show"} settings
+  </button>
   {#if ctx && showSettings}
     <h2>message obfuscation</h2>
     <p>in case you want to be forgotten...</p>
