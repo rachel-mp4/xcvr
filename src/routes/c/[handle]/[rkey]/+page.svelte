@@ -153,7 +153,7 @@
     font-size: 2rem;
   }
   .topic {
-    margin-bottom: 0.25rem solid var(--fg);
+    border-bottom: 0.25rem solid var(--fg);
   }
   h3 {
     font-size: 1.5rem;
