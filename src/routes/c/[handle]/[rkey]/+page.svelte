@@ -237,8 +237,4 @@
   input {
     accent-color: var(--theme);
   }
-  main {
-    margin-bottom: 70vh;
-    margin-bottom: 70dvh;
-  }
 </style>
