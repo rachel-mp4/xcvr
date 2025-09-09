@@ -166,7 +166,7 @@
                 middleware: [flip({ fallbackPlacements: ["bottom"] })],
             }).then(({ x, y }) => {
                 if (emojilist !== undefined) {
-                    Object.assign(emojilist.style, {
+                    Object.assign(emojilist?.style, {
                         left: `${x}px`,
                         top: `${y}px`,
                     });
