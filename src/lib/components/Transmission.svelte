@@ -114,14 +114,10 @@
     transmission"
     >
         <div class="header">
-            <span class="nick">{message.nick ?? "???"}</span>
-            {#if message.handle}
-                {#if !message.profileView}
-                    <span class="handle">
-                        @{message.handle}
-                    </span>
-                {:else}
-                    <div
+            <span class="nick">{message.nick ?? "???"}</span
+            >{#if message.handle}{#if !message.profileView}<span class="handle"
+                        >@{message.handle}</span
+                    >{:else}<div
                         role="button"
                         tabindex="0"
                         class="handle-container"
@@ -131,9 +127,8 @@
                         <a
                             bind:this={triggerEl}
                             class="handle"
-                            href={`/p/${message.handle}`}
-                            >@{message.handle}
-                        </a>
+                            href={`/p/${message.handle}`}>@{message.handle}</a
+                        >
                         {#if showProfile}
                             <div
                                 class="profile-container"
