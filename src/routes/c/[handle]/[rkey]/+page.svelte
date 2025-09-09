@@ -38,11 +38,11 @@
 </script>
 
 <main id="transceiver">
-  <!-- {#if data.channelView.title} -->
-  <!-- <h1> -->
-  <!-- {data.channelView.title} -->
-  <!-- </h1> -->
-  <!-- {/if} -->
+  {#if data.channelView}
+    <h1>
+      {data.channelView.title}
+    </h1>
+  {/if}
   {#if ctx?.topic}
     <div>{ctx?.topic}</div>
   {/if}
