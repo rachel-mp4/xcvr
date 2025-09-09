@@ -35,12 +35,17 @@
 </script>
 
 <main id="transceiver">
-  <div>
-    <a href="history"> view history </a>
-  </div>
+  {#if data.channelView.title}
+    <h1>
+      {data.channelView.title}
+    </h1>
+  {/if}
   {#if ctx?.topic}
     <div>{ctx?.topic}</div>
   {/if}
+  <div>
+    <a href="history"> view history </a>
+  </div>
   {#if !ctx?.connected}
     <div>
       loading... probably something went wrong if you can read me, maybe

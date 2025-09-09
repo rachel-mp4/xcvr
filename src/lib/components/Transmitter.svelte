@@ -95,7 +95,8 @@
         <AutoGrowInput
             bind:value={nick}
             {color}
-            placeholder="alice"
+            size={4}
+            placeholder="alice!"
             onInput={setName}
             maxlength={12}
             bold={true}
