@@ -60,6 +60,7 @@
       defaultHandle={data.myProfile.handle}
     />
     <button
+      id="settingsifier"
       onclick={() => {
         showSettings = !showSettings;
         if (showSettings) {
@@ -128,6 +129,12 @@
 <style>
   #transceiver {
     position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+  }
+  #settingsifier {
+    align-self: flex-start;
   }
   #obfuscation-settings {
     display: flex;

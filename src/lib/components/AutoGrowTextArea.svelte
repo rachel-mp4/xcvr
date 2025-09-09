@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import Fuse from "fuse.js";
     import emojis from "$lib/emojis.json";
-    import { computePosition, flip } from "@floating-ui/dom";
+    import { computePosition } from "@floating-ui/dom";
 
     interface Props {
         onBeforeInput?: (event: InputEvent) => void;
@@ -163,7 +163,6 @@
         if (inputEl && emojilist) {
             computePosition(inputEl, emojilist, {
                 placement: "top",
-                middleware: [flip({ fallbackPlacements: ["bottom"] })],
             }).then(({ x, y }) => {
                 if (emojilist?.style) {
                     Object.assign(emojilist.style, {

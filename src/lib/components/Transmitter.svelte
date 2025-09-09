@@ -122,6 +122,9 @@
 </div>
 
 <style>
+    #transmitter {
+        margin-top: auto;
+    }
     .wrapper {
         position: relative;
         display: inline-block;
