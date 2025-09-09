@@ -100,9 +100,7 @@
             maxlength={12}
             bold={true}
             fs={isDesktop ? "2rem" : "1rem"}
-        />
-        @
-        <AutoGrowInput
+        />@<AutoGrowInput
             bind:value={handle}
             placeholder="alice.com"
             size={8}
