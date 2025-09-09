@@ -83,7 +83,7 @@
     {showSettings ? "hide" : "show"} settings
   </button>
   {#if ctx && showSettings}
-    <h2>message obfuscation</h2>
+    <h3>message obfuscation</h3>
     <p>in case you want to be forgotten...</p>
     <div id="obfuscation-settings">
       <div id="replacer">
@@ -135,6 +135,21 @@
 </aside>
 
 <style>
+  h1,
+  h2,
+  h3 {
+    line-height: 1;
+  }
+  h1 {
+    font-size: 4rem;
+  }
+  h2 {
+    font-size: 2rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+
   #transceiver {
     position: relative;
     min-height: 100vh;
