@@ -38,23 +38,6 @@
 </script>
 
 <main id="transceiver">
-  {#if data.channelView}
-    <h1>
-      {data.channelView.title}
-    </h1>
-  {/if}
-  {#if ctx?.topic}
-    <div>{ctx?.topic}</div>
-  {/if}
-  <div>
-    <a href="history"> view history </a>
-  </div>
-  {#if !ctx?.connected}
-    <div>
-      loading... probably something went wrong if you can read me, maybe
-      refresh?
-    </div>
-  {/if}
   {#if ctx}
     <Receiever
       messages={ctx.messages}
@@ -81,8 +64,25 @@
     <Console log={ctx.log} />
   {/if}
 </main>
-{#if ctx && showSettings}
-  <aside style:--theme={numToHex(ctx.color)}>
+<aside style:--theme={numToHex(ctx.color)}>
+  {#if data.channelView}
+    <h1>
+      {data.channelView.title}
+    </h1>
+  {/if}
+  {#if ctx?.topic}
+    <h2>{ctx?.topic}</h2>
+  {/if}
+  <div>
+    <a href="history"> view history </a>
+  </div>
+  {#if !ctx?.connected}
+    <div>
+      loading... probably something went wrong if you can read me, maybe
+      refresh?
+    </div>
+  {/if}
+  {#if ctx && showSettings}
     <h2>message obfuscation</h2>
     <p>in case you want to be forgotten...</p>
     <div id="obfuscation-settings">
@@ -131,8 +131,8 @@
         />
       </div>
     </div>
-  </aside>
-{/if}
+  {/if}
+</aside>
 
 <style>
   #transceiver {
