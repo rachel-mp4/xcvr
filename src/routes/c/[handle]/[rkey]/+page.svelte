@@ -40,11 +40,17 @@
 <main id="transceiver">
   {#if !ctx?.connected}
     <div>
-      loading... probably something went wrong if you can read me, maybe
-      refresh?
+      connecting... <span class="error-message"
+        >probably something went wrong if you can read me, maybe refresh?</span
+      >
     </div>
   {/if}
   {#if ctx}
+    {#if ctx.messages.length === 0 && ctx.connected}
+      <div>connecting...</div>
+      <div>and you're connected.</div>
+      <div>messages will go here, start typing down below</div>
+    {/if}
     <Receiever
       messages={ctx.messages}
       mylocaltext={ctx.curMsg}
@@ -148,6 +154,16 @@
   }
   h3 {
     font-size: 1.5rem;
+    margin: 0;
+  }
+  .error-message {
+    opacity: 0;
+    animation: fadeIn 0.1s ease-in-out 1s forwards;
+  }
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
   }
 
   #transceiver {
