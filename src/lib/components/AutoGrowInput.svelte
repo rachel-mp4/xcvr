@@ -53,7 +53,7 @@
     onbeforeinput={onBeforeInput}
     style:font-weight={bold ? "700" : "inherit"}
     style:--theme={color}
-    style:color={color ? "var(--theme)" : ""}
+    style:color={color ? "var(--theme)" : "var(--fg)"}
     style:--themep={hexToTransparent(color ?? "#ffffff")}
     style:font-size={fs ?? "1rem"}
     {placeholder}
