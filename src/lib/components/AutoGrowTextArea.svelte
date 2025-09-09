@@ -163,7 +163,7 @@
         if (inputEl && emojilist) {
             computePosition(inputEl, emojilist, {
                 placement: "top",
-                middleware: [flip()],
+                middleware: [flip({ fallbackPlacements: ["bottom"] })],
             }).then(({ x, y }) => {
                 if (emojilist !== undefined) {
                     Object.assign(emojilist.style, {

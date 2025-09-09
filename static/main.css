@@ -82,7 +82,7 @@ input[type="submit"]:hover {
 	overflow-y: scroll;
 	align-self: start;
 }
-#content.desktop>:not(:last-child) {
+#content.desktop>:is(#left-sidebar, main) {
   border-right: .25rem solid var(--fg);
 }
 #content.tab-a > *:not(:nth-child(1)) {
