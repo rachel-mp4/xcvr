@@ -114,7 +114,11 @@
     <h2 class="topic">{ctx?.topic}</h2>
   {/if}
   <div>
-    <a href="history"> view history </a>
+    <a href="history">
+      view history <span class="hidden-hover">
+        (i will delete your local lrc messages!)
+      </span></a
+    >
   </div>
   <button
     id="settingsifier"
@@ -236,5 +240,11 @@
   }
   input {
     accent-color: var(--theme);
+  }
+  .hidden-hover {
+    visibility: hidden;
+  }
+  .history:hover .hidden-hover {
+    visibility: visible;
   }
 </style>
