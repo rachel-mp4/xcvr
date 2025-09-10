@@ -214,6 +214,7 @@
 		position: sticky;
 		bottom: 0;
 		font-size: 2rem;
+		line-height: 1;
 		border-top: solid var(--fg) 0.25rem;
 		background: var(--bg);
 	}
