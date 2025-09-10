@@ -122,7 +122,7 @@
 
 <style>
     #transmitter {
-        margin-top: auto;
+        flex-shrink: 0;
     }
     .wrapper {
         position: relative;
