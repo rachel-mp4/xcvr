@@ -232,7 +232,6 @@
 		display: grid;
 		position: relative;
 		grid-template-columns: 20rem 1fr 20rem;
-		height: 100vh;
 	}
 	.beep {
 		margin-top: 16rem;
