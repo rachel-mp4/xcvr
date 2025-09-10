@@ -35,9 +35,12 @@
   $effect(() => {
     console.log(data.channelView);
   });
+  let innerWidth = $state(0);
+  let isDesktop = $derived(innerWidth > 1000);
 </script>
 
-<main id="transceiver">
+<svelte:window bind:innerWidth />
+<main id="transceiver" class={isDesktop ? "desktop" : "mobile"}>
   {#if !ctx?.connected}
     <div>
       connecting... <span class="error-message"
@@ -216,6 +219,13 @@
     position: relative;
     display: flex;
     flex-direction: column;
+  }
+  #transceiver.desktop {
+    height: 100vh;
+  }
+  #transceiver.mobile {
+    height: calc(100vh - 2.25rem);
+    height: calc(100dvh - 2.25rem);
   }
   #settingsifier {
     align-self: flex-start;
