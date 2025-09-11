@@ -13,12 +13,13 @@
   let length = $derived(items.length);
   let innerWidth = $state(0);
   let isDesktop = $derived(innerWidth > 1000);
-  const attachImage: Action<HTMLDivElement, HTMLImageElement | null> = (
+  const attachImage: Action<HTMLDivElement, HTMLImageElement | undefined> = (
     node,
     img,
   ) => {
     $effect(() => {
       if (img != null) node.appendChild(img);
+      node.innerText = "bebebe";
       return () => {
         if (img != null) node.removeChild(img);
       };
