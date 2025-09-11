@@ -89,6 +89,7 @@
             startedAt: Date.now(),
         };
         ctx.pushItem(image);
+        console.log("pushed image item!");
     };
 </script>
 
