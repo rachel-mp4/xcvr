@@ -2,6 +2,7 @@
   import Transmission from "$lib/components/Transmission.svelte";
   import type { Message, Image, Item } from "$lib/types";
   import { isMessage, isImage } from "$lib/types";
+  import type { Action } from "svelte/action";
   interface Props {
     items: Array<Item>;
     mylocaltext?: string;
@@ -12,6 +13,14 @@
   let length = $derived(items.length);
   let innerWidth = $state(0);
   let isDesktop = $derived(innerWidth > 1000);
+  const attachImage: Action<HTMLDivElement, HTMLImageElement> = (node, img) => {
+    $effect(() => {
+      node.appendChild(img);
+      return () => {
+        node.removeChild(img);
+      };
+    });
+  };
 </script>
 
 <svelte:window bind:innerWidth />
@@ -30,6 +39,8 @@
         {onunmute}
         fs={isDesktop ? `${res}rem` : "1rem"}
       />
+    {:else if isImage(item) && item.image}
+      <div use:attachImage={item.image}></div>
     {/if}
   {/each}
 </div>

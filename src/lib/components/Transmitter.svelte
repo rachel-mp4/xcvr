@@ -2,6 +2,7 @@
     import AutoGrowInput from "$lib/components/AutoGrowInput.svelte";
     import { WSContext } from "$lib/wscontext.svelte";
     import { numToHex } from "$lib/colors";
+    import type { Image } from "$lib/types";
     import AutoGrowTextArea from "$lib/components/AutoGrowTextArea.svelte";
     import diff from "fast-diff";
     interface Props {
@@ -72,6 +73,23 @@
             }
         }
     };
+    const convertFileToImageItem = (blob: File) => {
+        const blobUrl = URL.createObjectURL(blob);
+        const img = document.createElement("img");
+        img.onload = () => {
+            URL.revokeObjectURL(blobUrl);
+        };
+        img.src = blobUrl;
+        const image: Image = {
+            type: "image",
+            id: 0,
+            active: false,
+            mine: false,
+            muted: false,
+            startedAt: Date.now(),
+        };
+        ctx.pushItem(image);
+    };
 </script>
 
 <svelte:window bind:innerWidth />
@@ -115,6 +133,7 @@
         placeholder="start typing..."
         onBeforeInput={bi}
         onInputEl={diffAndSendEl}
+        imageHandler={convertFileToImageItem}
         maxlength={65535}
         fs={isDesktop ? "2rem" : "1rem"}
     />
