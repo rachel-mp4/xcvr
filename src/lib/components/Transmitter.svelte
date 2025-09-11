@@ -76,10 +76,10 @@
     const convertFileToImageItem = (blob: File) => {
         const blobUrl = URL.createObjectURL(blob);
         const img = document.createElement("img");
+        img.src = blobUrl;
         img.onload = () => {
             URL.revokeObjectURL(blobUrl);
         };
-        img.src = blobUrl;
         const image: Image = {
             type: "image",
             id: 0,
