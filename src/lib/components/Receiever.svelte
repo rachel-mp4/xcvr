@@ -13,11 +13,14 @@
   let length = $derived(items.length);
   let innerWidth = $state(0);
   let isDesktop = $derived(innerWidth > 1000);
-  const attachImage: Action<HTMLDivElement, HTMLImageElement> = (node, img) => {
+  const attachImage: Action<HTMLDivElement, HTMLImageElement | null> = (
+    node,
+    img,
+  ) => {
     $effect(() => {
-      node.appendChild(img);
+      if (img != null) node.appendChild(img);
       return () => {
-        node.removeChild(img);
+        if (img != null) node.removeChild(img);
       };
     });
   };
@@ -39,7 +42,7 @@
         {onunmute}
         fs={isDesktop ? `${res}rem` : "1rem"}
       />
-    {:else if isImage(item) && item.image}
+    {:else if isImage(item)}
       <div use:attachImage={item.image}>beep</div>
     {/if}
   {/each}
