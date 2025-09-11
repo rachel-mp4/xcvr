@@ -226,6 +226,7 @@
   #transceiver.mobile {
     height: calc(100vh - 2.25rem);
     height: calc(100dvh - 2.25rem);
+    overflow-y: scroll;
   }
   #settingsifier {
     align-self: flex-start;
