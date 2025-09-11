@@ -61,6 +61,7 @@ export function calculateMarginTop(
 
 export function signedMessageViewToMessage(sm: SignedMessageView): Message {
   return {
+    type: 'message',
     uri: sm.uri,
     body: sm.body,
     id: sm.signet.lrcId,

@@ -49,7 +49,7 @@
     </div>
   {/if}
   {#if ctx}
-    {#if ctx.messages.length === 0 && ctx.connected}
+    {#if ctx.items.length === 0 && ctx.connected}
       <div>connecting...</div>
       <div>and you're connected.</div>
       <div>messages will go here, start typing down below</div>
@@ -94,7 +94,7 @@
       </div>
     {/if}
     <Receiever
-      messages={ctx.messages}
+      items={ctx.items}
       mylocaltext={ctx.curMsg}
       onmute={ctx.mute}
       onunmute={ctx.unmute}

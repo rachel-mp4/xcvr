@@ -26,10 +26,8 @@ export type ProfileView = {
     avatar?: string
 }
 
-export type Message = {
+type BaseItem = {
     uri?: string
-    body: string
-    mbody?: string
     id: number
     active: boolean
     mine: boolean
@@ -40,6 +38,25 @@ export type Message = {
     signetView?: SignetView
     nick?: string
     startedAt: number
+}
+export type Image = BaseItem & {
+    type: 'image'
+    image?: HTMLImageElement
+}
+
+export type Message = BaseItem & {
+    type: 'message'
+    body: string
+    mbody?: string
+}
+export type Item = Message | Image
+
+export function isMessage(item: Item): item is Message {
+    return item.type === 'message'
+}
+
+export function isImage(item: Item): item is Image {
+    return item.type === 'image'
 }
 
 export type LogItem = {
@@ -69,6 +86,16 @@ export type MessageView = {
     color?: number
     signetURI: string
     postedAt: string
+}
+
+export type ImageView = {
+    $type?: string
+    uri: string
+    author: ProfileView
+    imageUri: string
+    nick?: string
+    color?: number
+    signetURI: string
 }
 
 export type SignedMessageView = {

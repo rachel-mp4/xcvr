@@ -7,6 +7,7 @@
     interface Props {
         onBeforeInput?: (event: InputEvent) => void;
         onInputEl?: (el: HTMLTextAreaElement) => void;
+        imageHandler?: (image: File) => void;
         placeholder?: string;
         value?: string;
         maxlength?: number;
@@ -20,6 +21,7 @@
         placeholder,
         value = $bindable(""),
         onInputEl,
+        imageHandler,
         maxlength,
         bold = false,
         color,
@@ -173,6 +175,21 @@
             });
         }
     });
+    const pastifier = (event: ClipboardEvent) => {
+        const items = event.clipboardData?.items;
+        if (items === undefined) {
+            return;
+        }
+        for (const item of items) {
+            if (item.type.startsWith("image/")) {
+                const blob = item.getAsFile();
+                if (blob === null) {
+                    return;
+                }
+                imageHandler?.(blob);
+            }
+        }
+    };
 </script>
 
 <div class="autogrowwrapper">
@@ -183,6 +200,7 @@
         {maxlength}
         oninput={adjust}
         onkeydown={emojifier}
+        onpaste={pastifier}
         onbeforeinput={bi}
         style:font-weight={bold ? "700" : "inherit"}
         style:--theme={color}

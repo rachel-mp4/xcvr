@@ -1,4 +1,5 @@
-import type { Message, LogItem, SignetView, MessageView } from "./types"
+import type { Item, Image, Message, LogItem, SignetView, MessageView, ImageView } from "./types"
+import { isMessage, isImage } from "./types"
 import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 
 // so the thing with the current message is that i require a signet to post
@@ -10,9 +11,10 @@ import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 // so i want to make that side of things better
 
 export class WSContext {
-    messages: Array<Message> = $state(new Array())
+    items: Array<Item> = $state(new Array())
     orphanedSignets: Map<string, SignetView> = new Map()
     orphanedMessages: Map<string, MessageView> = new Map()
+    orphanedImages: Map<string, ImageView> = new Map()
     log: Array<LogItem> = $state(new Array())
     topic: string = $state("")
     connected: boolean = $state(false)
@@ -61,8 +63,9 @@ export class WSContext {
         this.ws?.close()
         this.ls?.close()
         connectTo(url, this)
-        this.messages = []
+        this.items = []
         this.orphanedMessages = new Map()
+        this.orphanedImages = new Map()
         this.orphanedSignets = new Map()
         this.mySignet = undefined
         this.myID = undefined
@@ -74,8 +77,9 @@ export class WSContext {
         this.ws = null
         this.ls?.close()
         this.ls = null
-        this.messages = []
+        this.items = []
         this.orphanedMessages = new Map()
+        this.orphanedImages = new Map()
         this.orphanedSignets = new Map()
         this.mySignet = undefined
         this.myID = undefined
@@ -203,51 +207,52 @@ export class WSContext {
 
     // theoretically this could occur _after we have an orphaned signet or an orphanedmessage or both! so,
     // TODO: make it work in that case
-    pushMessage = (message: Message) => {
+    pushItem = (item: Item) => {
         if (document.hidden || !document.hasFocus()) {
             this.audio.currentTime = 0
             this.audio.play()
-        } else if (!message.mine) {
+        } else if (!item.mine) {
             this.shortaudio.currentTime = 0
             this.shortaudio.play()
         }
-        if (this.messages.length > 200) {
-            this.messages = [...this.messages.slice(this.messages.length - 199), message]
+        if (this.items.length > 200) {
+            this.items = [...this.items.slice(this.items.length - 199), item]
         } else {
-            this.messages.push(message)
+            this.items.push(item)
         }
     }
 
-    editMessage = (id: number, newMessage: Message) => {
-        this.messages = this.messages.map((msg: Message) => {
-            return msg.id === id ? newMessage : msg
+    replaceItem = (id: number, newItem: Item) => {
+        this.items = this.items.map((item: Item) => {
+            return item.id === id ? newItem : item
         })
     }
 
-    pubMessage = (id: number) => {
-        this.messages = this.messages.map((msg: Message) => {
-            return msg.id === id ? { ...msg, active: false } : msg
+    pubItem = (id: number) => {
+        this.items = this.items.map((item: Item) => {
+            return isMessage(item) && item.id === id ? { ...item, active: false } : item
         })
     }
 
     insertMessage = (id: number, idx: number, s: string) => {
-        this.ensureExistenceOf(id)
-        this.messages = this.messages.map((msg: Message) => {
-            return msg.id === id ? { ...msg, body: insertSIntoAStringAtIdx(s, msg.body, idx) } : msg
+        this.ensureExistenceOfMessage(id)
+        this.items = this.items.map((item: Item) => {
+            return isMessage(item) && item.id === id ? { ...item, body: insertSIntoAStringAtIdx(s, item.body, idx) } : item
         })
     }
 
     deleteMessage = (id: number, idx1: number, idx2: number) => {
-        this.ensureExistenceOf(id)
-        this.messages = this.messages.map((msg: Message) => {
-            return msg.id === id ? { ...msg, body: deleteFromAStringBetweenIdxs(msg.body, idx1, idx2) } : msg
+        this.ensureExistenceOfMessage(id)
+        this.items = this.items.map((item: Item) => {
+            return isMessage(item) && item.id === id ? { ...item, body: deleteFromAStringBetweenIdxs(item.body, idx1, idx2) } : item
         })
     }
 
-    ensureExistenceOf = (id: number) => {
-        const idx = this.messages.findIndex((msg) => { return msg.id === id })
+    ensureExistenceOfMessage = (id: number) => {
+        const idx = this.items.findIndex((item) => { return item.id === id })
         if (idx === -1) {
-            this.pushMessage({
+            this.pushItem({
+                type: 'message',
                 body: "",
                 id: id,
                 active: true,
@@ -263,11 +268,11 @@ export class WSContext {
             this.mySignet = signet
         }
         console.log("now we are signing")
-        const arrayIdx = this.messages.findIndex(msg => msg.id === signet.lrcId)
+        const arrayIdx = this.items.findIndex(item => item.id === signet.lrcId)
         if (arrayIdx !== -1) {
             console.log("found appropriate signet c:")
-            this.messages = this.messages.map((msg: Message) => {
-                return msg.id === signet.lrcId ? { ...msg, signetView: signet } : msg
+            this.items = this.items.map((item: Item) => {
+                return item.id === signet.lrcId ? { ...item, signetView: signet } : item
             })
         } else {
             console.log("couldn't find appropriate signet :c")
@@ -275,28 +280,41 @@ export class WSContext {
             if (om !== undefined) {
                 console.log("some orphan logic")
                 const message = makeMessageFromSignetAndMessageViews(om, signet)
-                const idx = this.messages.findIndex(msg => msg.id > signet.lrcId)
+                const idx = this.items.findIndex(item => item.id > signet.lrcId)
                 if (idx === -1) {
-                    this.messages.push(message)
+                    this.items.push(message)
                 } else {
-                    this.messages = [...this.messages.slice(0, idx), message, ...this.messages.slice(idx)]
+                    this.items = [...this.items.slice(0, idx), message, ...this.items.slice(idx)]
                 }
                 this.orphanedMessages.delete(signet.uri)
-            } else {
-                this.orphanedSignets.set(signet.uri, signet)
+                return
             }
+            const oi = this.orphanedImages.get(signet.uri)
+            if (oi !== undefined) {
+                console.log("comse orphan logic 2")
+                const image = makeImageFromSignetAndImageViews(oi, signet)
+                const idx = this.items.findIndex(item => item.id > signet.lrcId)
+                if (idx === -1) {
+                    this.items.push(image)
+                } else {
+                    this.items = [...this.items.slice(0, idx), image, ...this.items.slice(idx)]
+                }
+                this.orphanedImages.delete(signet.uri)
+                return
+            }
+            this.orphanedSignets.set(signet.uri, signet)
         }
     }
 
     verifyMessage = (message: MessageView) => {
         console.log("now we are verifying!")
         console.log(message.signetURI)
-        const arrayIdx = this.messages.findIndex(msg => msg.signetView?.uri === message.signetURI && msg.signetView?.authorHandle === message.author.handle)
+        const arrayIdx = this.items.findIndex(item => item.signetView?.uri === message.signetURI && item.signetView?.authorHandle === message.author.handle)
         if (arrayIdx !== -1) {
             console.log("found appropriate message c:")
-            this.messages = this.messages.map((msg: Message) => {
-                return msg.signetView?.uri === message.signetURI ?
-                    { ...makeMessageFromSignetAndMessageViews(message, msg.signetView), body: msg.body, mine: msg.mine } : msg
+            this.items = this.items.map((item: Item) => {
+                return item.signetView?.uri === message.signetURI && isMessage(item) ?
+                    { ...makeMessageFromSignetAndMessageViews(message, item.signetView), body: item.body, mine: item.mine } : item
             })
         }
         else {
@@ -305,11 +323,11 @@ export class WSContext {
             if (os !== undefined) {
                 console.log("some orphan logic")
                 const m = makeMessageFromSignetAndMessageViews(message, os)
-                const idx = this.messages.findIndex(msg => msg.id > os.lrcId)
+                const idx = this.items.findIndex(item => item.id > os.lrcId)
                 if (idx === -1) {
-                    this.messages.push(m)
+                    this.items.push(m)
                 } else {
-                    this.messages = [...this.messages.slice(0, idx), m, ...this.messages.slice(idx)]
+                    this.items = [...this.items.slice(0, idx), m, ...this.items.slice(idx)]
                 }
                 this.orphanedSignets.delete(os.uri)
             } else {
@@ -317,6 +335,7 @@ export class WSContext {
             }
         }
     }
+
     pushToLog = (id: number, ba: Uint8Array, type: string) => {
         const bstring = Array.from(ba).map(byte => byte.toString(16).padStart(2, "0")).join('')
         const time = Date.now()
@@ -331,6 +350,7 @@ const b64encodebytearray = (u8: Uint8Array): string => {
 
 const makeMessageFromSignetAndMessageViews = (m: MessageView, s: SignetView): Message => {
     return {
+        type: 'message',
         uri: m.uri,
         body: "i didn't catch the lrc message body :c",
         mbody: m.body,
@@ -344,6 +364,24 @@ const makeMessageFromSignetAndMessageViews = (m: MessageView, s: SignetView): Me
         signetView: s,
         ...(m.nick && { nick: m.nick }),
         startedAt: Date.parse(s.startedAt)
+    }
+}
+
+const makeImageFromSignetAndImageViews = (i: ImageView, s: SignetView): Image => {
+    return {
+        type: 'image',
+        uri: i.uri,
+        id: s.lrcId,
+        active: false,
+        mine: false,
+        muted: false,
+        //image: fetch(i.imageUri)
+        ...(i.nick && { nick: i.nick }),
+        ...(i.color && { color: i.color }),
+        handle: i.author.handle,
+        profileView: i.author,
+        signetView: s,
+        startedAt: Date.parse(s.startedAt),
     }
 }
 
@@ -657,7 +695,8 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const mine = echoed
             const muted = false
             const startedAt = Date.now()
-            const msg = {
+            const msg: Message = {
+                type: 'message',
                 body: body,
                 id: id,
                 active: active,
@@ -668,7 +707,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
                 ...(nick && { nick: nick }),
                 startedAt: startedAt
             }
-            ctx.pushMessage(msg)
+            ctx.pushItem(msg)
             ctx.pushToLog(id, byteArray, "init")
             return true
         }
@@ -676,7 +715,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
         case "pub": {
             const id = event.msg.pub.id ?? 0
             if (id === 0) return false
-            ctx.pubMessage(id)
+            ctx.pubItem(id)
             ctx.pushToLog(id, byteArray, "pub")
             return false
         }
@@ -706,7 +745,17 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             const mine = false
             const body = ""
             const startedAt = Date.now()
-            ctx.pushMessage({ id, body, muted, active, mine, startedAt })
+            const msg: Message = {
+                type: "message",
+                id: id,
+                body: body,
+                muted: muted,
+                active: active,
+                mine: mine,
+                startedAt: startedAt
+            }
+
+            ctx.pushItem(msg)
             return false
         }
 
