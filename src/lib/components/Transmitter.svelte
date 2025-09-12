@@ -79,6 +79,7 @@
         img.src = blobUrl;
         const image: Image = {
             type: "image",
+            image: img,
             id: 0,
             active: false,
             mine: false,
