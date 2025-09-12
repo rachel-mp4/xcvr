@@ -77,9 +77,6 @@
         const blobUrl = URL.createObjectURL(blob);
         const img = document.createElement("img");
         img.src = blobUrl;
-        img.onload = () => {
-            URL.revokeObjectURL(blobUrl);
-        };
         const image: Image = {
             type: "image",
             id: 0,
