@@ -43,8 +43,8 @@
         {onunmute}
         fs={isDesktop ? `${res}rem` : "1rem"}
       />
-    {:else if isImage(item)}
-      <div use:attachImage={item.image}>beep</div>
+    {:else if isImage(item) && item.image !== undefined}
+      <img src={item.image.src} alt="beep" />
     {/if}
   {/each}
 </div>
