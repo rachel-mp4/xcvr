@@ -84,7 +84,7 @@
             return null;
         }
         const res = text.slice(colonPos + 1, selectionStart);
-        if (res.length < 3) return null;
+        if (res.length < 2) return null;
         return [res, colonPos, selectionStart];
     }
     const fuseOptions = {
