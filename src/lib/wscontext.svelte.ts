@@ -9,6 +9,24 @@ import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 // however long it takes for atproto to propogate, you can't submit your
 // message either.
 // so i want to make that side of things better
+type ATPBlob = {
+    $type: string
+    ref: string
+    mimeType: string
+    size: number
+}
+
+type ATPImage = {
+    $type: string
+    alt: string
+    aspectRatio?: ATPAspectRatio
+    blob?: ATPBlob
+}
+
+type ATPAspectRatio = {
+    width: number
+    height: number
+}
 
 export class WSContext {
     items: Array<Item> = $state(new Array())
@@ -25,14 +43,19 @@ export class WSContext {
 
     channelUri: string
     active: boolean = false
+    mediaactive: boolean = false
     nick: string = "wanderer"
     handle: string = ""
 
     myID: undefined | number
     myNonce: undefined | Uint8Array
     curMsg: string = $state("")
-
     mySignet: undefined | SignetView
+
+    myMediaID: undefined | number
+    myMediaNonce: undefined | Uint8Array
+    atpblob: ATPBlob | undefined
+    myMediaSignet: undefined | SignetView
 
     audio: HTMLAudioElement = new Audio('/notif.wav')
     shortaudio: HTMLAudioElement = new Audio('/shortnotif.wav')
@@ -162,6 +185,77 @@ export class WSContext {
         }
     }
 
+    pubImage = (alt: string) => {
+        if (this.atpblob) {
+            const image: ATPImage = { $type: "string", alt: alt, blob: this.atpblob }
+            const record = {
+                ...(this.mySignet && { signetURI: this.mySignet.uri }),
+                ...(this.channelUri && { channelURI: this.channelUri }),
+                ...(this.myID && { messageID: this.myID }),
+                ...(this.myNonce && { nonce: b64encodebytearray(this.myNonce) }),
+                image: image,
+                ...(this.nick && { nick: this.nick }),
+                ...(this.color && { color: this.color }),
+            }
+            const api = import.meta.env.VITE_API_URL
+            const recordstrungified = JSON.stringify(record)
+            const endpoint = `${api}/lrc/media`
+            fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: recordstrungified,
+            }).then((response) => {
+                if (response.ok) {
+                    console.log(response)
+                } else {
+                    throw new Error(`HTTP ${response.status}`)
+                }
+            }).catch(() => {
+                setTimeout(() => {
+                    fetch(endpoint, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: recordstrungified,
+                    }).then((val) => console.log(val), (val) => console.log(val))
+                }, 2000)
+            })
+            const uri = "beep"
+            const contentAddress = `${api}/lrc/getImage?uri=${uri}`
+            if (this.mediaactive) {
+                pubImage(alt, contentAddress, this)
+            }
+        } else {
+            pubImage(alt, undefined, this)
+        }
+    }
+
+    initImage = (blob: File) => {
+        if (!this.mediaactive) {
+            initImage(this)
+            this.mediaactive = true
+            const api = import.meta.env.VITE_API_URL
+            const endpoint = `${api}/lrc/image`
+            const formData = new FormData()
+            formData.append("image", blob)
+            fetch(endpoint, {
+                method: "POST",
+                body: formData,
+            }).then((response) => {
+                if (response.ok) {
+                    response.json().then((atpblob) =>
+                        this.atpblob = atpblob)
+                } else {
+                    throw new Error(`HTTP ${response.status}`)
+                }
+            }).catch((err) => { console.log(err) })
+        }
+    }
+
+
     insert = (idx: number, s: string) => {
         if (!this.active) {
             initMessage(this)
@@ -234,6 +328,12 @@ export class WSContext {
         })
     }
 
+    mediapubItem = (id: number, alt: string | undefined, contentAddress: string | undefined) => {
+        this.items = this.items.map((item: Item) => {
+            return isImage(item) && item.id === id ? { ...item, active: false, alt: alt, contentAddress: contentAddress } : item
+        })
+    }
+
     insertMessage = (id: number, idx: number, s: string) => {
         this.ensureExistenceOfMessage(id)
         this.items = this.items.map((item: Item) => {
@@ -266,6 +366,9 @@ export class WSContext {
     addSignet = (signet: SignetView) => {
         if (signet.lrcId === this.myID) {
             this.mySignet = signet
+        }
+        if (signet.lrcId === this.myMediaID) {
+            this.myMediaSignet = signet
         }
         console.log("now we are signing")
         const arrayIdx = this.items.findIndex(item => item.id === signet.lrcId)
@@ -518,6 +621,35 @@ export const initMessage = (ctx: WSContext) => {
     ctx.ws?.send(byteArray)
 }
 
+export const initImage = (ctx: WSContext) => {
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "mediainit",
+            mediainit: {
+                nick: ctx.nick,
+                color: ctx.color,
+                externalID: ctx.handle
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
+}
+
+export const pubImage = (alt: string | undefined, contentAddress: string | undefined, ctx: WSContext) => {
+    const evt: lrc.Event = {
+        msg: {
+            oneofKind: "mediapub",
+            mediapub: {
+                alt: alt,
+                contentAddress: contentAddress,
+            }
+        }
+    }
+    const byteArray = lrc.Event.toBinary(evt)
+    ctx.ws?.send(byteArray)
+}
+
 export const insertMessage = (idx: number, s: string, ctx: WSContext) => {
     if (ctx.shouldTransmit) {
         const evt: lrc.Event = {
@@ -712,10 +844,50 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
             return true
         }
 
+        case "mediainit": {
+            const id = event.msg.mediainit.id ?? 0
+            if (id === 0) return false
+            const echoed = event.msg.mediainit.echoed ?? false
+            if (echoed) {
+                ctx.myMediaID = id
+                ctx.myMediaNonce = event.msg.mediainit.nonce
+                // return false
+            }
+            const nick = event.msg.mediainit.nick
+            const handle = event.msg.mediainit.externalID
+            const color = event.msg.mediainit.color
+            const active = true
+            const mine = echoed
+            const muted = false
+            const startedAt = Date.now()
+            const msg: Image = {
+                type: 'image',
+                id: id,
+                active: active,
+                mine: mine,
+                muted: muted,
+                ...(color && { color: color }),
+                ...(handle && { handle: handle }),
+                ...(nick && { nick: nick }),
+                startedAt: startedAt
+            }
+            ctx.pushItem(msg)
+            ctx.pushToLog(id, byteArray, "init")
+            return true
+        }
+
         case "pub": {
             const id = event.msg.pub.id ?? 0
             if (id === 0) return false
             ctx.pubItem(id)
+            ctx.pushToLog(id, byteArray, "pub")
+            return false
+        }
+
+        case "mediapub": {
+            const id = event.msg.mediapub.id ?? 0
+            if (id === 0) return false
+            ctx.mediapubItem(id, event.msg.mediapub.alt, event.msg.mediapub.contentAddress)
             ctx.pushToLog(id, byteArray, "pub")
             return false
         }

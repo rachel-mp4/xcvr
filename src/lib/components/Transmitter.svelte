@@ -14,6 +14,8 @@
     let nick = $state(defaultNick ?? "wanderer");
     let innerWidth = $state(0);
     let isDesktop = $derived(innerWidth > 1000);
+    let imageURL: string | undefined = $state();
+    let imageAlt: string = $state("");
     $effect(() => {
         if (ctx) {
             ctx.setNick(nick);
@@ -75,19 +77,25 @@
     };
     const convertFileToImageItem = (blob: File) => {
         const blobUrl = URL.createObjectURL(blob);
-        const img = document.createElement("img");
-        img.src = blobUrl;
-        const image: Image = {
-            type: "image",
-            image: img,
-            id: 0,
-            active: false,
-            mine: false,
-            muted: false,
-            startedAt: Date.now(),
-        };
-        ctx.pushItem(image);
-        console.log("pushed image item!");
+        ctx.initImage(blob);
+        imageURL = blobUrl;
+    };
+    const cancelimagepost = () => {
+        if (imageURL) {
+            URL.revokeObjectURL(imageURL);
+        }
+        ctx.atpblob = undefined;
+        ctx.pubImage("");
+        imageAlt = "";
+        imageURL = undefined;
+    };
+    const uploadimage = () => {
+        ctx.pubImage(imageAlt);
+        if (imageURL) {
+            URL.revokeObjectURL(imageURL);
+        }
+        imageAlt = "";
+        imageURL = undefined;
     };
 </script>
 
@@ -136,6 +144,25 @@
         maxlength={65535}
         fs={isDesktop ? "2rem" : "1rem"}
     />
+    {#if imageURL !== undefined}
+        <div>
+            <img src={imageURL} alt={imageAlt} />
+            <AutoGrowInput
+                bind:value={imageAlt}
+                placeholder="alt text"
+                size={10}
+                bold={false}
+                fs={isDesktop ? "2rem" : "1rem"}
+            />
+            <button onclick={cancelimagepost}> cancel </button>
+            {#if ctx.atpblob}
+                confirm
+            {:else}
+                uploading...
+            {/if}
+            <button onclick={uploadimage}> confirm</button>
+        </div>
+    {/if}
 </div>
 
 <style>

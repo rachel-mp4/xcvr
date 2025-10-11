@@ -230,6 +230,7 @@
         position: absolute;
         top: 0;
         left: 0;
+        max-height: 16rem;
     }
     .selected.emoji-result {
         background: var(--fg);
