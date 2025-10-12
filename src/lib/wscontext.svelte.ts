@@ -187,7 +187,7 @@ export class WSContext {
 
     pubImage = (alt: string) => {
         if (this.atpblob) {
-            const image: ATPImage = { $type: "string", alt: alt, blob: this.atpblob }
+            const image: ATPImage = { $type: "org.xcvr.lrc.image", alt: alt, blob: this.atpblob }
             const record = {
                 ...(this.mySignet && { signetURI: this.mySignet.uri }),
                 ...(this.channelUri && { channelURI: this.channelUri }),
@@ -196,6 +196,7 @@ export class WSContext {
                 image: image,
                 ...(this.nick && { nick: this.nick }),
                 ...(this.color && { color: this.color }),
+                type: "image"
             }
             const api = import.meta.env.VITE_API_URL
             const recordstrungified = JSON.stringify(record)
