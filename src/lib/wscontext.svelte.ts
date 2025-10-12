@@ -54,7 +54,7 @@ export class WSContext {
 
     myMediaID: undefined | number
     myMediaNonce: undefined | Uint8Array
-    atpblob: ATPBlob | undefined
+    atpblob: ATPBlob | undefined = $state()
     myMediaSignet: undefined | SignetView
 
     audio: HTMLAudioElement = new Audio('/notif.wav')
