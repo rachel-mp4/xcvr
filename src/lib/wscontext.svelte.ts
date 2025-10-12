@@ -243,7 +243,7 @@ export class WSContext {
             formData.append("image", blob)
             fetch(endpoint, {
                 method: "POST",
-                body: formData,
+                body: formData
             }).then((response) => {
                 if (response.ok) {
                     response.json().then((atpblob) =>

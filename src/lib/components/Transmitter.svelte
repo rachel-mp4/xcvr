@@ -155,12 +155,11 @@
                 fs={isDesktop ? "2rem" : "1rem"}
             />
             <button onclick={cancelimagepost}> cancel </button>
-            {#if ctx.atpblob}
-                confirm
+            {#if ctx.atpblob !== undefined}
+                <button onclick={uploadimage}> confirm </button>
             {:else}
                 uploading...
             {/if}
-            <button onclick={uploadimage}> confirm</button>
         </div>
     {/if}
 </div>
