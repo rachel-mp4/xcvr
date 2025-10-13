@@ -25,3 +25,7 @@
 {:else}
   i can't find ban
 {/if}
+
+{#if data.myProfile.loggedIn}
+  try to ban someone (TODO, MAKE UI FOR BAN)
+{/if}
