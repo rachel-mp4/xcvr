@@ -29,10 +29,12 @@
     {/if}
     {#if data.ban.till}
       <p>
-        {#if data.ban.till > Date.now()}
-          the ban will end on {dumbAbsoluteTimestamp(data.ban.till)}.
+        {#if Date.parse(data.ban.till) > Date.now()}
+          the ban will end on {dumbAbsoluteTimestamp(
+            Date.parse(data.ban.till),
+          )}.
         {:else}
-          the ban ended {smartAbsoluteTimestamp(data.ban.till)}
+          the ban ended {smartAbsoluteTimestamp(Date.parse(data.ban.till))}
         {/if}
       </p>
     {/if}
