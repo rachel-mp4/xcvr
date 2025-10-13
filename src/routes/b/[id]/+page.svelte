@@ -17,14 +17,24 @@
     {:catch}
       error fetching handle
     {/await}
-    ({data.ban.did}) was banned {smartAbsoluteTimestamp(
-      Date.parse(data.ban.bannedAt),
-    )}
+    <p>
+      ({data.ban.did}) was banned. {smartAbsoluteTimestamp(
+        Date.parse(data.ban.bannedAt),
+      )}
+    </p>
     {#if data.ban.reason}
-      for {data.ban.reason}.
+      <p>
+        <b>{data.ban.reason}.</b>
+      </p>
     {/if}
     {#if data.ban.till}
-      the ban will end on {dumbAbsoluteTimestamp(data.ban.till)}.
+      <p>
+        {#if data.ban.till > Date.now()}
+          the ban will end on {dumbAbsoluteTimestamp(data.ban.till)}.
+        {:else}
+          the ban ended {smartAbsoluteTimestamp(data.ban.till)}
+        {/if}
+      </p>
     {/if}
   {:else}
     i can't find ban
