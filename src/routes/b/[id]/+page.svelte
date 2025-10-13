@@ -5,6 +5,7 @@
   const fetchhandle = async (did: string) => {
     return fetch(`https://plc.directory/${did}`).then((res) => res.json());
   };
+  const base = import.meta.env.VITE_API_URL;
 </script>
 
 {#if data.ban}
@@ -27,5 +28,22 @@
 {/if}
 
 {#if data.myProfile.loggedIn}
-  try to ban someone (TODO, MAKE UI FOR BAN)
+  try to ban user
+  <form action={`${base}/oauth/ban`} method="POST">
+    <div>
+      <label for="user">user to ban: </label>
+      <input type="text" name="user" id="user" required />
+    </div>
+    <div>
+      <label for="days">number of days to ban for: </label>
+      <input type="text" name="days" id="days" />
+    </div>
+    <div>
+      <label for="reason">reason: </label>
+      <input type="text" name="reason" id="reason" />
+    </div>
+    <div>
+      <input type="submit" value="ban" />
+    </div>
+  </form>
 {/if}
