@@ -18,14 +18,14 @@
       error fetching handle
     {/await}
     <p>
-      ({data.ban.did}) was banned. {smartAbsoluteTimestamp(
+      ({data.ban.did}) was banned {smartAbsoluteTimestamp(
         Date.parse(data.ban.bannedAt),
-      )}
+      )}.
     </p>
     {#if data.ban.reason}
-      <p>
-        <b>{data.ban.reason}.</b>
-      </p>
+      <blockquote>
+        <b>{data.ban.reason}</b>
+      </blockquote>
     {/if}
     {#if data.ban.till}
       <p>
