@@ -163,6 +163,8 @@
             <button onclick={cancelimagepost}> cancel </button>
             {#if ctx.atpblob !== undefined}
                 <button onclick={uploadimage}> confirm </button>
+                {imageWidth}
+                {imageHeight}
             {:else}
                 uploading...
             {/if}
