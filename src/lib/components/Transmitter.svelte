@@ -20,7 +20,7 @@
     let imageHeight: number | undefined;
     $effect(() => {
         imageWidth = image?.naturalWidth;
-        imageWidth = image?.naturalHeight;
+        imageHeight = image?.naturalHeight;
     });
     $effect(() => {
         if (ctx) {
@@ -163,8 +163,6 @@
             <button onclick={cancelimagepost}> cancel </button>
             {#if ctx.atpblob !== undefined}
                 <button onclick={uploadimage}> confirm </button>
-                {imageWidth}
-                {imageHeight}
             {:else}
                 uploading...
             {/if}
