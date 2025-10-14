@@ -510,7 +510,7 @@ const makeImageFromSignetAndImageMediaViews = (i: MediaView, s: SignetView): Ima
         mine: false,
         muted: false,
         malt: i.imageView?.alt,
-        ...(i.imageView?.src && { msrc: i.imageView.src }),
+        ...(i.imageView?.src && { src: i.imageView.src }),
         ...(i.imageView?.aspectRatio && { maspectRatio: i.imageView.aspectRatio }),
         ...(i.nick && { nick: i.nick }),
         ...(i.color && { color: i.color }),
@@ -649,6 +649,7 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
             }
             var imageView: ImageView | undefined
             if (lex.imageView) {
+                console.log("has an image!")
                 imageView = {
                     alt: lex.imageView.alt,
                     ...(lex.imageView.src && { src: lex.imageView.src }),
