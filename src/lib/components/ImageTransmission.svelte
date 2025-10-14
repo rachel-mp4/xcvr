@@ -248,7 +248,7 @@
         position: absolute;
         z-index: -1;
     }
-    .image-wrapper .bg-img {
+    .image-wrapper .fg-img {
         position: relative;
         opacity: 0.5;
     }
