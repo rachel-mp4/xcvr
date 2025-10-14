@@ -19,8 +19,12 @@
     let imageWidth: number | undefined;
     let imageHeight: number | undefined;
     $effect(() => {
-        imageWidth = image?.naturalWidth;
-        imageHeight = image?.naturalHeight;
+        if (image) {
+            image.onload = () => {
+                imageWidth = image?.naturalWidth;
+                imageHeight = image?.naturalHeight;
+            };
+        }
     });
     $effect(() => {
         if (ctx) {
