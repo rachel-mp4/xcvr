@@ -106,7 +106,18 @@
             {/if}
         </div>
         {#if image.src || image.msrc}
-            <img src={image.msrc ? image.msrc : image.src} alt={image.alt} />
+            <div class="image-wrapper">
+                <img
+                    class="bg-img"
+                    src={image.msrc ? image.msrc : image.src}
+                    alt={image.alt}
+                />
+                <img
+                    class="fg-img"
+                    src={image.msrc ? image.msrc : image.src}
+                    alt={image.alt}
+                />
+            </div>
         {:else}
             i don't have an image yet
         {/if}
@@ -229,5 +240,16 @@
     }
     button:hover {
         font-weight: 700;
+    }
+    .image-wrapper {
+        position: relative;
+    }
+    .image-wrapper .bg-img {
+        position: absolute;
+        z-index: -1;
+    }
+    .image-wrapper .bg-img {
+        position: relative;
+        opacity: 0.5;
     }
 </style>
