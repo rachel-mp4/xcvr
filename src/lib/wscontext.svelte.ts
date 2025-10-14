@@ -1,4 +1,4 @@
-import type { Item, Image, Message, LogItem, SignetView, MessageView, MediaView, ImageView } from "./types"
+import type { AspectRatio, Item, Image, Message, LogItem, SignetView, MessageView, MediaView, ImageView } from "./types"
 import { isMessage, isImage } from "./types"
 import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 
@@ -185,9 +185,21 @@ export class WSContext {
         }
     }
 
-    pubImage = (alt: string) => {
+    pubImage = (alt: string, width: number | undefined, height: number | undefined) => {
         if (this.atpblob) {
-            const image: ATPImage = { $type: "org.xcvr.lrc.image", alt: alt, blob: this.atpblob }
+            let aspectRatio: AspectRatio | undefined
+            if (width && height) {
+                aspectRatio = {
+                    width: width,
+                    height: height
+                }
+            }
+            const image: ATPImage = {
+                $type: "org.xcvr.lrc.image",
+                alt: alt,
+                blob: this.atpblob,
+                ...(aspectRatio && { aspectRatio: aspectRatio })
+            }
             const record = {
                 ...(this.mySignet && { signetURI: this.mySignet.uri }),
                 ...(this.channelUri && { channelURI: this.channelUri }),

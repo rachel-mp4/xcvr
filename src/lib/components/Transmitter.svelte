@@ -2,7 +2,6 @@
     import AutoGrowInput from "$lib/components/AutoGrowInput.svelte";
     import { WSContext } from "$lib/wscontext.svelte";
     import { numToHex } from "$lib/colors";
-    import type { Image } from "$lib/types";
     import AutoGrowTextArea from "$lib/components/AutoGrowTextArea.svelte";
     import diff from "fast-diff";
     interface Props {
@@ -16,6 +15,13 @@
     let isDesktop = $derived(innerWidth > 1000);
     let imageURL: string | undefined = $state();
     let imageAlt: string = $state("");
+    let image: HTMLImageElement | undefined = $state();
+    let imageWidth: number | undefined;
+    let imageHeight: number | undefined;
+    $effect(() => {
+        imageWidth = image?.naturalWidth;
+        imageWidth = image?.naturalHeight;
+    });
     $effect(() => {
         if (ctx) {
             ctx.setNick(nick);
@@ -85,12 +91,12 @@
             URL.revokeObjectURL(imageURL);
         }
         ctx.atpblob = undefined;
-        ctx.pubImage("");
+        ctx.pubImage("", undefined, undefined);
         imageAlt = "";
         imageURL = undefined;
     };
     const uploadimage = () => {
-        ctx.pubImage(imageAlt);
+        ctx.pubImage(imageAlt, imageWidth, imageHeight);
         if (imageURL) {
             URL.revokeObjectURL(imageURL);
         }
@@ -146,7 +152,7 @@
     />
     {#if imageURL !== undefined}
         <div>
-            <img src={imageURL} alt={imageAlt} />
+            <img bind:this={image} src={imageURL} alt={imageAlt} />
             <AutoGrowInput
                 bind:value={imageAlt}
                 placeholder="alt text"
