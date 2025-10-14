@@ -50,7 +50,7 @@
     {image.profileView ? 'signed' : ''} 
     {pinned ? 'pinned' : ''} 
     {image.nick ? '' : 'late'} 
-    transmission"
+    imageTransmission"
     >
         <div class="header">
             <span class="nick">{image.nick ?? "???"}</span
@@ -107,6 +107,8 @@
         </div>
         {#if image.src || image.msrc}
             <img src={image.msrc ? image.msrc : image.src} alt={image.alt} />
+        {:else}
+            i don't have an image yet
         {/if}
     </div>
 {:else}
@@ -135,7 +137,7 @@
         z-index: -1;
         background-color: var(--theme);
     }
-    .transmission:not(:hover) .clickable {
+    .imageTransmission:not(:hover) .clickable {
         display: none;
     }
     .active .clickable {
@@ -193,20 +195,20 @@
         transition: transform 0.17s 3s;
     }
 
-    .transmission:not(.signed):not(.active) .handle::after {
+    .imageTransmission:not(.signed):not(.active) .handle::after {
         transform: scaleX(1);
     }
-    .transmission:not(.signed):not(.active) .handle:hover::after {
+    .imageTransmission:not(.signed):not(.active) .handle:hover::after {
         content: "i couldn't find a record :c";
     }
 
-    .transmission {
+    .imageTransmission {
         padding-bottom: 1rem;
         margin-top: var(--margin);
         font-size: var(--size);
     }
 
-    .transmission:not(.active) .header {
+    .imageTransmission:not(.active) .header {
         color: var(--theme);
     }
     .profile-container {
