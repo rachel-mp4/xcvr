@@ -1,5 +1,6 @@
 <script lang="ts">
   import Transmission from "$lib/components/Transmission.svelte";
+  import ImageTransmission from "$lib/components/ImageTransmission.svelte";
   import type { Message, Image, Item } from "$lib/types";
   import { isMessage, isImage } from "$lib/types";
   import type { Action } from "svelte/action";
@@ -43,8 +44,14 @@
         {onunmute}
         fs={isDesktop ? `${res}rem` : "1rem"}
       />
-    {:else if isImage(item) && item.image !== undefined}
-      <img src={item.image.src} alt="beep" />
+    {:else if isImage(item)}
+      <ImageTransmission
+        image={item}
+        margin={0}
+        {onmute}
+        {onunmute}
+        fs={isDesktop ? `${res}rem` : "1rem"}
+      />
     {/if}
   {/each}
 </div>

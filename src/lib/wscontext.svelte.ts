@@ -1,4 +1,4 @@
-import type { Item, Image, Message, LogItem, SignetView, MessageView, ImageView } from "./types"
+import type { Item, Image, Message, LogItem, SignetView, MessageView, MediaView, ImageView } from "./types"
 import { isMessage, isImage } from "./types"
 import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 
@@ -32,7 +32,7 @@ export class WSContext {
     items: Array<Item> = $state(new Array())
     orphanedSignets: Map<string, SignetView> = new Map()
     orphanedMessages: Map<string, MessageView> = new Map()
-    orphanedImages: Map<string, ImageView> = new Map()
+    orphanedMedias: Map<string, MediaView> = new Map()
     log: Array<LogItem> = $state(new Array())
     topic: string = $state("")
     connected: boolean = $state(false)
@@ -88,7 +88,7 @@ export class WSContext {
         connectTo(url, this)
         this.items = []
         this.orphanedMessages = new Map()
-        this.orphanedImages = new Map()
+        this.orphanedMedias = new Map()
         this.orphanedSignets = new Map()
         this.mySignet = undefined
         this.myID = undefined
@@ -102,7 +102,7 @@ export class WSContext {
         this.ls = null
         this.items = []
         this.orphanedMessages = new Map()
-        this.orphanedImages = new Map()
+        this.orphanedMedias = new Map()
         this.orphanedSignets = new Map()
         this.mySignet = undefined
         this.myID = undefined
@@ -331,7 +331,7 @@ export class WSContext {
 
     mediapubItem = (id: number, alt: string | undefined, contentAddress: string | undefined) => {
         this.items = this.items.map((item: Item) => {
-            return isImage(item) && item.id === id ? { ...item, active: false, alt: alt, contentAddress: contentAddress } : item
+            return isImage(item) && item.id === id ? { ...item, active: false, alt: alt, src: contentAddress } : item
         })
     }
 
@@ -393,17 +393,17 @@ export class WSContext {
                 this.orphanedMessages.delete(signet.uri)
                 return
             }
-            const oi = this.orphanedImages.get(signet.uri)
+            const oi = this.orphanedMedias.get(signet.uri)
             if (oi !== undefined) {
                 console.log("comse orphan logic 2")
-                const image = makeImageFromSignetAndImageViews(oi, signet)
+                const image = makeImageFromSignetAndImageMediaViews(oi, signet)
                 const idx = this.items.findIndex(item => item.id > signet.lrcId)
                 if (idx === -1) {
                     this.items.push(image)
                 } else {
                     this.items = [...this.items.slice(0, idx), image, ...this.items.slice(idx)]
                 }
-                this.orphanedImages.delete(signet.uri)
+                this.orphanedMedias.delete(signet.uri)
                 return
             }
             this.orphanedSignets.set(signet.uri, signet)
@@ -440,6 +440,36 @@ export class WSContext {
         }
     }
 
+    verifyImageMediaView = (media: MediaView) => {
+        console.log("now we are verifying!")
+        console.log(media.signetURI)
+        const arrayIdx = this.items.findIndex(item => item.signetView?.uri === media.signetURI && item.signetView?.authorHandle === media.author.handle)
+        if (arrayIdx !== -1) {
+            console.log("found appropriate message c:")
+            this.items = this.items.map((item: Item) => {
+                return item.signetView?.uri === media.signetURI && isMessage(item) ?
+                    { ...makeImageFromSignetAndImageMediaViews(media, item.signetView), body: item.body, mine: item.mine } : item
+            })
+        }
+        else {
+            console.log("couldn't find appropriate message :c")
+            const os = this.orphanedSignets.get(media.signetURI)
+            if (os !== undefined) {
+                console.log("some orphan logic")
+                const m = makeImageFromSignetAndImageMediaViews(media, os)
+                const idx = this.items.findIndex(item => item.id > os.lrcId)
+                if (idx === -1) {
+                    this.items.push(m)
+                } else {
+                    this.items = [...this.items.slice(0, idx), m, ...this.items.slice(idx)]
+                }
+                this.orphanedSignets.delete(os.uri)
+            } else {
+                this.orphanedMedias.set(media.signetURI, media)
+            }
+        }
+    }
+
     pushToLog = (id: number, ba: Uint8Array, type: string) => {
         const bstring = Array.from(ba).map(byte => byte.toString(16).padStart(2, "0")).join('')
         const time = Date.now()
@@ -471,7 +501,7 @@ const makeMessageFromSignetAndMessageViews = (m: MessageView, s: SignetView): Me
     }
 }
 
-const makeImageFromSignetAndImageViews = (i: ImageView, s: SignetView): Image => {
+const makeImageFromSignetAndImageMediaViews = (i: MediaView, s: SignetView): Image => {
     return {
         type: 'image',
         uri: i.uri,
@@ -479,7 +509,9 @@ const makeImageFromSignetAndImageViews = (i: ImageView, s: SignetView): Image =>
         active: false,
         mine: false,
         muted: false,
-        //image: fetch(i.imageUri)
+        malt: i.imageView?.alt,
+        ...(i.imageView?.src && { msrc: i.imageView.src }),
+        ...(i.imageView?.aspectRatio && { maspectRatio: i.imageView.aspectRatio }),
         ...(i.nick && { nick: i.nick }),
         ...(i.color && { color: i.color }),
         handle: i.author.handle,
@@ -597,6 +629,40 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
                 uri: uri,
                 author: author,
                 body: body,
+                ...(nick && { nick: nick }),
+                ...(color && { color: color }),
+                ...(signetURI && { signetURI: signetURI }),
+                ...(postedAt && { postedAt: postedAt }),
+            })
+            return
+        }
+        case "org.xcvr.lrc.defs#mediaView": {
+            console.log("parsing media!!!")
+            const uri = lex.uri
+            const author = {
+                did: lex.author.did,
+                handle: lex.author.handle,
+                ...(lex.author.displayName && { displayName: lex.author.displayName }),
+                ...(lex.author.status && { status: lex.author.status }),
+                ...(lex.author.color && { color: lex.author.color }),
+                ...(lex.author.avatar && { avatar: lex.author.avatar }),
+            }
+            var imageView: ImageView | undefined
+            if (lex.imageView) {
+                imageView = {
+                    alt: lex.imageView.alt,
+                    ...(lex.imageView.src && { src: lex.imageView.src }),
+                    ...(lex.imageView.aspectRatio && { aspectRatio: lex.imageView.aspectRatio }),
+                }
+            }
+            const nick = lex.nick
+            const color = lex.color
+            const signetURI = lex.signetURI
+            const postedAt = lex.postedAt
+            ctx.verifyImageMediaView({
+                uri: uri,
+                author: author,
+                ...(imageView && { imageView: imageView }),
                 ...(nick && { nick: nick }),
                 ...(color && { color: color }),
                 ...(signetURI && { signetURI: signetURI }),

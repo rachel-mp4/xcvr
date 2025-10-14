@@ -39,9 +39,20 @@ type BaseItem = {
     nick?: string
     startedAt: number
 }
+
+export type AspectRatio = {
+    width: number
+    height: number
+}
+
 export type Image = BaseItem & {
     type: 'image'
-    image?: HTMLImageElement
+    alt?: string
+    malt?: string
+    src?: string
+    msrc?: string
+    aspectRatio?: AspectRatio
+    maspectRatio?: AspectRatio
 }
 
 export type Message = BaseItem & {
@@ -88,14 +99,21 @@ export type MessageView = {
     postedAt: string
 }
 
-export type ImageView = {
+export type MediaView = {
     $type?: string
     uri: string
     author: ProfileView
-    imageUri: string
+    imageView?: ImageView
     nick?: string
     color?: number
     signetURI: string
+}
+
+export type ImageView = {
+    $type?: string
+    alt: string
+    src?: string
+    aspectRatio?: AspectRatio
 }
 
 export type SignedMessageView = {
