@@ -236,7 +236,7 @@ export class WSContext {
                     }).then((val) => console.log(val), (val) => console.log(val))
                 }, 2000)
             })
-            const contentAddress = `${api}/lrc/getImage?handle=${this.handle}&cid=${this.atpblob.ref}`
+            const contentAddress = `${api}/lrc/getImage?handle=${this.handle}&cid=${this.atpblob.ref.link}`
             if (this.mediaactive) {
                 pubImage(alt, contentAddress, this)
             }
@@ -262,8 +262,12 @@ export class WSContext {
                 body: formData
             }).then((response) => {
                 if (response.ok) {
-                    response.json().then((atpblob) =>
-                        this.atpblob = atpblob)
+                    response.json().then((atpblob) => {
+
+                        console.log(atpblob)
+                        this.atpblob = atpblob
+                    }
+                    )
                 } else {
                     throw new Error(`HTTP ${response.status}`)
                 }
