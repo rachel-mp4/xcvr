@@ -201,9 +201,9 @@ export class WSContext {
                 ...(aspectRatio && { aspectRatio: aspectRatio })
             }
             const record = {
-                ...(this.mySignet && { signetURI: this.mySignet.uri }),
+                ...(this.myMediaSignet && { signetURI: this.myMediaSignet.uri }),
                 ...(this.channelUri && { channelURI: this.channelUri }),
-                ...(this.myID && { messageID: this.myID }),
+                ...(this.myMediaID && { messageID: this.myMediaID }),
                 ...(this.myNonce && { nonce: b64encodebytearray(this.myNonce) }),
                 image: image,
                 ...(this.nick && { nick: this.nick }),
@@ -236,6 +236,11 @@ export class WSContext {
                     }).then((val) => console.log(val), (val) => console.log(val))
                 }, 2000)
             })
+            this.mediaactive = false
+            this.atpblob = undefined
+            this.myMediaSignet = undefined
+            this.myMediaID = undefined
+            // TODO: backend respond correctly 
             const uri = "beep"
             const contentAddress = `${api}/lrc/getImage?uri=${uri}`
             if (this.mediaactive) {
