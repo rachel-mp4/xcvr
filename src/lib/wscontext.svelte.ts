@@ -236,16 +236,16 @@ export class WSContext {
                     }).then((val) => console.log(val), (val) => console.log(val))
                 }, 2000)
             })
-            this.mediaactive = false
-            this.atpblob = undefined
-            this.myMediaSignet = undefined
-            this.myMediaID = undefined
             // TODO: backend respond correctly 
             const uri = "beep"
             const contentAddress = `${api}/lrc/getImage?uri=${uri}`
             if (this.mediaactive) {
                 pubImage(alt, contentAddress, this)
             }
+            this.mediaactive = false
+            this.atpblob = undefined
+            this.myMediaSignet = undefined
+            this.myMediaID = undefined
         } else {
             pubImage(alt, undefined, this)
         }
