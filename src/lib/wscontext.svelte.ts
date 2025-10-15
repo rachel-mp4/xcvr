@@ -707,6 +707,7 @@ export const initMessage = (ctx: WSContext) => {
 }
 
 export const initImage = (ctx: WSContext) => {
+    console.log("send media init!!!")
     const evt: lrc.Event = {
         msg: {
             oneofKind: "mediainit",
