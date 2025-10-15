@@ -186,6 +186,7 @@
                 if (blob === null) {
                     return;
                 }
+                event.preventDefault();
                 imageHandler?.(blob);
             }
         }
