@@ -930,6 +930,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
         }
 
         case "mediainit": {
+            console.log("media init!!!!")
             const id = event.msg.mediainit.id ?? 0
             if (id === 0) return false
             const echoed = event.msg.mediainit.echoed ?? false
