@@ -236,9 +236,7 @@ export class WSContext {
                     }).then((val) => console.log(val), (val) => console.log(val))
                 }, 2000)
             })
-            // TODO: backend respond correctly 
-            const uri = "beep"
-            const contentAddress = `${api}/lrc/getImage?uri=${uri}`
+            const contentAddress = `${api}/lrc/getImage?handle=${this.handle}&cid=${this.atpblob.ref}`
             if (this.mediaactive) {
                 pubImage(alt, contentAddress, this)
             }
