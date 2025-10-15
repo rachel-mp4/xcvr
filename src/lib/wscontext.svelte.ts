@@ -11,7 +11,9 @@ import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 // so i want to make that side of things better
 type ATPBlob = {
     $type: string
-    ref: string
+    ref: {
+        $link: string
+    }
     mimeType: string
     size: number
 }
@@ -236,7 +238,7 @@ export class WSContext {
                     }).then((val) => console.log(val), (val) => console.log(val))
                 }, 2000)
             })
-            const contentAddress = `${api}/lrc/getImage?handle=${this.handle}&cid=${this.atpblob.ref.link}`
+            const contentAddress = `${api}/lrc/getImage?handle=${this.handle}&cid=${this.atpblob.ref["$link"]}`
             if (this.mediaactive) {
                 pubImage(alt, contentAddress, this)
             }
@@ -263,8 +265,6 @@ export class WSContext {
             }).then((response) => {
                 if (response.ok) {
                     response.json().then((atpblob) => {
-
-                        console.log(atpblob)
                         this.atpblob = atpblob
                     }
                     )
