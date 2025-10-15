@@ -238,7 +238,7 @@ export class WSContext {
                     }).then((val) => console.log(val), (val) => console.log(val))
                 }, 2000)
             })
-            const contentAddress = `${api}/lrc/getImage?handle=${this.handle}&cid=${this.atpblob.ref["$link"]}`
+            const contentAddress = `${api}/xrpc/org.xcvr.lrc.getImage?handle=${this.handle}&cid=${this.atpblob.ref["$link"]}`
             if (this.mediaactive) {
                 pubImage(alt, contentAddress, this)
             }
