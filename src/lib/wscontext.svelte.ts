@@ -232,6 +232,7 @@ export class WSContext {
                     response.json().then((atpblob) => {
                         if (this.myMedia) {
                             this.myMedia.atpblob = atpblob
+                            console.log("here's atpblob")
                         } else {
                             console.error("i don't have a media at the time of recieve atblob: ", atpblob)
                         }
