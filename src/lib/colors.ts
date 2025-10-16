@@ -3,6 +3,28 @@ export function ansiToHex(ansiCode: number) {
     return rgbToHex(rgb)
 }
 
+export type ColorSet = {
+    theme: string
+    themetransparent: string
+    themecontrast: string
+    themecontrasttransparent: string
+}
+
+export function colorSetFromTheme(theme: number): ColorSet {
+    const color = numToHex(theme);
+    const cpartial = hexToTransparent(color);
+    const contrast = hexToContrast(color);
+    const partial = hexToTransparent(contrast);
+
+    return {
+        theme: color,
+        themetransparent: cpartial,
+        themecontrast: contrast,
+        themecontrasttransparent: partial,
+    }
+}
+
+
 export function numToHex(num: number) {
     const int = Math.max(Math.min(16777215, Math.floor(num)), 0)
     return "#" + int.toString(16).padStart(6, '0')

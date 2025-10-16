@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Transmission from "$lib/components/Transmission.svelte";
+  import EnbyTransmission from "$lib/components/EnbyTransmission.svelte";
+  import MessageTransmission from "$lib/components/MessageTransmission.svelte";
   import ImageTransmission from "$lib/components/ImageTransmission.svelte";
-  import type { Message, Image, Item } from "$lib/types";
-  import { isMessage, isImage } from "$lib/types";
-  import type { Action } from "svelte/action";
+  import type { Item } from "$lib/types";
+  import { isMessage, isImage, isEnby } from "$lib/types";
   interface Props {
     items: Array<Item>;
     mylocaltext?: string;
@@ -14,31 +14,23 @@
   let length = $derived(items.length);
   let innerWidth = $state(0);
   let isDesktop = $derived(innerWidth > 1000);
-  const attachImage: Action<HTMLDivElement, HTMLImageElement | undefined> = (
-    node,
-    img,
-  ) => {
-    $effect(() => {
-      if (img != null) node.appendChild(img);
-      node.innerText = "bebebe";
-      return () => {
-        if (img != null) node.removeChild(img);
-      };
-    });
-  };
 </script>
 
 <svelte:window bind:innerWidth />
 <div id="receiver">
-  {#each items as item, index}
+  {#each items as item, index (item.id)}
     {@const last = length - 1}
     {@const diff = last - index}
     {@const guess = 2 + (Math.atan((diff - 19) * 0.25) / -2.8 - 0.45)}
     {@const res = Math.min(Math.max(guess, 1), 2)}
-    {#if isMessage(item)}
-      <Transmission
+    {#if isEnby(item)}
+      <EnbyTransmission enby={item} />
+    {:else if isMessage(item)}
+      <MessageTransmission
         message={item}
-        mylocaltext={item.active && item.mine ? mylocaltext : undefined}
+        mylocaltext={item.lrcdata.mine && !item.lrcdata.pub
+          ? mylocaltext
+          : undefined}
         margin={0}
         {onmute}
         {onunmute}

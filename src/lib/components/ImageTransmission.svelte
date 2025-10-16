@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Image } from "$lib/types";
     import { computePosition, flip, shift, offset } from "@floating-ui/dom";
-    import { hexToContrast, hexToTransparent, numToHex } from "$lib/colors";
+    import { colorSetFromTheme, type ColorSet } from "$lib/colors";
     import { smartAbsoluteTimestamp, dumbAbsoluteTimestamp } from "$lib/utils";
     import ProfileCard from "./ProfileCard.svelte";
     interface Props {
@@ -12,10 +12,35 @@
         fs?: string;
     }
     let { image, margin, onmute, onunmute, fs }: Props = $props();
-    let color: string = numToHex(image.color ?? 16777215);
-    let cpartial: string = hexToTransparent(color);
-    let contrast: string = hexToContrast(color);
-    let partial: string = hexToTransparent(contrast);
+    let protocol: string = $state(image.mediaView ? "atp" : "lrc");
+    let canatp: boolean = $derived(image.mediaView !== undefined);
+    let canlrc: boolean = $derived(
+        image.lrcdata.init !== undefined || image.lrcdata.pub !== undefined,
+    );
+    let nick: string | undefined = $derived(
+        protocol === "atp" ? image.mediaView?.nick : image.lrcdata.init?.nick,
+    );
+    let handle: string | undefined = $derived(
+        protocol === "atp"
+            ? image.mediaView?.author.handle
+            : image.lrcdata.init?.handle,
+    );
+    let color: number | undefined = $derived(
+        protocol === "atp"
+            ? (image.mediaView?.color ?? image.mediaView?.author.color)
+            : image.lrcdata.init?.color,
+    );
+    let colorSet: ColorSet = $derived(colorSetFromTheme(color ?? 8421504));
+    let src: string | undefined = $derived(
+        protocol === "atp"
+            ? image.mediaView?.imageView?.src
+            : image.lrcdata.pub?.contentAddress,
+    );
+    let alt: string | undefined = $derived(
+        protocol === "atp"
+            ? image.mediaView?.imageView?.alt
+            : image.lrcdata.pub?.alt,
+    );
     let triggerEl: HTMLElement | undefined = $state();
     let profileEl: HTMLElement | undefined = $state();
     let showProfile = $state(false);
@@ -38,24 +63,24 @@
     let pinned = $state(false);
 </script>
 
-{#if image.muted === false}
+{#if image.lrcdata.muted === false}
     <div
-        style:--theme={color}
-        style:--themep={cpartial}
-        style:--tcontrast={contrast}
-        style:--tpartial={partial}
+        style:--theme={colorSet.theme}
+        style:--themep={colorSet.themetransparent}
+        style:--tcontrast={colorSet.themecontrast}
+        style:--tpartial={colorSet.themecontrasttransparent}
         style:--margin={margin + "rem"}
         style:--size={fs ?? "1rem"}
-        class="{image.active ? 'active' : ''} 
-    {image.profileView ? 'signed' : ''} 
+        class="{image.lrcdata.pub || image.mediaView ? '' : 'active'} 
+    {image.mediaView ? 'signed' : ''} 
     {pinned ? 'pinned' : ''} 
-    {image.nick ? '' : 'late'} 
+    {image.lrcdata.init ? '' : 'late'} 
     imageTransmission"
     >
         <div class="header">
-            <span class="nick">{image.nick ?? "???"}</span
-            >{#if image.handle}{#if !image.profileView}<span class="handle"
-                        >@{image.handle}</span
+            <span class="nick">{nick ?? ""}</span>{#if handle !== undefined}
+                {#if !image.mediaView?.author}<span class="handle"
+                        >@{handle}</span
                     >{:else}<div
                         role="button"
                         tabindex="0"
@@ -66,24 +91,53 @@
                         <a
                             bind:this={triggerEl}
                             class="handle"
-                            href={`/p/${image.handle}`}>@{image.handle}</a
+                            href={`/p/${handle}`}>@{handle}</a
                         >
                         {#if showProfile}
                             <div
                                 class="profile-container"
                                 bind:this={profileEl}
                             >
-                                <ProfileCard profile={image.profileView} />
+                                <ProfileCard profile={image.mediaView.author} />
                             </div>
                         {/if}
                     </div>
                 {/if}
-                <span
-                    class="time clickable"
-                    title={dumbAbsoluteTimestamp(image.startedAt)}
-                >
-                    {smartAbsoluteTimestamp(image.startedAt)}
-                </span>
+                {#if protocol === "atp"}
+                    {#if canlrc}
+                        <button
+                            class="clickable"
+                            onclick={() => {
+                                protocol = "lrc";
+                            }}
+                        >
+                            atproto, switch to lrc
+                        </button>
+                    {:else}
+                        <span class="clickable">atproto</span>
+                    {/if}
+                {:else if canatp}
+                    <button
+                        class="clickable"
+                        onclick={() => (protocol = "atp")}
+                    >
+                        lrc, switch to atproto
+                    </button>
+                {:else}
+                    <span class="clickable">lrc</span>
+                {/if}
+                {#if image.signetView?.startedAt}
+                    <span
+                        class="time clickable"
+                        title={dumbAbsoluteTimestamp(
+                            Date.parse(image.signetView.startedAt),
+                        )}
+                    >
+                        {smartAbsoluteTimestamp(
+                            Date.parse(image.signetView.startedAt),
+                        )}
+                    </span>
+                {/if}
                 <button
                     class="clickable"
                     onclick={() => {
@@ -92,11 +146,11 @@
                 >
                     {pinned ? "unpin" : "pin"}
                 </button>
-                {#if image.mine !== true}
+                {#if image.lrcdata.mine !== true}
                     <button
                         class="mute clickable"
                         onclick={() => {
-                            image.muted = true;
+                            image.lrcdata.mine = true;
                             onmute?.(image.id);
                         }}
                     >
@@ -105,18 +159,10 @@
                 {/if}
             {/if}
         </div>
-        {#if image.src || image.msrc}
+        {#if src}
             <div class="image-wrapper">
-                <img
-                    class="bg-img"
-                    src={image.msrc ? image.msrc : image.src}
-                    alt={image.alt}
-                />
-                <img
-                    class="fg-img"
-                    src={image.msrc ? image.msrc : image.src}
-                    alt={image.alt}
-                />
+                <img class="bg-img" {src} {alt} />
+                <img class="fg-img" {src} {alt} />
             </div>
         {:else}
             i don't have an image yet
@@ -127,7 +173,7 @@
     <button
         class="unmute"
         onclick={() => {
-            image.muted = false;
+            image.lrcdata.muted = false;
             onunmute?.(image.id);
         }}
     >

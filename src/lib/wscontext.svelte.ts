@@ -1,41 +1,12 @@
-import type { AspectRatio, Item, Image, Message, LogItem, SignetView, MessageView, MediaView, ImageView } from "./types"
-import { isMessage, isImage } from "./types"
+import type * as xcvr from "./types"
+import { isMessage, isImage, isMedia } from "./types"
 import * as lrc from '@rachel-mp4/lrcproto/gen/ts/lrc'
 
-// so the thing with the current message is that i require a signet to post
-// which is not ideal because you might be in an lrc server that is working
-// but the atproto integration isn't, and i want it to still be somewhat ok
-// in that case. additionally, it means that in the first like round trip +
-// however long it takes for atproto to propogate, you can't submit your
-// message either.
-// so i want to make that side of things better
-type ATPBlob = {
-    $type: string
-    ref: {
-        $link: string
-    }
-    mimeType: string
-    size: number
-}
-
-type ATPImage = {
-    $type: string
-    alt: string
-    aspectRatio?: ATPAspectRatio
-    blob?: ATPBlob
-}
-
-type ATPAspectRatio = {
-    width: number
-    height: number
-}
-
 export class WSContext {
-    items: Array<Item> = $state(new Array())
-    orphanedSignets: Map<string, SignetView> = new Map()
-    orphanedMessages: Map<string, MessageView> = new Map()
-    orphanedMedias: Map<string, MediaView> = new Map()
-    log: Array<LogItem> = $state(new Array())
+    existingindices: Map<number, boolean> = new Map()
+    existinguris: Map<string, string> = new Map()
+    items: Array<xcvr.Item> = $state(new Array())
+    log: Array<xcvr.LogItem> = $state(new Array())
     topic: string = $state("")
     connected: boolean = $state(false)
     conncount = $state(0)
@@ -44,20 +15,13 @@ export class WSContext {
     color: number = $state(Math.floor(Math.random() * 16777216))
 
     channelUri: string
-    active: boolean = false
-    mediaactive: boolean = false
     nick: string = "wanderer"
     handle: string = ""
-
-    myID: undefined | number
-    myNonce: undefined | Uint8Array
     curMsg: string = $state("")
-    mySignet: undefined | SignetView
-
-    myMediaID: undefined | number
-    myMediaNonce: undefined | Uint8Array
-    atpblob: ATPBlob | undefined = $state()
-    myMediaSignet: undefined | SignetView
+    myMessage: xcvr.Message | undefined
+    messageactive: boolean = false
+    myMedia: xcvr.Media | undefined
+    mediaactive: boolean = false
 
     audio: HTMLAudioElement = new Audio('/notif.wav')
     shortaudio: HTMLAudioElement = new Audio('/shortnotif.wav')
@@ -89,12 +53,6 @@ export class WSContext {
         this.ls?.close()
         connectTo(url, this)
         this.items = []
-        this.orphanedMessages = new Map()
-        this.orphanedMedias = new Map()
-        this.orphanedSignets = new Map()
-        this.mySignet = undefined
-        this.myID = undefined
-        this.myNonce = undefined
     }
 
     disconnect = () => {
@@ -103,12 +61,6 @@ export class WSContext {
         this.ls?.close()
         this.ls = null
         this.items = []
-        this.orphanedMessages = new Map()
-        this.orphanedMedias = new Map()
-        this.orphanedSignets = new Map()
-        this.mySignet = undefined
-        this.myID = undefined
-        this.myNonce = undefined
     }
 
     starttransmit = () => {
@@ -128,7 +80,7 @@ export class WSContext {
     }
 
     insertLineBreak = () => {
-        if (this.active) {
+        if (this.myMessage) {
             this.starttransmit()
             pubMessage(this)
             const api = import.meta.env.VITE_API_URL
@@ -145,10 +97,10 @@ export class WSContext {
             }
             console.log(body)
             const record = {
-                ...(this.mySignet && { signetURI: this.mySignet.uri }),
+                ...(this.myMessage.signetView && { signetURI: this.myMessage.signetView.uri }),
                 ...(this.channelUri && { channelURI: this.channelUri }),
-                ...(this.myID && { messageID: this.myID }),
-                ...(this.myNonce && { nonce: b64encodebytearray(this.myNonce) }),
+                messageID: this.myMessage.id,
+                ...(this.myMessage.lrcdata?.init?.nonce && { nonce: b64encodebytearray(this.myMessage.lrcdata.init.nonce) }),
                 body: body,
                 ...(this.nick && { nick: this.nick }),
                 ...(this.color && { color: this.color }),
@@ -180,33 +132,37 @@ export class WSContext {
                     }, 2000)
                 })
             }
-            this.active = false
+            this.myMessage = undefined
+            this.messageactive = false
             this.curMsg = ""
-            this.mySignet = undefined
-            this.myID = undefined
+        } else if (this.messageactive) {
+            this.starttransmit()
+            pubMessage(this)
+            this.messageactive = false
+            this.curMsg = ""
         }
     }
 
     pubImage = (alt: string, width: number | undefined, height: number | undefined) => {
-        if (this.atpblob) {
-            let aspectRatio: AspectRatio | undefined
+        if (this.myMedia) {
+            let aspectRatio: xcvr.AspectRatio | undefined
             if (width && height) {
                 aspectRatio = {
                     width: width,
                     height: height
                 }
             }
-            const image: ATPImage = {
+            const image: xcvr.AtpImage = {
                 $type: "org.xcvr.lrc.image",
                 alt: alt,
-                blob: this.atpblob,
+                ...(this.myMedia.atpblob && { blob: this.myMedia.atpblob }),
                 ...(aspectRatio && { aspectRatio: aspectRatio })
             }
             const record = {
-                ...(this.myMediaSignet && { signetURI: this.myMediaSignet.uri }),
+                ...(this.myMedia.signetView && { signetURI: this.myMedia.signetView.uri }),
                 ...(this.channelUri && { channelURI: this.channelUri }),
-                ...(this.myMediaID && { messageID: this.myMediaID }),
-                ...(this.myNonce && { nonce: b64encodebytearray(this.myNonce) }),
+                messageID: this.myMedia.id,
+                ...(this.myMedia.lrcdata?.init?.nonce && { nonce: b64encodebytearray(this.myMedia.lrcdata.init.nonce) }),
                 image: image,
                 ...(this.nick && { nick: this.nick }),
                 ...(this.color && { color: this.color }),
@@ -238,23 +194,31 @@ export class WSContext {
                     }).then((val) => console.log(val), (val) => console.log(val))
                 }, 2000)
             })
-            const contentAddress = `${api}/xrpc/org.xcvr.lrc.getImage?handle=${this.handle}&cid=${this.atpblob.ref["$link"]}`
-            if (this.mediaactive) {
+            if (this.myMedia.atpblob) {
+                const contentAddress = `${api}/xrpc/org.xcvr.lrc.getImage?handle=${this.handle}&cid=${this.myMedia.atpblob.ref["$link"]}`
                 pubImage(alt, contentAddress, this)
+            } else {
+                pubImage(alt, undefined, this)
             }
+            this.myMedia = undefined
             this.mediaactive = false
-            this.atpblob = undefined
-            this.myMediaSignet = undefined
-            this.myMediaID = undefined
-        } else {
+        } else if (this.mediaactive) {
             pubImage(alt, undefined, this)
+            this.mediaactive = false
         }
+    }
+    cancelImage = () => {
+        if (this.mediaactive) {
+            pubImage(undefined, undefined, this)
+            this.myMedia = undefined
+            this.mediaactive = false
+        }
+
     }
 
     initImage = (blob: File) => {
-        if (!this.mediaactive) {
+        if (!this.myMedia) {
             initImage(this)
-            this.mediaactive = true
             const api = import.meta.env.VITE_API_URL
             const endpoint = `${api}/lrc/image`
             const formData = new FormData()
@@ -265,7 +229,9 @@ export class WSContext {
             }).then((response) => {
                 if (response.ok) {
                     response.json().then((atpblob) => {
-                        this.atpblob = atpblob
+                        if (this.myMedia) {
+                            this.myMedia.atpblob = atpblob
+                        }
                     }
                     )
                 } else {
@@ -277,16 +243,16 @@ export class WSContext {
 
 
     insert = (idx: number, s: string) => {
-        if (!this.active) {
+        if (!this.messageactive) {
             initMessage(this)
-            this.active = true
+            this.messageactive = true
         }
         insertMessage(idx, s, this)
         this.curMsg = insertSIntoAStringAtIdx(s, this.curMsg, idx)
     }
 
     delete = (idx: number, idx2: number) => {
-        if (!this.active) {
+        if (!this.messageactive) {
             return
         }
         deleteMessage(idx, idx2, this)
@@ -319,173 +285,221 @@ export class WSContext {
         this.conncount = cc
     }
 
-    // theoretically this could occur _after we have an orphaned signet or an orphanedmessage or both! so,
-    // TODO: make it work in that case
-    pushItem = (item: Item) => {
+    pushItem = (item: xcvr.Item) => {
+        if (this.existingindices.get(item.id)) {
+            console.log("you tried to push an item who exists!")
+            return
+        }
         if (document.hidden || !document.hasFocus()) {
             this.audio.currentTime = 0
             this.audio.play()
-        } else if (!item.mine) {
+        } else if (!item.lrcdata.mine) {
             this.shortaudio.currentTime = 0
             this.shortaudio.play()
         }
-        if (this.items.length > 200) {
-            this.items = [...this.items.slice(this.items.length - 199), item]
+        this.items.push(item)
+        if (item.lrcdata.mine) {
+            if (isMessage(item)) {
+                this.myMessage = item
+            } else if (isMedia(item)) {
+                this.myMedia = item
+            }
+        }
+        this.existingindices.set(item.id, true)
+    }
+
+    initMessage = (id: number, init: xcvr.LrcInit, mine: boolean) => {
+        if (this.existingindices.get(id)) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.id === id && isMessage(item)
+                    ? { ...item, type: "message", lrcdata: { ...item.lrcdata, init: init } }
+                    : item
+            })
         } else {
-            this.items.push(item)
+            this.pushItem({
+                type: 'message',
+                id: id,
+                lrcdata: {
+                    body: '',
+                    mine: mine,
+                    muted: false,
+                    init: init,
+                },
+            })
         }
     }
 
-    replaceItem = (id: number, newItem: Item) => {
-        this.items = this.items.map((item: Item) => {
-            return item.id === id ? newItem : item
-        })
+    initMedia = (id: number, init: xcvr.LrcInit, mine: boolean) => {
+        if (this.existingindices.get(id)) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.id === id && isImage(item)
+                    ? { ...item, type: "image", lrcdata: { ...item.lrcdata, init: init } }
+                    : item
+            })
+        } else {
+            this.pushItem({
+                type: 'image',
+                id: id,
+                lrcdata: {
+                    mine: mine,
+                    muted: false,
+                    init: init,
+                },
+            })
+        }
     }
 
-    pubItem = (id: number) => {
-        this.items = this.items.map((item: Item) => {
-            return isMessage(item) && item.id === id ? { ...item, active: false } : item
-        })
+    initMute = (id: number) => {
+        if (this.existingindices.get(id)) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.id === id
+                    ? { ...item, lrcdata: { ...item.lrcdata, muted: true } } as typeof item
+                    : item
+            })
+        } else {
+            this.pushItem({
+                type: 'enby',
+                id: id,
+                lrcdata: {
+                    mine: false,
+                    muted: true,
+                }
+            })
+        }
     }
 
-    mediapubItem = (id: number, alt: string | undefined, contentAddress: string | undefined) => {
-        this.items = this.items.map((item: Item) => {
-            return isImage(item) && item.id === id ? { ...item, active: false, alt: alt, src: contentAddress } : item
-        })
+    pubMessage = (id: number) => {
+        if (this.existingindices.get(id)) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.id === id && isMessage(item)
+                    ? { ...item, type: "message", lrcdata: { ...item.lrcdata, pub: true } }
+                    : item
+            })
+        } else {
+            this.pushItem({
+                type: "message",
+                id: id,
+                lrcdata: {
+                    mine: false,
+                    muted: false,
+                    body: "",
+                },
+            })
+        }
+    }
+
+    pubMedia = (id: number, pub: xcvr.LrcMediaPub) => {
+        if (this.existingindices.get(id)) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.id === id && isMedia(item)
+                    ? {
+                        ...item, type: "image",
+                        lrcdata: {
+                            ...item.lrcdata,
+                            pub: pub
+                        }
+                    }
+                    : item
+            })
+        } else {
+            this.pushItem({
+                type: "image",
+                id: id,
+                lrcdata: {
+                    mine: false,
+                    muted: false,
+                    pub: pub,
+                },
+            })
+        }
     }
 
     insertMessage = (id: number, idx: number, s: string) => {
-        this.ensureExistenceOfMessage(id)
-        this.items = this.items.map((item: Item) => {
-            return isMessage(item) && item.id === id ? { ...item, body: insertSIntoAStringAtIdx(s, item.body, idx) } : item
-        })
+        if (this.existingindices.get(id)) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.id === id && isMessage(item)
+                    ? { ...item, type: "message", lrcdata: { ...item.lrcdata, body: insertSIntoAStringAtIdx(s, item.lrcdata.body, idx) } }
+                    : item
+            })
+        } else {
+            this.pushItem({
+                type: "message",
+                id: id,
+                lrcdata: {
+                    mine: false,
+                    muted: false,
+                    body: insertSIntoAStringAtIdx(s, "", idx),
+                    pub: false
+                },
+            })
+        }
     }
 
     deleteMessage = (id: number, idx1: number, idx2: number) => {
-        this.ensureExistenceOfMessage(id)
-        this.items = this.items.map((item: Item) => {
-            return isMessage(item) && item.id === id ? { ...item, body: deleteFromAStringBetweenIdxs(item.body, idx1, idx2) } : item
-        })
-    }
-
-    ensureExistenceOfMessage = (id: number) => {
-        const idx = this.items.findIndex((item) => { return item.id === id })
-        if (idx === -1) {
-            this.pushItem({
-                type: 'message',
-                body: "",
-                id: id,
-                active: true,
-                mine: false,
-                muted: false,
-                startedAt: Date.now(),
-            })
-        }
-    }
-
-    addSignet = (signet: SignetView) => {
-        if (signet.lrcId === this.myID) {
-            this.mySignet = signet
-        }
-        if (signet.lrcId === this.myMediaID) {
-            this.myMediaSignet = signet
-        }
-        console.log("now we are signing")
-        const arrayIdx = this.items.findIndex(item => item.id === signet.lrcId)
-        if (arrayIdx !== -1) {
-            console.log("found appropriate signet c:")
-            this.items = this.items.map((item: Item) => {
-                return item.id === signet.lrcId ? { ...item, signetView: signet } : item
+        if (this.existingindices.get(id)) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.id === id && isMessage(item)
+                    ? { ...item, type: "message", lrcdata: { ...item.lrcdata, body: deleteFromAStringBetweenIdxs(item.lrcdata.body, idx1, idx2) } }
+                    : item
             })
         } else {
-            console.log("couldn't find appropriate signet :c")
-            const om = this.orphanedMessages.get(signet.uri)
-            if (om !== undefined) {
-                console.log("some orphan logic")
-                const message = makeMessageFromSignetAndMessageViews(om, signet)
-                const idx = this.items.findIndex(item => item.id > signet.lrcId)
-                if (idx === -1) {
-                    this.items.push(message)
-                } else {
-                    this.items = [...this.items.slice(0, idx), message, ...this.items.slice(idx)]
-                }
-                this.orphanedMessages.delete(signet.uri)
-                return
-            }
-            const oi = this.orphanedMedias.get(signet.uri)
-            if (oi !== undefined) {
-                console.log("comse orphan logic 2")
-                const image = makeImageFromSignetAndImageMediaViews(oi, signet)
-                const idx = this.items.findIndex(item => item.id > signet.lrcId)
-                if (idx === -1) {
-                    this.items.push(image)
-                } else {
-                    this.items = [...this.items.slice(0, idx), image, ...this.items.slice(idx)]
-                }
-                this.orphanedMedias.delete(signet.uri)
-                return
-            }
-            this.orphanedSignets.set(signet.uri, signet)
+            this.pushItem({
+                type: "message",
+                id: id,
+                lrcdata: {
+                    mine: false,
+                    muted: false,
+                    body: deleteFromAStringBetweenIdxs("", idx1, idx2),
+                    pub: false
+                },
+            })
         }
     }
 
-    verifyMessage = (message: MessageView) => {
-        console.log("now we are verifying!")
-        console.log(message.signetURI)
-        const arrayIdx = this.items.findIndex(item => item.signetView?.uri === message.signetURI && item.signetView?.authorHandle === message.author.handle)
-        if (arrayIdx !== -1) {
-            console.log("found appropriate message c:")
-            this.items = this.items.map((item: Item) => {
-                return item.signetView?.uri === message.signetURI && isMessage(item) ?
-                    { ...makeMessageFromSignetAndMessageViews(message, item.signetView), body: item.body, mine: item.mine } : item
+    addSignet = (signet: xcvr.SignetView) => {
+        if (this.existingindices.get(signet.lrcId)) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.id === signet.lrcId
+                    ? { ...item, signetView: signet }
+                    : item
+            })
+        } else {
+            this.pushItem({
+                type: "enby",
+                id: signet.lrcId,
+                lrcdata: { mine: false, muted: false },
+                signetView: signet
             })
         }
-        else {
-            console.log("couldn't find appropriate message :c")
-            const os = this.orphanedSignets.get(message.signetURI)
-            if (os !== undefined) {
-                console.log("some orphan logic")
-                const m = makeMessageFromSignetAndMessageViews(message, os)
-                const idx = this.items.findIndex(item => item.id > os.lrcId)
-                if (idx === -1) {
-                    this.items.push(m)
-                } else {
-                    this.items = [...this.items.slice(0, idx), m, ...this.items.slice(idx)]
-                }
-                this.orphanedSignets.delete(os.uri)
-            } else {
-                this.orphanedMessages.set(message.signetURI, message)
-            }
+        this.existinguris.set(signet.uri, signet.authorHandle)
+    }
+
+    addMessageView = (message: xcvr.MessageView) => {
+        if (this.existinguris.get(message.signetURI) === message.author.handle) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.signetView?.uri === message.signetURI && isMessage(item)
+                    ? { ...item, type: "message", messageView: message }
+                    : item
+            })
+            this.existinguris.delete(message.signetURI)
+        } else {
+            console.error("recieved a messageview who doesn't have a matching signet, rejecting: ", message)
         }
     }
 
-    verifyImageMediaView = (media: MediaView) => {
-        console.log("now we are verifying!")
-        console.log(media.signetURI)
-        const arrayIdx = this.items.findIndex(item => item.signetView?.uri === media.signetURI && item.signetView?.authorHandle === media.author.handle)
-        if (arrayIdx !== -1) {
-            console.log("found appropriate message c:")
-            this.items = this.items.map((item: Item) => {
-                return item.signetView?.uri === media.signetURI && isMessage(item) ?
-                    { ...makeImageFromSignetAndImageMediaViews(media, item.signetView), body: item.body, mine: item.mine } : item
-            })
+    addImageView = (media: xcvr.MediaView) => {
+        if (!media.imageView) {
+            console.log("called add imageview when i don't have an imageview")
+            return
         }
-        else {
-            console.log("couldn't find appropriate message :c")
-            const os = this.orphanedSignets.get(media.signetURI)
-            if (os !== undefined) {
-                console.log("some orphan logic")
-                const m = makeImageFromSignetAndImageMediaViews(media, os)
-                const idx = this.items.findIndex(item => item.id > os.lrcId)
-                if (idx === -1) {
-                    this.items.push(m)
-                } else {
-                    this.items = [...this.items.slice(0, idx), m, ...this.items.slice(idx)]
-                }
-                this.orphanedSignets.delete(os.uri)
-            } else {
-                this.orphanedMedias.set(media.signetURI, media)
-            }
+        if (this.existinguris.get(media.signetURI)) {
+            this.items = this.items.map((item: xcvr.Item) => {
+                return item.signetView?.uri === media.signetURI && isImage(item) ?
+                    { ...item, type: "image", mediaView: media } : item
+            })
+            this.existinguris.delete(media.signetURI)
+        } else {
+            console.error("recieved a mediaview who doesn't have a matching signet, rejecting: ", media)
         }
     }
 
@@ -499,45 +513,6 @@ export class WSContext {
 
 const b64encodebytearray = (u8: Uint8Array): string => {
     return btoa(String.fromCharCode(...u8))
-}
-
-const makeMessageFromSignetAndMessageViews = (m: MessageView, s: SignetView): Message => {
-    return {
-        type: 'message',
-        uri: m.uri,
-        body: "i didn't catch the lrc message body :c",
-        mbody: m.body,
-        id: s.lrcId,
-        active: false,
-        mine: false,
-        muted: false,
-        ...(m.color && { color: m.color }),
-        handle: m.author.handle,
-        profileView: m.author,
-        signetView: s,
-        ...(m.nick && { nick: m.nick }),
-        startedAt: Date.parse(s.startedAt)
-    }
-}
-
-const makeImageFromSignetAndImageMediaViews = (i: MediaView, s: SignetView): Image => {
-    return {
-        type: 'image',
-        uri: i.uri,
-        id: s.lrcId,
-        active: false,
-        mine: false,
-        muted: false,
-        malt: i.imageView?.alt,
-        ...(i.imageView?.src && { src: i.imageView.src }),
-        ...(i.imageView?.aspectRatio && { maspectRatio: i.imageView.aspectRatio }),
-        ...(i.nick && { nick: i.nick }),
-        ...(i.color && { color: i.color }),
-        handle: i.author.handle,
-        profileView: i.author,
-        signetView: s,
-        startedAt: Date.parse(s.startedAt),
-    }
 }
 
 const insertSIntoAStringAtIdx = (s: string, a: string, idx: number) => {
@@ -644,7 +619,7 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
             const color = lex.color
             const signetURI = lex.signetURI
             const postedAt = lex.postedAt
-            ctx.verifyMessage({
+            ctx.addMessageView({
                 uri: uri,
                 author: author,
                 body: body,
@@ -666,7 +641,7 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
                 ...(lex.author.color && { color: lex.author.color }),
                 ...(lex.author.avatar && { avatar: lex.author.avatar }),
             }
-            var imageView: ImageView | undefined
+            var imageView: xcvr.ImageView | undefined
             if (lex.imageView) {
                 console.log("has an image!")
                 imageView = {
@@ -679,7 +654,7 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
             const color = lex.color
             const signetURI = lex.signetURI
             const postedAt = lex.postedAt
-            ctx.verifyImageMediaView({
+            ctx.addImageView({
                 uri: uri,
                 author: author,
                 ...(imageView && { imageView: imageView }),
@@ -898,69 +873,39 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
         }
 
         case "init": {
-            console.log(event.msg.init)
             const id = event.msg.init.id ?? 0
             if (id === 0) return false
-            const echoed = event.msg.init.echoed ?? false
-            if (echoed) {
-                ctx.myID = id
-                ctx.myNonce = event.msg.init.nonce
-                // return false
-            }
+            const color = event.msg.init.color
             const nick = event.msg.init.nick
             const handle = event.msg.init.externalID
-            const color = event.msg.init.color
-            const body = ""
-            const active = true
-            const mine = echoed
-            const muted = false
-            const startedAt = Date.now()
-            const msg: Message = {
-                type: 'message',
-                body: body,
-                id: id,
-                active: active,
-                mine: mine,
-                muted: muted,
+            const nonce = event.msg.init.nonce
+            const mine = event.msg.init.echoed ?? false
+            const init: xcvr.LrcInit = {
                 ...(color && { color: color }),
-                ...(handle && { handle: handle }),
                 ...(nick && { nick: nick }),
-                startedAt: startedAt
+                ...(handle && { handle: handle }),
+                ...(nonce && { nonce: nonce }),
             }
-            ctx.pushItem(msg)
+            ctx.initMessage(id, init, mine)
             ctx.pushToLog(id, byteArray, "init")
             return true
         }
 
         case "mediainit": {
-            console.log("media init!!!!")
             const id = event.msg.mediainit.id ?? 0
             if (id === 0) return false
-            const echoed = event.msg.mediainit.echoed ?? false
-            if (echoed) {
-                ctx.myMediaID = id
-                ctx.myMediaNonce = event.msg.mediainit.nonce
-                // return false
-            }
+            const color = event.msg.mediainit.color
             const nick = event.msg.mediainit.nick
             const handle = event.msg.mediainit.externalID
-            const color = event.msg.mediainit.color
-            const active = true
-            const mine = echoed
-            const muted = false
-            const startedAt = Date.now()
-            const msg: Image = {
-                type: 'image',
-                id: id,
-                active: active,
-                mine: mine,
-                muted: muted,
+            const nonce = event.msg.mediainit.nonce
+            const mine = event.msg.mediainit.echoed ?? false
+            const init: xcvr.LrcInit = {
                 ...(color && { color: color }),
-                ...(handle && { handle: handle }),
                 ...(nick && { nick: nick }),
-                startedAt: startedAt
+                ...(handle && { handle: handle }),
+                ...(nonce && { nonce: nonce }),
             }
-            ctx.pushItem(msg)
+            ctx.initMedia(id, init, mine)
             ctx.pushToLog(id, byteArray, "init")
             return true
         }
@@ -968,7 +913,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
         case "pub": {
             const id = event.msg.pub.id ?? 0
             if (id === 0) return false
-            ctx.pubItem(id)
+            ctx.pubMessage(id)
             ctx.pushToLog(id, byteArray, "pub")
             return false
         }
@@ -976,7 +921,11 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
         case "mediapub": {
             const id = event.msg.mediapub.id ?? 0
             if (id === 0) return false
-            ctx.mediapubItem(id, event.msg.mediapub.alt, event.msg.mediapub.contentAddress)
+            const pub: xcvr.LrcMediaPub = {
+                alt: event.msg.mediapub.alt ?? "",
+                contentAddress: event.msg.mediapub.contentAddress
+            }
+            ctx.pubMedia(id, pub)
             ctx.pushToLog(id, byteArray, "pub")
             return false
         }
@@ -1001,22 +950,7 @@ function parseEvent(binary: MessageEvent<any>, ctx: WSContext): boolean {
         case "mute": {
             const id = event.msg.mute.id ?? 0
             if (id === 0) return false
-            const muted = true
-            const active = true
-            const mine = false
-            const body = ""
-            const startedAt = Date.now()
-            const msg: Message = {
-                type: "message",
-                id: id,
-                body: body,
-                muted: muted,
-                active: active,
-                mine: mine,
-                startedAt: startedAt
-            }
-
-            ctx.pushItem(msg)
+            ctx.initMute(id)
             return false
         }
 

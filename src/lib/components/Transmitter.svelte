@@ -73,7 +73,7 @@
         const el = event.target as HTMLInputElement;
         switch (event.inputType) {
             case "insertLineBreak": {
-                if (ctx.myID === undefined) {
+                if (ctx.myMessage === undefined) {
                     event.preventDefault();
                     return;
                 }
@@ -94,8 +94,8 @@
         if (imageURL) {
             URL.revokeObjectURL(imageURL);
         }
-        ctx.atpblob = undefined;
-        ctx.pubImage("", undefined, undefined);
+
+        ctx.cancelImage();
         imageAlt = "";
         imageURL = undefined;
     };
@@ -165,7 +165,7 @@
                 fs={isDesktop ? "2rem" : "1rem"}
             />
             <button onclick={cancelimagepost}> cancel </button>
-            {#if ctx.atpblob !== undefined}
+            {#if ctx.myMedia?.atpblob !== undefined}
                 <button onclick={uploadimage}> confirm </button>
             {:else}
                 uploading...

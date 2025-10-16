@@ -1,4 +1,3 @@
-import * as lrc from '@rachel-mp4/lrcproto'
 export type Channel = {
     title: string
     host: string
@@ -26,48 +25,103 @@ export type ProfileView = {
     avatar?: string
 }
 
-type BaseItem = {
-    uri?: string
+export type Item = Message | Media | Enby
+
+export type Enby = {
+    type: 'enby'
     id: number
-    active: boolean
+    lrcdata: LrcBaseItem
+    signetView?: SignetView
+}
+
+export type Message = {
+    type: 'message'
+    id: number
+    lrcdata: LrcMessage
+    messageView?: MessageView
+    signetView?: SignetView
+}
+
+export type Media = Image
+
+export type Image = {
+    type: 'image'
+    id: number
+    lrcdata: LrcMedia
+    mediaView?: MediaView
+    signetView?: SignetView
+    atpblob?: AtpBlob
+}
+
+export type LrcMessage = LrcBaseItem & {
+    body: string
+    pub?: LrcMessagePub
+}
+
+export type LrcMedia = LrcBaseItem & {
+    pub?: LrcMediaPub
+}
+
+export type LrcBaseItem = {
     mine: boolean
     muted: boolean
-    color?: number
-    handle?: string
-    profileView?: ProfileView
-    signetView?: SignetView
-    nick?: string
-    startedAt: number
+    init?: LrcInit
 }
+
+export type LrcInit = {
+    color?: number
+    nick?: string
+    handle?: string
+    nonce?: Uint8Array
+}
+
+export type LrcMediaPub = {
+    alt: string
+    contentAddress?: string
+}
+
+export type LrcMessagePub = boolean
 
 export type AspectRatio = {
     width: number
     height: number
 }
 
-export type Image = BaseItem & {
-    type: 'image'
-    alt?: string
-    malt?: string
-    src?: string
-    msrc?: string
-    aspectRatio?: AspectRatio
-    maspectRatio?: AspectRatio
+export function isEnby(item: Item): item is Enby {
+    return item.type === "enby"
 }
-
-export type Message = BaseItem & {
-    type: 'message'
-    body: string
-    mbody?: string
-}
-export type Item = Message | Image
 
 export function isMessage(item: Item): item is Message {
-    return item.type === 'message'
+    return item.type === 'message' || item.type === 'enby'
 }
 
 export function isImage(item: Item): item is Image {
-    return item.type === 'image'
+    return item.type === 'image' || item.type === 'enby'
+}
+
+export function isMedia(item: Item): item is Media {
+    return isImage(item)
+}
+
+export type AtpBlob = {
+    $type: string
+    ref: {
+        $link: string
+    }
+    mimeType: string
+    size: number
+}
+
+export type AtpImage = {
+    $type: string
+    alt: string
+    aspectRatio?: ATPAspectRatio
+    blob?: AtpBlob
+}
+
+export type ATPAspectRatio = {
+    width: number
+    height: number
 }
 
 export type LogItem = {
@@ -108,6 +162,8 @@ export type MediaView = {
     color?: number
     signetURI: string
 }
+
+export type ItemView = MessageView | MediaView
 
 export type ImageView = {
     $type?: string

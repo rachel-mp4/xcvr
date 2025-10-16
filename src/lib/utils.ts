@@ -62,18 +62,23 @@ export function calculateMarginTop(
 export function signedMessageViewToMessage(sm: SignedMessageView): Message {
   return {
     type: 'message',
-    uri: sm.uri,
-    body: sm.body,
     id: sm.signet.lrcId,
-    active: false,
-    mine: false,
-    muted: false,
-    ...(sm.color && { color: sm.color }),
-    handle: sm.author.handle,
-    profileView: sm.author,
+    lrcdata: {
+      body: "",
+      muted: false,
+      mine: false
+    },
     signetView: sm.signet,
-    ...(sm.nick && { nick: sm.nick }),
-    startedAt: Date.parse(sm.signet.startedAt),
+    messageView: {
+      $type: sm.$type,
+      uri: sm.uri,
+      author: sm.author,
+      body: sm.body,
+      ...(sm.nick && { nick: sm.nick }),
+      ...(sm.color && { color: sm.color }),
+      signetURI: sm.signet.uri,
+      postedAt: sm.postedAt
+    }
   }
 }
 export function sanitizeHandle(input: string) {

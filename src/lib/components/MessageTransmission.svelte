@@ -2,7 +2,8 @@
     import type { Message } from "$lib/types";
     import * as linkify from "linkifyjs";
     import { computePosition, flip, shift, offset } from "@floating-ui/dom";
-    import { hexToContrast, hexToTransparent, numToHex } from "$lib/colors";
+    import { colorSetFromTheme } from "$lib/colors";
+    import type { ColorSet } from "$lib/colors";
     import { smartAbsoluteTimestamp, dumbAbsoluteTimestamp } from "$lib/utils";
     import ProfileCard from "./ProfileCard.svelte";
     import diff from "fast-diff";
@@ -16,10 +17,27 @@
     }
     let { message, margin, mylocaltext, onmute, onunmute, fs }: Props =
         $props();
-    let color: string = numToHex(message.color ?? 16777215);
-    let cpartial: string = hexToTransparent(color);
-    let contrast: string = hexToContrast(color);
-    let partial: string = hexToTransparent(contrast);
+    let protocol: string = $state(message.messageView ? "atp" : "lrc");
+    let canatp: boolean = $derived(message.messageView !== undefined);
+    let canlrc: boolean = $derived(
+        message.lrcdata.init !== undefined || message.lrcdata.pub !== undefined,
+    );
+    let nick: string | undefined = $derived(
+        protocol === "atp"
+            ? message.messageView?.nick
+            : message.lrcdata.init?.nick,
+    );
+    let handle: string | undefined = $derived(
+        protocol === "atp"
+            ? message.messageView?.author.handle
+            : message.lrcdata.init?.handle,
+    );
+    let color: number | undefined = $derived(
+        protocol === "atp"
+            ? (message.messageView?.color ?? message.messageView?.author.color)
+            : message.lrcdata.init?.color,
+    );
+    let colorSet: ColorSet = $derived(colorSetFromTheme(color ?? 8421504));
     let triggerEl: HTMLElement | undefined = $state();
     let profileEl: HTMLElement | undefined = $state();
     let showProfile = $state(false);
@@ -44,10 +62,6 @@
         div.textContent = text;
         return div.innerHTML;
     };
-    let canshownotlrc = $derived(
-        message.mbody !== undefined && message.mbody !== message.body,
-    );
-    let showinglrc = $state(message.mbody !== undefined);
     const convertLinksToMessageFrags = (body: string) => {
         const ebody = escapeHTML(body);
         const links = linkify.find(body, "url");
@@ -88,35 +102,38 @@
     };
     let mfrags = $derived(
         convertLinksToMessageFrags(
-            showinglrc ? message.body : (message.mbody ?? message.body),
+            protocol === "lrc"
+                ? message.lrcdata.body
+                : (message.messageView?.body ??
+                      "i'm showing atproto data when i shouldn't be!"),
         ),
     );
     let diffs = $derived(
-        message.active && message.mine && mylocaltext
-            ? diff(message.body, mylocaltext)
+        message.lrcdata.pub && message.lrcdata.mine && mylocaltext
+            ? diff(message.lrcdata.body, mylocaltext)
             : null,
     );
     let pinned = $state(false);
 </script>
 
-{#if message.muted === false}
+{#if message.lrcdata.muted === false}
     <div
-        style:--theme={color}
-        style:--themep={cpartial}
-        style:--tcontrast={contrast}
-        style:--tpartial={partial}
+        style:--theme={colorSet.theme}
+        style:--themep={colorSet.themetransparent}
+        style:--tcontrast={colorSet.themecontrast}
+        style:--tpartial={colorSet.themecontrasttransparent}
         style:--margin={margin + "rem"}
         style:--size={fs ?? "1rem"}
-        class="{message.active ? 'active' : ''} 
-    {message.profileView ? 'signed' : ''} 
+        class="{message.lrcdata.pub || message.messageView ? '' : 'active'} 
+    {message.messageView?.author ? 'signed' : ''} 
     {pinned ? 'pinned' : ''} 
-    {message.nick ? '' : 'late'} 
+    {message.lrcdata.init ? '' : 'late'} 
     transmission"
     >
         <div class="header">
-            <span class="nick">{message.nick ?? "???"}</span
-            >{#if message.handle}{#if !message.profileView}<span class="handle"
-                        >@{message.handle}</span
+            <span class="nick">{nick ?? ""}</span>{#if handle !== undefined}
+                {#if !message.messageView?.author}<span class="handle"
+                        >@{handle}</span
                     >{:else}<div
                         role="button"
                         tabindex="0"
@@ -127,24 +144,55 @@
                         <a
                             bind:this={triggerEl}
                             class="handle"
-                            href={`/p/${message.handle}`}>@{message.handle}</a
+                            href={`/p/${handle}`}>@{handle}</a
                         >
                         {#if showProfile}
                             <div
                                 class="profile-container"
                                 bind:this={profileEl}
                             >
-                                <ProfileCard profile={message.profileView} />
+                                <ProfileCard
+                                    profile={message.messageView.author}
+                                />
                             </div>
                         {/if}
                     </div>
                 {/if}
-                <span
-                    class="time clickable"
-                    title={dumbAbsoluteTimestamp(message.startedAt)}
-                >
-                    {smartAbsoluteTimestamp(message.startedAt)}
-                </span>
+                {#if protocol === "atp"}
+                    {#if canlrc}
+                        <button
+                            class="clickable"
+                            onclick={() => {
+                                protocol = "lrc";
+                            }}
+                        >
+                            atproto, switch to lrc
+                        </button>
+                    {:else}
+                        <span class="clickable">atproto</span>
+                    {/if}
+                {:else if canatp}
+                    <button
+                        class="clickable"
+                        onclick={() => (protocol = "atp")}
+                    >
+                        lrc, switch to atproto
+                    </button>
+                {:else}
+                    <span class="clickable">lrc</span>
+                {/if}
+                {#if message.signetView?.startedAt}
+                    <span
+                        class="time clickable"
+                        title={dumbAbsoluteTimestamp(
+                            Date.parse(message.signetView.startedAt),
+                        )}
+                    >
+                        {smartAbsoluteTimestamp(
+                            Date.parse(message.signetView.startedAt),
+                        )}
+                    </span>
+                {/if}
                 <button
                     class="clickable"
                     onclick={() => {
@@ -153,27 +201,17 @@
                 >
                     {pinned ? "unpin" : "pin"}
                 </button>
-                {#if message.mine !== true}
+                {#if message.lrcdata.mine !== true}
                     <button
                         class="mute clickable"
                         onclick={() => {
-                            message.muted = true;
+                            message.lrcdata.muted = true;
                             onmute?.(message.id);
                         }}
                     >
                         mute
                     </button>
                 {/if}
-                {#if canshownotlrc}<span class="clickable"
-                        ><button
-                            onclick={() => {
-                                showinglrc = !showinglrc;
-                            }}
-                            >{showinglrc
-                                ? "go back to atproto"
-                                : "I WAS THERE!"}</button
-                        > (difference between atproto + lrc detected)</span
-                    >{/if}
             {/if}
         </div>
         <div class="body">
@@ -205,7 +243,7 @@
     <button
         class="unmute"
         onclick={() => {
-            message.muted = false;
+            message.lrcdata.muted = false;
             onunmute?.(message.id);
         }}
     >

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Transmission from "$lib/components/Transmission.svelte";
+  import MessageTransmission from "$lib/components/MessageTransmission.svelte";
   import type { SignedMessageView } from "$lib/types";
   import { calculateMarginTop, signedMessageViewToMessage } from "$lib/utils";
   interface Props {
@@ -10,7 +10,10 @@
 
 <div id="receiver">
   {#each [...messages].reverse() as message, i}
-    <Transmission message={signedMessageViewToMessage(message)} margin={0} />
+    <MessageTransmission
+      message={signedMessageViewToMessage(message)}
+      margin={0}
+    />
   {/each}
 </div>
 
