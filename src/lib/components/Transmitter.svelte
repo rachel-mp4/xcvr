@@ -164,7 +164,7 @@
                 fs={isDesktop ? "2rem" : "1rem"}
             />
             <button onclick={cancelimagepost}> cancel </button>
-            {#if ctx.myMedia?.atpblob !== undefined}
+            {#if ctx.atpblob !== undefined}
                 <button onclick={uploadimage}> confirm </button>
             {:else}
                 uploading...

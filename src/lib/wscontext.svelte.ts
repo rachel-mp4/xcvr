@@ -21,6 +21,8 @@ export class WSContext {
     myMessage: xcvr.Message | undefined
     messageactive: boolean = false
     myMedia: xcvr.Media | undefined
+    atpblob: xcvr.AtpBlob | undefined = $state()
+    atpblobtoken: string | undefined
     mediaactive: boolean = false
 
     audio: HTMLAudioElement = new Audio('/notif.wav')
@@ -155,7 +157,7 @@ export class WSContext {
             const image: xcvr.AtpImage = {
                 $type: "org.xcvr.lrc.image",
                 alt: alt,
-                ...(this.myMedia.atpblob && { blob: this.myMedia.atpblob }),
+                ...(this.atpblob && { blob: this.atpblob }),
                 ...(aspectRatio && { aspectRatio: aspectRatio })
             }
             const record = {
@@ -194,15 +196,20 @@ export class WSContext {
                     }).then((val) => console.log(val), (val) => console.log(val))
                 }, 2000)
             })
-            if (this.myMedia.atpblob) {
-                const contentAddress = `${api}/xrpc/org.xcvr.lrc.getImage?handle=${this.handle}&cid=${this.myMedia.atpblob.ref["$link"]}`
+            if (this.atpblob) {
+                const contentAddress = `${api}/xrpc/org.xcvr.lrc.getImage?handle=${this.handle}&cid=${this.atpblob.ref["$link"]}`
                 pubImage(alt, contentAddress, this)
             } else {
                 pubImage(alt, undefined, this)
             }
             this.myMedia = undefined
+            this.atpblob = undefined
             this.mediaactive = false
         } else if (this.mediaactive) {
+            if (this.atpblob) {
+                console.error("atpblob should be undefined in this case")
+                this.atpblob = undefined
+            }
             pubImage(alt, undefined, this)
             this.mediaactive = false
         }
@@ -212,6 +219,7 @@ export class WSContext {
         if (this.mediaactive) {
             pubImage(undefined, undefined, this)
             this.myMedia = undefined
+            this.atpblob = undefined
             this.mediaactive = false
         }
     }
@@ -220,21 +228,25 @@ export class WSContext {
         if (!this.myMedia) {
             initImage(this)
             this.mediaactive = true
+            const uuid = crypto.randomUUID()
             const api = import.meta.env.VITE_API_URL
             const endpoint = `${api}/lrc/image`
             const formData = new FormData()
             formData.append("image", blob)
+            formData.append("uuid", uuid)
+            this.atpblobtoken = uuid
             fetch(endpoint, {
                 method: "POST",
                 body: formData
             }).then((response) => {
                 if (response.ok) {
-                    response.json().then((atpblob) => {
-                        if (this.myMedia) {
-                            this.myMedia.atpblob = atpblob
+                    response.json().then((data) => {
+                        if (this.atpblobtoken === data.uuid) {
+                            this.atpblob = data.blob
+                            this.atpblobtoken = undefined
                             console.log("here's atpblob")
                         } else {
-                            console.error("i don't have a media at the time of recieve atblob: ", atpblob)
+                            console.error("atpblobtoken mismatch!!!")
                         }
                     })
                 } else {
@@ -300,7 +312,6 @@ export class WSContext {
             this.shortaudio.currentTime = 0
             this.shortaudio.play()
         }
-        this.items.push(item)
         if (item.lrcdata.mine) {
             if (isMessage(item)) {
                 this.myMessage = item
@@ -308,6 +319,7 @@ export class WSContext {
                 this.myMedia = item
             }
         }
+        this.items.push(item)
         this.existingindices.set(item.id, true)
     }
 

@@ -50,7 +50,6 @@ export type Image = {
     lrcdata: LrcMedia
     mediaView?: MediaView
     signetView?: SignetView
-    atpblob?: AtpBlob
 }
 
 export type LrcMessage = LrcBaseItem & {
