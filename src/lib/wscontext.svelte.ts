@@ -207,13 +207,13 @@ export class WSContext {
             this.mediaactive = false
         }
     }
+
     cancelImage = () => {
         if (this.mediaactive) {
             pubImage(undefined, undefined, this)
             this.myMedia = undefined
             this.mediaactive = false
         }
-
     }
 
     initImage = (blob: File) => {
@@ -232,9 +232,10 @@ export class WSContext {
                     response.json().then((atpblob) => {
                         if (this.myMedia) {
                             this.myMedia.atpblob = atpblob
+                        } else {
+                            console.error("i don't have a media at the time of recieve atblob: ", atpblob)
                         }
-                    }
-                    )
+                    })
                 } else {
                     throw new Error(`HTTP ${response.status}`)
                 }
