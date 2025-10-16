@@ -94,7 +94,6 @@
         if (imageURL) {
             URL.revokeObjectURL(imageURL);
         }
-
         ctx.cancelImage();
         imageAlt = "";
         imageURL = undefined;

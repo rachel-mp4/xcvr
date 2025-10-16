@@ -219,6 +219,7 @@ export class WSContext {
     initImage = (blob: File) => {
         if (!this.myMedia) {
             initImage(this)
+            this.mediaactive = true
             const api = import.meta.env.VITE_API_URL
             const endpoint = `${api}/lrc/image`
             const formData = new FormData()
