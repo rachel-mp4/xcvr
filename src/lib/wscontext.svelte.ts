@@ -331,6 +331,7 @@ export class WSContext {
                     : item
             })
         } else {
+            console.log("push message init")
             this.pushItem({
                 type: 'message',
                 id: id,
@@ -352,6 +353,7 @@ export class WSContext {
                     : item
             })
         } else {
+            console.log("push media init")
             this.pushItem({
                 type: 'image',
                 id: id,
@@ -372,6 +374,7 @@ export class WSContext {
                     : item
             })
         } else {
+            console.log("push mute init")
             this.pushItem({
                 type: 'enby',
                 id: id,
@@ -391,6 +394,7 @@ export class WSContext {
                     : item
             })
         } else {
+            console.log("push message pub")
             this.pushItem({
                 type: "message",
                 id: id,
@@ -417,6 +421,7 @@ export class WSContext {
                     : item
             })
         } else {
+            console.log("push media pub")
             this.pushItem({
                 type: "image",
                 id: id,
@@ -437,6 +442,8 @@ export class WSContext {
                     : item
             })
         } else {
+
+            console.log("push message insert")
             this.pushItem({
                 type: "message",
                 id: id,
@@ -458,6 +465,8 @@ export class WSContext {
                     : item
             })
         } else {
+
+            console.log("push message delete")
             this.pushItem({
                 type: "message",
                 id: id,
@@ -479,6 +488,7 @@ export class WSContext {
                     : item
             })
         } else {
+            console.log("push signet")
             this.pushItem({
                 type: "enby",
                 id: signet.lrcId,
