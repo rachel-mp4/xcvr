@@ -86,6 +86,7 @@
         }
     };
     const convertFileToImageItem = (blob: File) => {
+        cancelimagepost();
         const blobUrl = URL.createObjectURL(blob);
         ctx.initImage(blob);
         imageURL = blobUrl;

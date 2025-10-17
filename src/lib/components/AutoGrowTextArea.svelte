@@ -193,7 +193,7 @@
     };
 </script>
 
-<div class="autogrowwrapper">
+<div class="autogrowwrapper" style:--fs={fs ?? "1rem"}>
     <textarea
         rows="1"
         bind:value
@@ -205,9 +205,27 @@
         onbeforeinput={bi}
         style:font-weight={bold ? "700" : "inherit"}
         style:--theme={color}
-        style:font-size={fs ?? "1rem"}
+        style:font-size="var(--fs)"
         {placeholder}
     ></textarea>
+    {#if value === ""}
+        <label class="media-upload-button" for="media-upload"
+            >...or upload an image</label
+        >
+        <input
+            onchange={(event) => {
+                if (
+                    event.currentTarget.files &&
+                    event.currentTarget.files.length > 0
+                ) {
+                    imageHandler?.(event.currentTarget.files[0]);
+                }
+            }}
+            id="media-upload"
+            type="file"
+            accept="image/*"
+        />
+    {/if}
     {#if curemojiresults !== null && curemojinumber !== null}
         <div bind:this={emojilist} class="emoji-selector">
             {#each curemojiresults[0] as result, idx}
@@ -226,6 +244,18 @@
 </div>
 
 <style>
+    #media-upload {
+        display: none;
+    }
+    .media-upload-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        font-size: var(--fs);
+        border: none;
+    }
+
     .emoji-selector {
         width: 100%;
         position: absolute;
