@@ -2,6 +2,7 @@
   <h2>short term TODO</h2>
   <p>ability to load media in history</p>
   <p>improve user interface for image upload</p>
+  <p>oauth scopes</p>
   <p>improve mobile site a hair</p>
   <p>notification volume settings</p>
   <p>improve color scheme settings</p>
