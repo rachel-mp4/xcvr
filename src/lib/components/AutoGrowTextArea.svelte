@@ -254,6 +254,11 @@
         margin: 0;
         font-size: var(--fs);
         border: none;
+        color: var(--bl);
+        cursor: pointer;
+    }
+    .media-upload-button:hover {
+        font-weight: 700;
     }
 
     .emoji-selector {
