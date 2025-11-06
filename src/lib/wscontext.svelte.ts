@@ -541,6 +541,9 @@ const b64encodebytearray = (u8: Uint8Array): string => {
 }
 
 const insertSIntoAStringAtIdx = (s: string, a: string, idx: number) => {
+    if (a === undefined) {
+        a = ""
+    }
     if (idx > a.length) {
         a = a.padEnd(idx)
     }
@@ -548,6 +551,9 @@ const insertSIntoAStringAtIdx = (s: string, a: string, idx: number) => {
 }
 
 const deleteFromAStringBetweenIdxs = (a: string, idx1: number, idx2: number) => {
+    if (a === undefined) {
+        a = ""
+    }
     if (idx2 > a.length) {
         a = a.padEnd(idx2)
     }
