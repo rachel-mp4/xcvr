@@ -18,7 +18,7 @@
 
 <svelte:window bind:innerWidth />
 <div id="receiver">
-  {#each items as item, index (item.id)}
+  {#each items as item, index (`${item.id}-${item.type}`)}
     {@const last = length - 1}
     {@const diff = last - index}
     {@const guess = 2 + (Math.atan((diff - 19) * 0.25) / -2.8 - 0.45)}
