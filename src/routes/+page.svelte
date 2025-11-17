@@ -147,6 +147,14 @@
 		hi! i'm <a href="/p/moth11.net">rachel</a> and i'd like to welcome you to xcvr
 		(pronounced transceiver)!
 	</p>
+	<p>UPDATE AS OF MONDAY NOVEMBER 17 2025</p>
+	<p>XCVR WILL BE DOWN FOR MAINTENANCE AFTER 6PM EST FOR A FEW DAYS</p>
+	<p>
+		i need to switch hosting providers, and i'm making a few changes to the
+		lexicon, and i think that the current xcvr.org account will be migrated to
+		legacy.xcvr.org, and i'm going to make the new xcvr.org use did:web
+	</p>
+	<p>WE'LL BE BACK SHORTLY</p>
 	<p>
 		tune in to a channel <span class="desktop">(to the left)</span>
 		<span class="mobile">(press aaaaa)</span> and start chatting, make your own,
