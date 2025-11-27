@@ -166,7 +166,8 @@
                 <img class="fg-img" {src} {alt} />
             </div>
         {:else}
-            i don't have an image yet
+            i don't have an image yet {image.mediaView?.imageView?.src ??
+                "noper"}
         {/if}
     </div>
 {:else}
