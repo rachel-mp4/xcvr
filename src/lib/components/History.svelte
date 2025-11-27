@@ -1,19 +1,28 @@
 <script lang="ts">
   import MessageTransmission from "$lib/components/MessageTransmission.svelte";
-  import type { SignedMessageView } from "$lib/types";
-  import { calculateMarginTop, signedMessageViewToMessage } from "$lib/utils";
+  import type { SignedItemView } from "$lib/types";
+  import {
+    signedImageViewToImage,
+    signedMessageViewToMessage,
+  } from "$lib/utils";
+  import ImageTransmission from "./ImageTransmission.svelte";
   interface Props {
-    messages: Array<SignedMessageView>;
+    items: Array<SignedItemView>;
   }
-  let { messages }: Props = $props();
+  let { items }: Props = $props();
 </script>
 
 <div id="receiver">
-  {#each [...messages].reverse() as message, i}
-    <MessageTransmission
-      message={signedMessageViewToMessage(message)}
-      margin={0}
-    />
+  {#each [...items].reverse() as item, i (`${item.signet.lrcId}-${item.type}`)}
+    {#if item.type === "message"}
+      <MessageTransmission
+        message={signedMessageViewToMessage(item)}
+        margin={0}
+      />
+    {/if}
+    {#if item.type === "image"}
+      <ImageTransmission image={signedImageViewToImage(item)} margin={0} />
+    {/if}
   {/each}
 </div>
 

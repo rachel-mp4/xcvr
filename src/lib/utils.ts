@@ -1,5 +1,5 @@
 import type { ChannelView } from "$lib/types.ts"
-import type { SignedMessageView, Message } from "$lib/types.ts"
+import type { SignedImageView, SignedMessageView, Message, Image } from "$lib/types.ts"
 export function getChannelWS(c: ChannelView): string | null {
   const host = c.host
   const uri = c.uri
@@ -57,6 +57,28 @@ export function calculateMarginTop(
   const elapsedMs = currentTime - previousTime;
   const elapsedMinutes = elapsedMs / (1000 * 60);
   return Math.log(elapsedMinutes + 1);
+}
+
+export function signedImageViewToImage(sm: SignedImageView): Image {
+  return {
+    type: 'image',
+    id: sm.signet.lrcId,
+    lrcdata: {
+      muted: false,
+      mine: false
+    },
+    signetView: sm.signet,
+    mediaView: {
+      $type: sm.$type,
+      uri: sm.uri,
+      author: sm.author,
+      imageView: sm.image,
+      ...(sm.nick && { nick: sm.nick }),
+      ...(sm.color && { color: sm.color }),
+      signetURI: sm.signet.uri,
+      postedAt: sm.postedAt
+    }
+  }
 }
 
 export function signedMessageViewToMessage(sm: SignedMessageView): Message {

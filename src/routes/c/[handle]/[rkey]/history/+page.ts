@@ -17,12 +17,12 @@ export const load: PageLoad = async ({ params, fetch }) => {
     if (!uri) throw error(500, 'Invalid channel response')
 
     // Get messages
-    const messagesRes = await fetch(`${base}/xrpc/org.xcvr.lrc.getMessages?channelURI=${uri}`)
-    if (!messagesRes.ok) throw error(messagesRes.status, 'Failed to load messages')
+    const historyRes = await fetch(`${base}/xrpc/org.xcvr.lrc.getHistory?channelURI=${uri}`)
+    if (!historyRes.ok) throw error(historyRes.status, 'Failed to load messages')
 
-    const { messages = [], cursor } = await messagesRes.json()
+    const { items = [], cursor } = await historyRes.json()
 
-    return { messages, cursor, uri }
+    return { items, cursor, uri }
 
   } catch (err) {
     throw error(500, 'Unexpected error')

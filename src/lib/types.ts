@@ -161,6 +161,7 @@ export type MediaView = {
     nick?: string
     color?: number
     signetURI: string
+    postedAt: string
 }
 
 export type ItemView = MessageView | MediaView
@@ -172,11 +173,28 @@ export type ImageView = {
     aspectRatio?: AspectRatio
 }
 
+export type SignedItemView = SignedMessageView | SignedMediaView
+
 export type SignedMessageView = {
+    type: 'message'
     $type?: string
     uri: string
     author: ProfileView
     body: string
+    nick?: string
+    color?: number
+    signet: SignetView
+    postedAt: string
+}
+
+export type SignedMediaView = SignedImageView
+
+export type SignedImageView = {
+    type: 'image'
+    $type?: string
+    uri: string
+    author: ProfileView
+    image: ImageView
     nick?: string
     color?: number
     signet: SignetView

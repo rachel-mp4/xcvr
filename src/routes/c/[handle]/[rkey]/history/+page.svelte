@@ -1,21 +1,30 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
   import History from "$lib/components/History.svelte";
+  import type { SignedItemView } from "$lib/types";
+  const nicify = (arr: Array<any>): Array<SignedItemView> => {
+    return arr.map((element) => {
+      if (element["$type"] === "org.xcvr.lrc.defs#signedMessageView") {
+        return { ...element, type: "message" };
+      } else if (element["$type"] === "org.xcvr.lrc.defs#signedMediaView")
+        return { ...element, type: "image" };
+    });
+  };
   let { data }: PageProps = $props();
-  let messages = $state(data.messages);
+  let items = $state(nicify(data.items));
   let nextCursor = $state(data.cursor);
   let hasMore = $derived(!!nextCursor);
   let loading = $state(false);
   const base = import.meta.env.VITE_API_URL;
-  const endpoint = "/xrpc/org.xcvr.lrc.getMessages";
+  const endpoint = "/xrpc/org.xcvr.lrc.getHistory";
   let query = $derived(`?channelURI=${data.uri}&cursor=${nextCursor}`);
   $effect(() => console.log(`${base}${endpoint}${query}`));
-  $effect(() => console.log(messages));
+  $effect(() => console.log(items));
   let scrollContainer: HTMLElement;
   let shouldScrollToBottom = $state(true);
 
   $effect(() => {
-    if (shouldScrollToBottom && scrollContainer && messages.length > 0) {
+    if (shouldScrollToBottom && scrollContainer && items.length > 0) {
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
       shouldScrollToBottom = false;
     }
@@ -27,11 +36,11 @@
     const oldScrollTop = scrollContainer.scrollTop;
     try {
       const base = import.meta.env.VITE_API_URL;
-      const endpoint = "/xrpc/org.xcvr.lrc.getMessages";
+      const endpoint = "/xrpc/org.xcvr.lrc.getHistory";
       const query = `?channelURI=${data.uri}&cursor=${nextCursor}`;
       const res = await fetch(`${base}${endpoint}${query}`);
       const newData = await res.json();
-      messages = [...messages, ...newData.messages];
+      items = [...items, ...nicify(newData.messages)];
       nextCursor = newData.cursor;
       requestAnimationFrame(() => {
         const newScrollHeight = scrollContainer.scrollHeight;
@@ -54,8 +63,8 @@
       <span> loading... </span>
     {/if}
   {/if}
-  {#if messages && messages.length !== 0}
-    <History {messages} />
+  {#if items && items.length !== 0}
+    <History {items} />
   {:else}
     <h1>NO HISTORY</h1>
   {/if}
