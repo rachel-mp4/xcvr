@@ -36,7 +36,7 @@
             ? image.mediaView?.imageView?.src
             : image.lrcdata.pub?.contentAddress,
     );
-    $effect(() => console.log(src));
+    $effect(() => console.log(image));
     let alt: string | undefined = $derived(
         protocol === "atp"
             ? image.mediaView?.imageView?.alt
