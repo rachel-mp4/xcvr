@@ -134,10 +134,11 @@ export type LogItem = {
 export type SignetView = {
     $type?: string
     uri: string
-    issuerHandle: string
+    issuer: string
     channelURI: string
     lrcId: number
-    authorHandle: string
+    author: string
+    authorHandle?: string
     startedAt: string
 }
 

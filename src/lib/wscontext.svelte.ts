@@ -496,11 +496,11 @@ export class WSContext {
                 signetView: signet
             })
         }
-        this.existinguris.set(signet.uri, signet.authorHandle)
+        this.existinguris.set(signet.uri, signet.author)
     }
 
     addMessageView = (message: xcvr.MessageView) => {
-        if (this.existinguris.get(message.signetURI) === message.author.handle) {
+        if (this.existinguris.get(message.signetURI) === message.author.did) {
             this.items = this.items.map((item: xcvr.Item) => {
                 return item.signetView?.uri === message.signetURI && isMessage(item)
                     ? { ...item, type: "message", messageView: message }
@@ -517,7 +517,7 @@ export class WSContext {
             console.log("called add imageview when i don't have an imageview")
             return
         }
-        if (this.existinguris.get(media.signetURI)) {
+        if (this.existinguris.get(media.signetURI) === media.author.did) {
             this.items = this.items.map((item: xcvr.Item) => {
                 return item.signetView?.uri === media.signetURI && isImage(item) ?
                     { ...item, type: "image", mediaView: media } : item
@@ -621,14 +621,16 @@ const parseLexStreamEvent = (event: MessageEvent<any>, ctx: WSContext) => {
             const issuerHandle = lex.issuerHandle
             const channelURI = lex.channelURI
             const lrcID = lex.lrcID
+            const author = lex.author
             const authorHandle = lex.authorHandle
             const startedAt = lex.startedAt
             ctx.addSignet({
                 $type: "org.xcvr.lrc.defs#signetView",
                 uri: uri,
-                issuerHandle: issuerHandle,
+                issuer: issuerHandle,
                 channelURI: channelURI,
                 lrcId: lrcID,
+                author: author,
                 authorHandle: authorHandle,
                 startedAt: startedAt
             })

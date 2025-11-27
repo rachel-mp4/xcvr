@@ -1,7 +1,7 @@
 <script lang="ts">
   let title = $state("");
   let topic = $state("");
-  let host = $state("xcvr.org");
+  let host = $state("did:web:xcvr.org");
   const graphemes = (text: string) => {
     if (Intl.Segmenter) {
       const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
@@ -71,9 +71,10 @@
     <div class="beeper {hostValid ? 'valid' : ''}">
       <label for="host">
         this is the channel host. you can put whatever you want here, but if the
-        given url does not host xcvr channels, or if they do but they don't like
+        given did does not host xcvr channels, or if they do but they don't like
         you in particular, then your channel will not exactly "work." freedom of
-        speech, but not a right to a platform.
+        speech, but not a right to a platform. likely just leave it as
+        did:web:xcvr.org as of nov 26 2025
       </label>
       <input
         type="text"
