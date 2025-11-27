@@ -13,8 +13,7 @@
 </script>
 
 <div id="receiver">
-  {#each [...items].reverse() as item, i}
-    {i}
+  {#each [...items].reverse() as item}
     {#if item.type === "message"}
       <MessageTransmission
         message={signedMessageViewToMessage(item)}
