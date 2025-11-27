@@ -13,7 +13,7 @@
 </script>
 
 <div id="receiver">
-  {#each [...items].reverse() as item, i (`${item.signet.lrcId}-${item.type}`)}
+  {#each [...items].reverse() as item, i}
     {i}
     {#if item.type === "message"}
       <MessageTransmission
