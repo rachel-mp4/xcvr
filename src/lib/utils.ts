@@ -60,7 +60,6 @@ export function calculateMarginTop(
 }
 
 export function signedImageViewToImage(sm: SignedImageView): Image {
-  console.log(sm)
   return {
     type: 'image',
     id: sm.signet.lrcId,
@@ -73,7 +72,7 @@ export function signedImageViewToImage(sm: SignedImageView): Image {
       $type: sm.$type,
       uri: sm.uri,
       author: sm.author,
-      imageView: sm.image,
+      imageView: sm.imageView,
       ...(sm.nick && { nick: sm.nick }),
       ...(sm.color && { color: sm.color }),
       signetURI: sm.signet.uri,

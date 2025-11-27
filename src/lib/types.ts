@@ -194,7 +194,7 @@ export type SignedImageView = {
     $type?: string
     uri: string
     author: ProfileView
-    image: ImageView
+    imageView: ImageView
     nick?: string
     color?: number
     signet: SignetView
