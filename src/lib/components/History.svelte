@@ -14,6 +14,7 @@
 
 <div id="receiver">
   {#each [...items].reverse() as item, i (`${item.signet.lrcId}-${item.type}`)}
+    {i}
     {#if item.type === "message"}
       <MessageTransmission
         message={signedMessageViewToMessage(item)}
